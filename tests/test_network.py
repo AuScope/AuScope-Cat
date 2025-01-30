@@ -1,5 +1,8 @@
 from auscopecat.network import request, requestWMS, requestWFS
 import pytest
+
+
+
 def test_request():
     params = {
               "service": "WFS",
@@ -10,6 +13,13 @@ def test_request():
               "FILTER": "<ogc:Filter><ogc:PropertyIsEqualTo matchCase=\"false\"><ogc:PropertyName>gsmlp:nvclCollection</ogc:PropertyName><ogc:Literal>true</ogc:Literal></ogc:PropertyIsEqualTo></ogc:Filter>",
               "maxFeatures": str(10)
              }
+    res = request('https://auscope.portal.org.au/api/getBlah.do')
+    assert (res == [])
+
+    res = request('https://auportal-dev.geoanalytics.group/api/getKnownLayers.do')
+    data = res.json()['data']
+    dataLen = len(data)
+    assert (dataLen > 100)
 
     res = request('https://geology.data.nt.gov.au/geoserver/wfs',params, 'GET')
     features = res.json()['features']
