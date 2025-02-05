@@ -23,3 +23,21 @@ or
 pdm run $SHELL
 ```
 will run an environment in a new shell
+
+### To search for WFS borehole datasets and download from one of them
+
+```
+$ pdm run $SHELL
+$ python3
+>>> from auscopecat.api import search, download
+>>> from auscopecat.auscopecat_types import ServiceType, DownloadType
+>>> first_wfs = search('borehole', ServiceType.WFS)[0]
+>>> BBOX = {
+... "north": -24.7257367141281, "east": 131.38891993801204,
+...  "south": -25.793715746583374, "west": 129.77844446004175
+... }
+>>> download(first_wfs, DownloadType.CSV, bbox=BBOX)
+```
+
+
+
