@@ -5,7 +5,10 @@ description = "Access to AuScope's catalogue of geoscience datasets from sources
 authors = [
     {name = "AuScope MAINTAIN", email = "cg-admin@csiro.au"},
 ]
-dependencies = []
+dependencies = [
+    "pytest",
+    "requests",
+]
 requires-python = ">=3.10"
 readme = "README.md"
 license = {file = "LICENSE"}
