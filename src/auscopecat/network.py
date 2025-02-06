@@ -2,7 +2,6 @@ import sys
 import logging
 from urllib3.util import Retry
 import requests
-from requests import Session
 from requests.adapters import HTTPAdapter
 from urllib3.exceptions import HTTPError
 
@@ -35,7 +34,7 @@ def request(url: str, params: dict = None, method:str = 'GET'):
     :param url: URL 
     :param params: dictionary of HTTP request parameters
     :param method:  HTTP request method "POST" or "GET"
-    :returns: response 
+    :returns: response or [] upon error
     """
     prov = url
     try:
