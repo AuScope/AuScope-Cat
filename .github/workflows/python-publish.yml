@@ -32,7 +32,7 @@ jobs:
   publish:
     needs: build
     runs-on: ubuntu-latest
-    if: ${{ github.repository == 'AuScope/AuScope-Cat' && github.ref == 'refs/heads/main' && false }}
+    if: ${{ github.repository == 'AuScope/AuScope-Cat' && github.ref == 'refs/heads/main' }}
 
     steps:
     - name: Checkout repository
@@ -46,4 +46,4 @@ jobs:
     - uses: pdm-project/setup-pdm@v4
 
     - name: Publish package distributions to PyPI
-      run: pdm publish
+      run: pdm publish --repository testpypi
