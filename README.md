@@ -8,7 +8,8 @@ Home of 'auscopecat', a Python package that aims to allow access to AuScope's ca
 
 1. Install Python v3.10 or higher (https://www.python.org/)
 2. Install PDM (https://pdm.fming.dev/latest/)
-3. 'pdm install' will install the python library dependencies
+3. Clone this repository
+4. 'pdm install' will install the python library dependencies
 
 ### To activate environment
 
@@ -39,5 +40,12 @@ $ python3
 >>> download(first_wfs, DownloadType.CSV, bbox=BBOX)
 ```
 
+### To run tests
+
+Run
+```
+pdm run pytest
+```
+in the 'AuScope-Cat'root directory
 
 
