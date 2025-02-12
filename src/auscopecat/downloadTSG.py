@@ -133,7 +133,8 @@ def downloadTSG_Polygon(prov: str,kmlCoords: str,max_features = MAX_FEATURES)->i
     for lonlat in lonlatList:
         (lon,lat) = lonlat.split(',')
         latlonList.append(f'{lat} {lon}')
-    cql_polygon = f'INTERSECTS(gsmlp:shape,POLYGON(({','.join(latlonList)})))'
+    latlonStr = ','.join(latlonList)
+    cql_polygon = f'INTERSECTS(gsmlp:shape,POLYGON(({latlonStr})))'
 
     resLen = downloadTSG(prov, cql_polygon, max_features)
     return resLen
