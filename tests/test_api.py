@@ -2,11 +2,12 @@ from types import SimpleNamespace
 import pytest
 from auscopecat.api import download, search, validate_bbox
 from auscopecat.auscopecat_types import DownloadType, ServiceType, SpatialSearchType, AuScopeCatException
+from auscopecat.network import request
 
 
 VALID_BBOX = {
-    "north": -24.7257367141281, "east": 131.38891993801204,
-    "south": -25.793715746583374, "west": 129.77844446004175
+    "north": -22.19, "east": 123.07,
+    "south": -28.00, "west": 115.56
 }
 
 INVALID_BBOX = {
@@ -15,9 +16,9 @@ INVALID_BBOX = {
 }
 
 SEARCH_RESULT = SimpleNamespace(
-    url = "https://public.lithodat.com/geoserver/wfs",
+    url = "https://geossdi.dmp.wa.gov.au/services/wfs",
     type = "WFS",
-    name = "public_data:lithodat_ft_samples"
+    name = "gsmlp:BoreholeView"
 )
 
 
@@ -44,12 +45,19 @@ def test_search_with_invalid_bbox():
     with pytest.raises(AuScopeCatException):
         search("pattern", spatial_search_type=SpatialSearchType.INTERSECTS, bbox=INVALID_BBOX)
 
+@pytest.mark.xfail(reason="Testing live servers is not reliable as they are sometimes unavailable")
 def test_successful_wfs_search():
     try:
-        search("flinders", ServiceType.WFS)
+        search_result = search("nvcl", ServiceType.WFS)
+        assert(len(search_result) > 0)
+        for result in search_result:
+            assert(hasattr(result, "name"))
+            assert(hasattr(result, "type"))
+            assert(hasattr(result, "url"))
     except AuScopeCatException as e:
         assert False, f"Error searching: {e}"
 
+# download tests
 def test_download_invalid_download_type():
     with pytest.raises(AuScopeCatException):
         download(SEARCH_RESULT, "XLSX")
@@ -57,3 +65,36 @@ def test_download_invalid_download_type():
 def test_download_missing_bbox():
     with pytest.raises(AuScopeCatException):
         download(SEARCH_RESULT, DownloadType.CSV)
+
+def test_download_invalid_bbox():
+    with pytest.raises(AuScopeCatException):
+        download(SEARCH_RESULT, DownloadType.CSV, bbox=INVALID_BBOX)
+
+def test_download_invalid_srs():
+    with pytest.raises(AuScopeCatException):
+        download(SEARCH_RESULT, DownloadType.CSV, bbox=INVALID_BBOX, srs_name="ESPG:4326")
+
+@pytest.mark.xfail(reason="Testing live servers is not reliable as they are sometimes unavailable")
+def test_successful_download(mocker):
+    try:
+        mock_file = mocker.mock_open()
+        mocker.patch("builtins.open", mock_file)
+        download(SEARCH_RESULT, DownloadType.CSV, VALID_BBOX, "EPSG:4236", 10, "test_download.csv")
+        mock_file.assert_called_once_with("test_download.csv", "wb")
+    except AuScopeCatException as e:
+        assert False, f"Error downloading: {e}"
+
+# combined tests
+@pytest.mark.xfail(reason="Testing live servers is not reliable as they are sometimes unavailable")
+def test_search_and_download(mocker):
+    try:
+        search_result = search("nvcl", ServiceType.WFS)
+        mock_file = mocker.mock_open()
+        mocker.patch("builtins.open", mock_file)
+        if search_result is not None and len(search_result) > 0:
+            download(search_result[0], DownloadType.CSV, VALID_BBOX, "EPSG:4236", 5, "test_download.csv")
+            mock_file.assert_called_once_with("test_download.csv", "wb")
+        else:
+            assert False, "No search results to download"
+    except AuScopeCatException as e:
+        assert False, f"Error downloading: {e}"
