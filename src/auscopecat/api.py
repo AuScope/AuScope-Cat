@@ -1,5 +1,4 @@
 import numbers
-import urllib
 from auscopecat.auscopecat_types import AuScopeCatException, DownloadType, ServiceType, SpatialSearchType
 from auscopecat.network import request
 from types import SimpleNamespace
@@ -7,7 +6,6 @@ from types import SimpleNamespace
 
 API_URL = "https://auportal-dev.geoanalytics.group/api/"
 #API_URL = "http://localhost:8080/api/"
-DOWNLOAD_URL = "getAllFeaturesInCSV.do"
 SEARCH_URL = "searchCSWRecords.do"
 
 
@@ -76,16 +74,20 @@ def search(pattern: str, ogc_type: ServiceType = None, spatial_search_type: Spat
                                    type = online_resource.get("type"),
                                    name = online_resource.get("name")
                             ))
+
     return search_results
 
 
-def download(obj: SimpleNamespace, download_type: DownloadType, bbox: dict = None, file_name: str = None) -> any:
+def download(obj: SimpleNamespace, download_type: DownloadType, bbox: dict = None,
+             srs_name: str = "EPSG:4326", max_features = None, file_name: str = "download.csv") -> any:
     """
     Downloads data from object
 
     :param obj: SimpleNamespace objects with "url", "type" and "name" attributes
     :param download_type: type of download
     :param bbox: the bounding box for the download data e.g. {"north":-31.456, "east":129.653...}
+    :param srs_name: the SRS name, e.g. "EPGS:4326" (Optional)
+    :param max_features: maximum number of features to return (Optional)
     :param file_name: the file name for the download (Optional)
     :return: CSV data
     """
@@ -113,24 +115,25 @@ def download(obj: SimpleNamespace, download_type: DownloadType, bbox: dict = Non
     if download_type is None:
         download_type = DownloadType.CSV
 
-    # TODO: Supply CRS?
-    bbox_param = (f'{{"crs":"EPSG:4326",'
-                  f'"eastBoundLongitude":{bbox.get("east")},'
-                  f'"westBoundLongitude":{bbox.get("west")},'
-                  f'"northBoundLatitude":{bbox.get("north")},"southBoundLatitude":{bbox.get("south")}}}')
+    bbox_param = f'{bbox.get("south")},{bbox.get("west")},{bbox.get("north")},{bbox.get("east")}'
 
-    # URL, name and bbox will need to be double encoded
-    feature_download_url = urllib.parse.quote_plus(obj.url) + \
-                           "&typeName=" + urllib.parse.quote_plus(obj.name) + \
-                           "&bbox=" + urllib.parse.quote_plus(bbox_param)
-    feature_download_url = urllib.parse.quote_plus(feature_download_url)
-    service_url = f"{API_URL}{DOWNLOAD_URL}?serviceUrl={feature_download_url}"
-    download_url = f"{API_URL}downloadGMLAsZip.do?outputFormat={download_type.value}&serviceUrls={service_url}"
+    request_params = dict(
+        service = "wfs",
+        version = "1.1.0",
+        request = "GetFeature",
+        typeNames = obj.name,
+        srsName = srs_name,
+        bbox = bbox_param,
+        outputFormat = download_type.value
+    )
+
+    if max_features is not None:
+        request_params["maxFeatures"] = max_features
 
     try:
-        response = request(download_url)
+        response = request(obj.url, request_params)
         if response and response.status_code and response.status_code == 200:
-            f_name = "download.zip" if not file_name else file_name
+            f_name = "download.csv" if not file_name else file_name
             with open(f_name, "wb") as f:
                 f.write(response.content)
         else:
@@ -146,6 +149,10 @@ def download(obj: SimpleNamespace, download_type: DownloadType, bbox: dict = Non
 
 
 def validate_bbox(bbox: dict):
+    """
+    Validate a bounding box
+    :param bbox: the bounding box, a dict with "north", "south", "east" and "west" keys
+    """
     if (bbox.get("north") is None or not isinstance(bbox.get("north"), numbers.Number) or
             bbox.get("south") is None or not isinstance(bbox.get("south"), numbers.Number) or
             bbox.get("east") is None or not isinstance(bbox.get("east"), numbers.Number) or
