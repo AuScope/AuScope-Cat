@@ -1,5 +1,18 @@
 import pytest
-from auscopecat.downloadTSG import downloadTSG_BBOX, downloadTSG_Polygon
+from auscopecat.downloadTSG import downloadTSG_BBOX, downloadTSG_Name, downloadTSG_Polygon
+@pytest.mark.xfail(reason="Testing live servers is not reliable as they are sometimes unavailable")
+def test_downloadTSG_Name_live():
+
+    resLen = downloadTSG_Name('WA', '05GJD001', 1000001)
+    assert (resLen == 1)
+    resLen = downloadTSG_Name('NSW', 'Cobbora: DM COBBORA DDH113', 1000001)
+    assert (resLen == 1)
+    resLen = downloadTSG_Name('TAS', 'PVD001', 1000001)
+    assert (resLen == 1)
+    resLen = downloadTSG_Name('NT', 'NTGS96/1', 1000001)
+    assert (resLen == 1)
+    resLen = downloadTSG_Name('SA', 'KOKDD 20', 1000001)
+    assert (resLen == 1)
 
 @pytest.mark.xfail(reason="Testing live servers is not reliable as they are sometimes unavailable")
 def test_downloadTSG_Polygon_live():
@@ -9,13 +22,13 @@ def test_downloadTSG_Polygon_live():
     assert (resLen == 351)
 
     resLen = downloadTSG_Polygon('NSW', '110.569,-10.230 155.095,-9.445 156.250,-45.161 111.027,-41.021 111.016,-41.010 110.569,-10.230', 1000001)
-    assert (resLen == 1)
+    assert (resLen == 1070)
 
     resLen = downloadTSG_Polygon('VIC', '110.569,-10.230 155.095,-9.445 156.250,-45.161 111.027,-41.021 111.016,-41.010 110.569,-10.230', 1000001)
     assert (resLen == 0)
 
     resLen = downloadTSG_Polygon('SA', '110.569,-10.230 155.095,-9.445 156.250,-45.161 111.027,-41.021 111.016,-41.010 110.569,-10.230', 1000001)
-    assert (resLen == 42)
+    assert (resLen == 1626)
 
     resLen = downloadTSG_Polygon('NT', '110.569,-10.230 155.095,-9.445 156.250,-45.161 111.027,-41.021 111.016,-41.010 110.569,-10.230', 1000001)
     assert (resLen == 61)
