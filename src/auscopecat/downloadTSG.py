@@ -83,10 +83,13 @@ def search_cql(prov: str, cql_filter: str, max_features = MAX_FEATURES)->list[st
         )
     csvBuffer = StringIO(response.text)
     df = pd.read_csv(filepath_or_buffer = csvBuffer, low_memory=False)
-    df = df.loc[df['gsmlp:nvclCollection']]
     urlAll = 'https://nvclstore.z8.web.core.windows.net/all.csv'
     dfA = pd.read_csv(urlAll)
     LOGGER.info((f'{prov} cql return: {df.shape[0]} : dfAll return {dfA.shape[0]}'))
+    if df.shape[0] < 1:
+        return []
+    df = df.loc[df['gsmlp:nvclCollection']]
+
     urls = []
     for bhIdentifier in df['gsmlp:identifier']:
         bhIdentifier1 = bhIdentifier.split('://')[1]
@@ -108,6 +111,9 @@ def downloadTSG(prov: str, cql_filter: str, max_features = MAX_FEATURES)->int:
     :param max_features: max_features
     :return: number of downloaded files
     '''
+    if prov not in ['NT','QLD']:
+        #add nvclCollection filter except NT, QLD.(exception from server)
+        cql_filter = cql_filter + ' AND nvclCollection=\'true\''
     urls = search_cql(prov, cql_filter, max_features)
     if (max_features == 1000001):
         #if 1000001, just simulate downloading
@@ -152,4 +158,16 @@ def downloadTSG_BBOX(prov: str,bbox: str,max_features = MAX_FEATURES):
     resLen = downloadTSG(prov, cql_bbox, max_features)
     return resLen
 
+def downloadTSG_Name(prov: str,name: str,max_features = MAX_FEATURES):
+    '''
+    Download TSG files with BBox filter
+
+    :param prov: prov
+    :param cql_filter: cql_filter
+    :param max_features: max_features
+    :return: number of downloaded files
+    '''
+    cql_filter = f'name like \'%{name}%\''
+    resLen = downloadTSG(prov, cql_filter, max_features)
+    return resLen
 
