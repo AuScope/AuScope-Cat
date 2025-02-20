@@ -150,7 +150,7 @@ def download(obj: SimpleNamespace, download_type: DownloadType, bbox: dict = Non
 
     try:
         response = wfs_get_feature(obj.url, obj.name, bbox, version = version, srs_name = srs_name,
-                         output_format = "csv", max_features = None)
+                         output_format = "csv", max_features = max_features)
         if response and response.status_code and response.status_code == 200:
             f_name = "download.csv" if not file_name else file_name
             with open(f_name, "wb") as f:
