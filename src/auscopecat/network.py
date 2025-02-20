@@ -1,9 +1,10 @@
-import sys
 import logging
-from urllib3.util import Retry
 import requests
+import sys
+from auscopecat.auscopecat_types import AuScopeCatException
 from requests.adapters import HTTPAdapter
 from urllib3.exceptions import HTTPError
+from urllib3.util import Retry
 
 LOG_LVL = logging.INFO
 ''' Initialise debug level, set to 'logging.INFO' or 'logging.DEBUG'
@@ -55,9 +56,10 @@ def request(url: str, params: dict = None, method:str = 'GET'):
 
     except (HTTPError, requests.RequestException) as e:
         LOGGER.error(f"{prov} returned error exception: {e}")
-        return []
+        raise AuScopeCatException(
+            f"{prov} returned error exception: {e}",
+            500
+        )
     if response.status_code != 200:
         LOGGER.error(f"{prov} returned error {response.status_code} in response: {response.text}")
     return response
-
-

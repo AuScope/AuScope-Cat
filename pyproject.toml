@@ -9,6 +9,7 @@ dependencies = [
     "pytest",
     "pytest-mock",
     "requests",
+    "numpy",
     "pandas"
 ]
 requires-python = ">=3.10"

@@ -1,6 +1,7 @@
 import numbers
 from auscopecat.auscopecat_types import AuScopeCatException, DownloadType, ServiceType, SpatialSearchType
 from auscopecat.network import request
+from requests import Response
 from types import SimpleNamespace
 
 
@@ -55,11 +56,8 @@ def search(pattern: str, ogc_type: ServiceType = None, spatial_search_type: Spat
 
     try:
         search_request = request(search_query)
-    except Exception as e:
-        raise AuScopeCatException(
-            f"Error querying data: {e}",
-            500
-        )
+    except AuScopeCatException as e:
+        raise
 
     search_results = []
     if search_request.status_code == 200:
@@ -78,8 +76,42 @@ def search(pattern: str, ogc_type: ServiceType = None, spatial_search_type: Spat
     return search_results
 
 
-def download(obj: SimpleNamespace, download_type: DownloadType, bbox: dict = None,
-             srs_name: str = "EPSG:4326", max_features = None, file_name: str = "download.csv") -> any:
+def wfs_get_feature(url: str, type_name: str, bbox: dict, version = "1.1.0", srs_name: str = "EPSG:4326",
+                         output_format = "csv", max_features = None) -> Response:
+    if bbox is None:
+        raise AuScopeCatException(
+            "A bounding box (bbox) must be specified",
+            500
+        )
+    try:
+        validate_bbox(bbox)
+    except Exception:
+        raise
+
+    bbox_param = f'{bbox.get("south")},{bbox.get("west")},{bbox.get("north")},{bbox.get("east")}'
+
+    request_params = dict(
+        service="wfs",
+        version=version,
+        request="GetFeature",
+        typeNames=type_name,
+        srsName=srs_name,
+        bbox=bbox_param,
+        outputFormat="csv"
+    )
+
+    if max_features is not None:
+        request_params["maxFeatures"] = max_features
+
+    try:
+        response = request(url, request_params)
+        return response
+    except Exception as e:
+        raise
+
+
+def download(obj: SimpleNamespace, download_type: DownloadType, bbox: dict = None, srs_name: str = "EPSG:4326",
+             max_features = None, version = "1.1.0", file_name: str = "download.csv") -> any:
     """
     Downloads data from object
 
@@ -88,8 +120,9 @@ def download(obj: SimpleNamespace, download_type: DownloadType, bbox: dict = Non
     :param bbox: the bounding box for the download data e.g. {"north":-31.456, "east":129.653...}
     :param srs_name: the SRS name, e.g. "EPGS:4326" (Optional)
     :param max_features: maximum number of features to return (Optional)
+    :param version: WFS version, e.g. "1.1.0" (Optional)
     :param file_name: the file name for the download (Optional)
-    :return: CSV data
+    :return: CSV dataclear
     """
     if download_type and not isinstance(download_type, DownloadType):
         raise AuScopeCatException(
@@ -115,37 +148,20 @@ def download(obj: SimpleNamespace, download_type: DownloadType, bbox: dict = Non
     if download_type is None:
         download_type = DownloadType.CSV
 
-    bbox_param = f'{bbox.get("south")},{bbox.get("west")},{bbox.get("north")},{bbox.get("east")}'
-
-    request_params = dict(
-        service = "wfs",
-        version = "1.1.0",
-        request = "GetFeature",
-        typeNames = obj.name,
-        srsName = srs_name,
-        bbox = bbox_param,
-        outputFormat = download_type.value
-    )
-
-    if max_features is not None:
-        request_params["maxFeatures"] = max_features
-
     try:
-        response = request(obj.url, request_params)
+        response = wfs_get_feature(obj.url, obj.name, bbox, version = version, srs_name = srs_name,
+                         output_format = "csv", max_features = max_features)
         if response and response.status_code and response.status_code == 200:
             f_name = "download.csv" if not file_name else file_name
             with open(f_name, "wb") as f:
                 f.write(response.content)
         else:
             raise AuScopeCatException(
-                f"Invalid response ({response.status_code}): {response.reason}",
-                500
+                f"Error downloading data: {response.reason}",
+                response.status_code
             )
-    except Exception as e:
-        raise AuScopeCatException(
-            "Error downloading data",
-            500
-        )
+    except AuScopeCatException as e:
+        raise
 
 
 def validate_bbox(bbox: dict):
