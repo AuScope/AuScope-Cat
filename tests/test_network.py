@@ -1,5 +1,6 @@
 import logging
 import pytest
+from auscopecat.auscopecat_types import AuScopeCatException
 from requests import Session, RequestException
 from urllib3.exceptions import HTTPError
 
@@ -44,26 +45,25 @@ def test_request_return_500(fn, monkeypatch, caplog):
     caplog.clear()
 
 
-@pytest.mark.parametrize("excp, exc_msg, fn",
+@pytest.mark.parametrize("excp, message, error_code, fn",
         [
-          (HTTPError, "returned error exception: ", "get"),
-          (RequestException, "returned error exception: ", "get"),
-          (HTTPError, "returned error exception: ", "post"),
-          (RequestException, "returned error exception: ", "post")
+          (AuScopeCatException, "returned error exception: ", 500, "get")
         ]
     )
-def test_request_exceptions(excp, exc_msg, fn, monkeypatch, caplog):
+def test_request_exceptions(excp, message, error_code, fn, monkeypatch, caplog):
     """ Tests that networking exceptions are caught correctly
         for GET and POST operations
     """
 
     def mock_get_http_exc(*args, **kwargs):
-        raise excp
+        raise excp(message, error_code)
 
     monkeypatch.setattr(Session, fn, mock_get_http_exc)
-    res = request("https://blah.com", {}, fn.upper())
-    assert exc_msg in caplog.text
-    caplog.clear()
+    with pytest.raises(AuScopeCatException):
+        res = request("https://blah.com", {}, fn.upper())
+
+        assert message in caplog.text
+        caplog.clear()
 
 
 # Mark this test as failable
@@ -78,8 +78,8 @@ def test_request_live():
               "FILTER": "<ogc:Filter><ogc:PropertyIsEqualTo matchCase=\"false\"><ogc:PropertyName>gsmlp:nvclCollection</ogc:PropertyName><ogc:Literal>true</ogc:Literal></ogc:PropertyIsEqualTo></ogc:Filter>",
               "maxFeatures": str(10)
              }
-    res = request('https://auscope.portal.org.au/api/getBlah.do')
-    assert (res == [])
+    with pytest.raises(AuScopeCatException):
+        res = request('https://auscope.portal.org.au/api/getBlah.do')
 
     res = request('https://auportal-dev.geoanalytics.group/api/getKnownLayers.do')
     data = res.json()['data']
