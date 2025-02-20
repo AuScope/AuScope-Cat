@@ -145,7 +145,7 @@ def downloadTSG(prov: str,name: str = None, bbox: str = None, kmlCoords: str = N
         )
     return len(urls)
 
-def downloadTSG_CQL(prov: str, cql_filter: str, max_features = MAX_FEATURES)->int:
+def downloadTSG_CQL(prov: str, cql_filter: str, max_features = MAX_FEATURES)->list[str]:
     '''
     Download TSG files
 
