@@ -121,19 +121,19 @@ def downloadTSG(prov: str,name: str = None, bbox: str = None, kmlCoords: str = N
             (lon,lat) = lonlat.split(',')
             latlonList.append(f'{lat} {lon}')
         latlonStr = ','.join(latlonList)
-        if len(cql_filter):
+        if cql_filter.strip() != "":
             cql_filter +=  ' AND '
         cql_filter += f'INTERSECTS(gsmlp:shape,POLYGON(({latlonStr})))'
 
     if name :
-        if len(cql_filter):
+        if cql_filter.strip() != "":
             cql_filter +=  ' AND '
         cql_filter += f'name like \'%{name}%\''
 
     if bbox :
-        if len(cql_filter):
+        if cql_filter.strip() != "":
             cql_filter +=  ' AND '
-        cql_filter += f' BBOX(gsmlp:shape,{bbox})'
+        cql_filter += f'BBOX(gsmlp:shape,{bbox})'
 
     try:
         urls = downloadTSG_CQL(prov, cql_filter, max_features)
