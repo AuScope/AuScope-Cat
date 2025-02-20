@@ -113,7 +113,7 @@ def downloadTSG(prov: str, cql_filter: str, max_features = MAX_FEATURES)->int:
     '''
     if prov not in ['NT','QLD']:
         #add nvclCollection filter except NT, QLD.(exception from server)
-        cql_filter = cql_filter + ' AND nvclCollection=\'true\''
+        cql_filter += ' AND nvclCollection=\'true\''
     urls = search_cql(prov, cql_filter, max_features)
     if (max_features == 1000001):
         #if 1000001, just simulate downloading
@@ -121,7 +121,7 @@ def downloadTSG(prov: str, cql_filter: str, max_features = MAX_FEATURES)->int:
     for url in urls:
         fn = url.replace('/','-').replace(':','-')
         LOGGER.info((f'{prov} downloadTSG::downloaded: {fn}'))
-        download_url(url,f'{fn}')
+        download_url(url,fn)
     return len(urls)
 
 def downloadTSG_Polygon(prov: str,kmlCoords: str,max_features = MAX_FEATURES)->int:
