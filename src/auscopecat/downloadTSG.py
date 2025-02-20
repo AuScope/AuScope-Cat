@@ -102,7 +102,41 @@ def search_cql(prov: str, cql_filter: str, max_features = MAX_FEATURES)->list[st
     LOGGER.info((f'{prov} search_cql return urls: {len(urls)}'))
     return urls
 
-def downloadTSG(prov: str, cql_filter: str, max_features = MAX_FEATURES)->int:
+def downloadTSG(prov: str,name: str = None, bbox: str = None, kmlCoords: str = None, max_features = MAX_FEATURES)->int:
+    '''
+    Download TSG files with Polygon filter
+
+    :param prov: prov
+    :param cql_filter: cql_filter
+    :param max_features: max_features
+    :return: number of downloaded files
+    '''
+    urls = []
+    cql_filter = ''
+    if kmlCoords :
+        #KML coordinates are x,y (longitude, latitude), whereas geoserver uses LatLng (or y,x / latitude, longitude).
+        lonlatList = kmlCoords.split(' ')
+        latlonList = []
+        for lonlat in lonlatList:
+            (lon,lat) = lonlat.split(',')
+            latlonList.append(f'{lat} {lon}')
+        latlonStr = ','.join(latlonList)
+        cql_filter += f'INTERSECTS(gsmlp:shape,POLYGON(({latlonStr})))'
+    if name :
+        cql_filter += f'name like \'%{name}%\''
+    if bbox :
+        cql_filter += f'BBOX(gsmlp:shape,{bbox})'
+    try:
+        urls = downloadTSG_CQL(prov, cql_filter, max_features)
+    except Exception as e:
+        LOGGER.exception(f"{prov} returned error exception: {str(e)}")
+        raise AuScopeCatException(
+            f"Error querying data: {e}",
+            500
+        )
+    return len(urls)
+
+def downloadTSG_CQL(prov: str, cql_filter: str, max_features = MAX_FEATURES)->int:
     '''
     Download TSG files
 
@@ -117,57 +151,15 @@ def downloadTSG(prov: str, cql_filter: str, max_features = MAX_FEATURES)->int:
     urls = search_cql(prov, cql_filter, max_features)
     if (max_features == 1000001):
         #if 1000001, just simulate downloading
-        return len(urls)
+        return urls
     for url in urls:
         fn = url.replace('/','-').replace(':','-')
         LOGGER.info((f'{prov} downloadTSG::downloaded: {fn}'))
         download_url(url,fn)
-    return len(urls)
+    return urls
 
-def downloadTSG_Polygon(prov: str,kmlCoords: str,max_features = MAX_FEATURES)->int:
-    '''
-    Download TSG files with Polygon filter
 
-    :param prov: prov
-    :param cql_filter: cql_filter
-    :param max_features: max_features
-    :return: number of downloaded files
-    '''
-    #KML coordinates are x,y (longitude, latitude), whereas geoserver uses LatLng (or y,x / latitude, longitude).
-    lonlatList = kmlCoords.split(' ')
-    latlonList = []
-    for lonlat in lonlatList:
-        (lon,lat) = lonlat.split(',')
-        latlonList.append(f'{lat} {lon}')
-    latlonStr = ','.join(latlonList)
-    cql_polygon = f'INTERSECTS(gsmlp:shape,POLYGON(({latlonStr})))'
 
-    resLen = downloadTSG(prov, cql_polygon, max_features)
-    return resLen
 
-def downloadTSG_BBOX(prov: str,bbox: str,max_features = MAX_FEATURES):
-    '''
-    Download TSG files with BBox filter
 
-    :param prov: prov
-    :param cql_filter: cql_filter
-    :param max_features: max_features
-    :return: number of downloaded files
-    '''
-    cql_bbox = f'BBOX(gsmlp:shape,{bbox})'
-    resLen = downloadTSG(prov, cql_bbox, max_features)
-    return resLen
-
-def downloadTSG_Name(prov: str,name: str,max_features = MAX_FEATURES):
-    '''
-    Download TSG files with BBox filter
-
-    :param prov: prov
-    :param cql_filter: cql_filter
-    :param max_features: max_features
-    :return: number of downloaded files
-    '''
-    cql_filter = f'name like \'%{name}%\''
-    resLen = downloadTSG(prov, cql_filter, max_features)
-    return resLen
 
