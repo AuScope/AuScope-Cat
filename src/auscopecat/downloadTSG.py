@@ -121,11 +121,20 @@ def downloadTSG(prov: str,name: str = None, bbox: str = None, kmlCoords: str = N
             (lon,lat) = lonlat.split(',')
             latlonList.append(f'{lat} {lon}')
         latlonStr = ','.join(latlonList)
+        if len(cql_filter):
+            cql_filter +=  ' AND '
         cql_filter += f'INTERSECTS(gsmlp:shape,POLYGON(({latlonStr})))'
+
     if name :
+        if len(cql_filter):
+            cql_filter +=  ' AND '
         cql_filter += f'name like \'%{name}%\''
+
     if bbox :
-        cql_filter += f'BBOX(gsmlp:shape,{bbox})'
+        if len(cql_filter):
+            cql_filter +=  ' AND '
+        cql_filter += f' BBOX(gsmlp:shape,{bbox})'
+
     try:
         urls = downloadTSG_CQL(prov, cql_filter, max_features)
     except Exception as e:
@@ -157,9 +166,4 @@ def downloadTSG_CQL(prov: str, cql_filter: str, max_features = MAX_FEATURES)->in
         LOGGER.info((f'{prov} downloadTSG::downloaded: {fn}'))
         download_url(url,fn)
     return urls
-
-
-
-
-
 
