@@ -4,9 +4,7 @@ on:
   release:
     types: [published]
 
-permissions:
-  contents: write
-  actions: write
+
 
 jobs:
   pypi-publish:
@@ -14,6 +12,8 @@ jobs:
     permissions:
       # IMPORTANT: this permission is mandatory for trusted publishing
       id-token: write
+      contents: write
+      actions: write
 
     environment:
       name: pypitest
