@@ -43,11 +43,11 @@ jobs:
 
     - name: Write the new version into the project file
       run: |
-        sed -i 's/^version =.*/version = "${{ steps.getversionfromtag.outputs.VERSION }}"/' ${{ github.workspace }}/project.toml
+        sed -i 's/^version =.*/version = "${{ steps.getversionfromtag.outputs.VERSION }}"/' ${{ github.workspace }}/pyproject.toml
 
     - name: Check the version was correctly updated in the project file
       run: |
-        vercheck ${{ steps.getversionfromtag.outputs.VERSION }} ${{ github.workspace }}/project.toml
+        vercheck ${{ steps.getversionfromtag.outputs.VERSION }} ${{ github.workspace }}/pyproject.toml
 
     - name: Commit changes and more tag to after the version change
       run: |
@@ -55,7 +55,7 @@ jobs:
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
         git tag -d ${{ github.event.release.tag_name }}
         git push origin :refs/tags/${{ github.event.release.tag_name }}
-        git add ${{ github.workspace }}/project.toml
+        git add ${{ github.workspace }}/pyproject.toml
         git commit -m 'Updated project version to ${{ steps.getversionfromtag.outputs.VERSION }}'
         git push origin
         git tag ${{ github.event.release.tag_name }}
