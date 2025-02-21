@@ -51,16 +51,18 @@ jobs:
     #    vercheck ${{ steps.getversionfromtag.outputs.VERSION }} ${{ github.workspace }}/pyproject.toml
 
     - name: Commit changes and more tag to after the version change
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         git config --global user.name 'github-actions[bot]'
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
         git tag -d ${{ github.event.release.tag_name }}
-        git push --delete ${{ github.event.release.tag_name }}
+        git push --delete origin ${{ github.event.release.tag_name }}
         git add ${{ github.workspace }}/pyproject.toml
         git commit -m 'Updated project version to ${{ steps.getversionfromtag.outputs.VERSION }}'
-        git push
+        git push origin
         git tag ${{ github.event.release.tag_name }}
-        git push ${{ github.event.release.tag_name }}
+        git push ${{ github.event.release.tag_name }} origin
 
     - name: Publish package distributions to PyPI
       run: pdm publish --repository testpypi
