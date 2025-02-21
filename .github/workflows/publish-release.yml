@@ -55,7 +55,7 @@ jobs:
         git config --global user.name 'github-actions[bot]'
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
         git tag -d ${{ github.event.release.tag_name }}
-        git push --delete origin ${{ github.event.release.tag_name }}
+        git push --delete ${{ github.event.release.tag_name }}
         git add ${{ github.workspace }}/pyproject.toml
         git commit -m 'Updated project version to ${{ steps.getversionfromtag.outputs.VERSION }}'
         git push
