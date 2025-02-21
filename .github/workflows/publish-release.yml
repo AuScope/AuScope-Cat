@@ -17,7 +17,7 @@ jobs:
     environment:
       name: pypitest
 
-      url: https://test.pypi.org/project/auscopecat/${{ github.event.release.name }}
+      url: https://test.pypi.org/project/auscopecat/${{ github.event.release.tag_name }}
 
     steps:
     - name: Checkout repository
@@ -29,6 +29,37 @@ jobs:
         python-version: '3.x'
 
     - uses: pdm-project/setup-pdm@v4
+
+    - name: Read new version number from the tag. expecting the letter 'v' followed by a PEP-440 compliant version number
+      env:
+        TAG: ${{ github.event.release.tag_name }}
+      id: getversionfromtag
+      run: echo "VERSION=${TAG#v}" >> $GITHUB_OUTPUT
+
+    - name: check tag name is a valid PEP-440 compliant version number
+      run: |
+        pip install vercheck
+        vercheck ${{ steps.getversionfromtag.outputs.VERSION }} --check-version-number-only
+
+    - name: Write the new version into the project file
+      run: |
+        sed -i 's/^version =.*/version = "${{ steps.getversionfromtag.outputs.VERSION }}"/' ${{ github.workspace }}/project.toml
+
+    - name: Check the version was correctly updated in the project file
+      run: |
+        vercheck ${{ steps.getversionfromtag.outputs.VERSION }} ${{ github.workspace }}/project.toml
+
+    - name: Commit changes and more tag to after the version change
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        git tag -d ${{ github.event.release.tag_name }}
+        git push origin :refs/tags/${{ github.event.release.tag_name }}
+        git add ${{ github.workspace }}/project.toml
+        git commit -m 'Updated project version to ${{ steps.getversionfromtag.outputs.VERSION }}'
+        git push origin
+        git tag ${{ github.event.release.tag_name }}
+        git push origin ${{ github.event.release.tag_name }}
 
     - name: Publish package distributions to PyPI
       run: pdm publish --repository testpypi
