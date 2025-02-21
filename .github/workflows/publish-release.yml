@@ -56,7 +56,7 @@ jobs:
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
         git add ${{ github.workspace }}/pyproject.toml
         git commit -m 'Updated project version to ${{ steps.getversionfromtag.outputs.VERSION }}'
-        git push $(git rev-parse --abbrev-ref HEAD)
+        git push HEAD HEAD:main
 
 
     - name: Publish package distributions to PyPI
