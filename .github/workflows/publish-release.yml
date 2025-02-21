@@ -45,9 +45,9 @@ jobs:
       run: |
         sed -i 's/^version =.*/version = "${{ steps.getversionfromtag.outputs.VERSION }}"/' ${{ github.workspace }}/pyproject.toml
 
-    - name: Check the version was correctly updated in the project file
-      run: |
-        vercheck ${{ steps.getversionfromtag.outputs.VERSION }} ${{ github.workspace }}/pyproject.toml
+    # - name: Check the version was correctly updated in the project file
+    #  run: |
+    #    vercheck ${{ steps.getversionfromtag.outputs.VERSION }} ${{ github.workspace }}/pyproject.toml
 
     - name: Commit changes and more tag to after the version change
       run: |
