@@ -15,8 +15,8 @@ Home of 'auscopecat', a Python package that aims to allow access to AuScope's ca
 
 ```
 $ uv venv
-$ uv sync
 $ source .venv/bin/activate
+$ uv sync
 ```
 
 And to deactivate:
@@ -31,10 +31,13 @@ uv run $SHELL
 ```
 will run an environment in a new shell
 
+**TIP**: Use 'uv pip install "auscopecat@."' to install the local auscopecat package
+
 ### To search for WFS borehole datasets and download from one of them
 
 ```
 $ uv run $SHELL
+$ uv pip install "auscopecat@."
 $ python3
 >>> from auscopecat.api import search, download
 >>> from auscopecat.auscopecat_types import ServiceType, DownloadType
