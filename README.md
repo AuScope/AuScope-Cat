@@ -10,12 +10,12 @@ Home of 'auscopecat', a Python package that aims to allow access to AuScope's ca
 1. Install Python v3.10 or higher (https://www.python.org/)
 2. Install uv (https://docs.astral.sh/uv/getting-started/installation/)
 3. Clone this repository
-4. 'uv sync' will install the python library dependencies
 
 ### To create and activate a new Python environment
 
 ```
 $ uv venv
+$ uv sync
 $ source .venv/bin/activate
 ```
 
