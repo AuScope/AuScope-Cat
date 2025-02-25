@@ -12,7 +12,19 @@ Home of 'auscopecat', a Python package that aims to allow access to AuScope's ca
 3. Clone this repository
 4. 'uv sync' will install the python library dependencies
 
-### To activate environment
+### To create and activate a new Python environment
+
+```
+$ uv venv
+$ source .venv/bin/activate
+```
+
+And to deactivate:
+```
+$ deactivate
+```
+
+**ALSO**
 
 ```
 uv run $SHELL
