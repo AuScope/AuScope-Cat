@@ -56,13 +56,13 @@ jobs:
       run: |
         git config --global user.name 'github-actions[bot]'
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-        git tag -d ${{ github.event.release.tag_name }}
-        git push :refs/tags/${{ github.event.release.tag_name }}
+        # git tag -d ${{ github.event.release.tag_name }}
+        # git push :refs/tags/${{ github.event.release.tag_name }}
         git add ${{ github.workspace }}/pyproject.toml
         git commit -m 'Updated project version to ${{ steps.getversionfromtag.outputs.VERSION }}'
         git push
-        git tag ${{ github.event.release.tag_name }}
-        git push ${{ github.event.release.tag_name }}
+        # git tag ${{ github.event.release.tag_name }}
+        # git push ${{ github.event.release.tag_name }}
 
 
     - name: Publish package distributions to PyPI
