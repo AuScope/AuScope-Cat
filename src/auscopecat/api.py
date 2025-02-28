@@ -5,7 +5,7 @@ from requests import Response
 from types import SimpleNamespace
 
 
-API_URL = "https://auportal-dev.geoanalytics.group/api/"
+API_URL = "https://portal.auscope.org/api/"
 #API_URL = "http://localhost:8080/api/"
 SEARCH_URL = "searchCSWRecords.do"
 
