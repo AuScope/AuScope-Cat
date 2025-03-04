@@ -26,12 +26,18 @@ jobs:
       with:
         ref: main
 
-    - name: Set up Python
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        # Install a specific version of uv.
+        version: "0.6.3"
+        enable-cache: true
+        cache-dependency-glob: "uv.lock"
+
+    - name: "Set up Python"
       uses: actions/setup-python@v5
       with:
-        python-version: '3.x'
-
-    - uses: pdm-project/setup-pdm@v4
+        python-version-file: "pyproject.toml"
 
     - name: Read new version number from the tag. expecting the letter 'v' followed by a PEP-440 compliant version number
       env:
@@ -56,10 +62,16 @@ jobs:
       run: |
         git config --global user.name 'github-actions[bot]'
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        # git tag -d ${{ github.event.release.tag_name }}
+        # git push :refs/tags/${{ github.event.release.tag_name }}
         git add ${{ github.workspace }}/pyproject.toml
         git commit -m 'Updated project version to ${{ steps.getversionfromtag.outputs.VERSION }}'
         git push
+        # git tag ${{ github.event.release.tag_name }}
+        # git push ${{ github.event.release.tag_name }}
 
 
     - name: Publish package distributions to PyPI
-      run: pdm publish --repository testpypi
+      run: |
+        uv build
+        uv publish --publish-url https://test.pypi.org/legacy/ --trusted-publishing always

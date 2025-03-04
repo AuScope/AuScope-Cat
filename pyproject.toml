@@ -1,12 +1,12 @@
 [project]
 name = "auscopecat"
-version = "0.1.1"
+version = "0.1.4"
 description = "Access to AuScope's catalogue of geoscience datasets from sources all over Australia"
 authors = [
     {name = "AuScope MAINTAIN", email = "cg-admin@csiro.au"},
 ]
 dependencies = [
-    "pytest",
+    "pytest>=5.0",
     "pytest-mock",
     "requests",
     "numpy",
@@ -30,10 +30,3 @@ classifiers = [
 
 [project.urls]
 Repository = "https://github.com/AuScope/AuScope-Cat"
-
-[tool.pdm]
-distribution = true
-
-[build-system]
-requires = ["pdm-backend"]
-build-backend = "pdm.backend"

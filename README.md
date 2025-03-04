@@ -1,4 +1,3 @@
-[![pdm-managed](https://img.shields.io/endpoint?url=https%3A%2F%2Fcdn.jsdelivr.net%2Fgh%2Fpdm-project%2F.github%2Fbadge.json)](https://pdm-project.org)
 ![Test Status](https://github.com/AuScope/AuScope-Cat/actions/workflows/python-build-test.yml/badge.svg)
 
 # AuScope Catalogue
@@ -9,28 +8,36 @@ Home of 'auscopecat', a Python package that aims to allow access to AuScope's ca
 ### To install
 
 1. Install Python v3.10 or higher (https://www.python.org/)
-2. Install PDM (https://pdm.fming.dev/latest/)
+2. Install uv (https://docs.astral.sh/uv/getting-started/installation/)
 3. Clone this repository
-4. 'pdm install' will install the python library dependencies
 
-### To activate environment
-
-```
-eval $(pdm venv activate)
-```
-will start a Python env, 'deactivate' to exit
-
-or
+### To create and activate a new Python environment
 
 ```
-pdm run $SHELL
+$ uv venv
+$ source .venv/bin/activate
+$ uv sync
+```
+
+And to deactivate:
+```
+$ deactivate
+```
+
+**ALSO**
+
+```
+uv run $SHELL
 ```
 will run an environment in a new shell
+
+**TIP**: Use 'uv pip install "auscopecat@."' to install the local auscopecat package
 
 ### To search for WFS borehole datasets and download from one of them
 
 ```
-$ pdm run $SHELL
+$ uv run $SHELL
+$ uv pip install "auscopecat@."
 $ python3
 >>> from auscopecat.api import search, download
 >>> from auscopecat.auscopecat_types import ServiceType, DownloadType
@@ -46,7 +53,7 @@ $ python3
 
 Run
 ```
-pdm run pytest
+uv run pytest
 ```
 in the 'AuScope-Cat'root directory
 
