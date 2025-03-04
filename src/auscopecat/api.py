@@ -8,6 +8,11 @@ from types import SimpleNamespace
 API_URL = "https://portal.auscope.org/api/"
 #API_URL = "http://localhost:8080/api/"
 SEARCH_URL = "searchCSWRecords.do"
+SEARCH_FIELDS = [
+    "fileIdentifier", "serviceName", "descriptiveKeywords",
+    "dataIdentificationAbstract", "onlineResources.name",
+    "onlineResources.description"
+]
 
 
 def search(pattern: str, ogc_type: ServiceType = None, spatial_search_type: SpatialSearchType = None,
@@ -49,6 +54,11 @@ def search(pattern: str, ogc_type: ServiceType = None, spatial_search_type: Spat
     if ogc_type is not None and ogc_type != "":
         search_query += f"&ogcServices={ogc_type.value}"
 
+    # Specify CSW fields only in order to ignore KnownLayer results
+    for field in SEARCH_FIELDS:
+        search_query += f"&fields={field}"
+
+    # Spatial search if requested
     if spatial_search_type and bbox:
         search_query += f'&spatialRelation={spatial_search_type.value}' \
                 f'&westBoundLongitude={bbox.get("west")}&eastBoundLongitude={bbox.get("east")}' \
