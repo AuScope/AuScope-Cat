@@ -18,7 +18,7 @@ NVCL_URLS = {
     'CSIRO': 'https://nvclwebservices.csiro.au/geoserver/wfs',
     'TAS': 'https://www.mrt.tas.gov.au/web-services/wfs'
 }
-MAX_FEATURES = 100
+MAX_FEATURES = 1000000
 LOG_LVL = logging.INFO
 ''' Initialise debug level, set to 'logging.INFO' or 'logging.DEBUG'
 '''
@@ -171,4 +171,3 @@ def search_TSG(prov: str, name: str = None, bbox: str = None, kmlCoords: str = N
         cql_filter += ' AND nvclCollection=\'true\''
     urls = search_cql(prov, cql_filter, max_features)
     return urls
-
