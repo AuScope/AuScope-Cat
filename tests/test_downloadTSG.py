@@ -1,5 +1,102 @@
+import sys
 import pytest
-from auscopecat.downloadTSG import downloadTSG
+import pandas as pd
+import requests
+from requests import RequestException
+import tempfile
+from auscopecat.downloadTSG import downloadTSG, download_url, search_cql
+from auscopecat import downloadTSG as download_tsg
+from .helpers import get_all_csv_df
+
+def test_download_url(monkeypatch):
+
+    class MockResponse:
+
+        @staticmethod
+        def iter_content(chunk_size=1, decode_unicode=False):
+            return [b"ABC123"]
+
+    def mock_get(*args, **kwargs):
+        return MockResponse()
+
+    monkeypatch.setattr(requests, 'get', mock_get)
+    with tempfile.NamedTemporaryFile() as fp:
+        download_url("https://blah.blah", fp.name)
+        fp.seek(0)
+        assert fp.read() == b"ABC123"
+
+
+#def test_download_url_req_exception(monkeypatch):
+#
+#    def mock_get(*args, **kwargs):
+#        raise RequestException(*args)
+#
+#    monkeypatch.setattr(requests, 'get', mock_get)
+#    with tempfile.NamedTemporaryFile() as fp:
+#        download_url("https://blah.blah", fp.name)
+
+
+
+def test_search_cql(monkeypatch):
+
+    # Mocks a CSV version of https://nvclstore.z8.web.core.windows.net/all.csv
+    class MockResponse:
+        text = "gsmlp:nvclCollection,gsmlp:identifier\n" + \
+               "true,http://geology.data.nt.gov.au/resource/feature/ntgs/borehole/8440735_11CPD005\n" + \
+               "true,http://geology.data.nt.gov.au/resource/feature/ntgs/borehole/8418381_BND1\n" + \
+               "true,http://geology.data.nt.gov.au/resource/feature/ntgs/borehole/8434796_YG35RD\n" + \
+               "true,http://geology.data.nt.gov.au/resource/feature/ntgs/borehole/8471153_CCD09\n"
+
+
+    def mock_request(url: str, params: dict = None, method:str = 'GET'):
+        return MockResponse()
+
+    monkeypatch.setattr(download_tsg, 'request', mock_request)
+
+
+    # Mocks DataFrame read_csv() method
+    class MockDataFrame():
+        global call_counter
+        call_counter = 0
+
+        def read_csv(filepath_or_buffer=None, low_memory=0):
+            """ The first time it is called returns a Dataframe of a WFS response
+                The second time it returns a Dataframe of a few rows of https://nvclstore.z8.web.core.windows.net/all.csv
+            """
+            global call_counter
+            if call_counter == 0:
+                call_counter += 1
+                # DataFrame of WFS response
+                return pd.DataFrame({'gsmlp:nvclCollection': {0: True, 1: True, 2: True, 3: True}, 'gsmlp:identifier': {0: 'http://geology.data.nt.gov.au/resource/feature/ntgs/borehole/8440735_11CPD005', 1: 'http://geology.data.nt.gov.au/resource/feature/ntgs/borehole/8418381_BND1', 2: 'http://geology.data.nt.gov.au/resource/feature/ntgs/borehole/8434796_YG35RD', 3: 'http://geology.data.nt.gov.au/resource/feature/ntgs/borehole/8471153_CCD09'}})
+            # DataFrame of https://nvclstore.z8.web.core.windows.net/all.csv
+            return get_all_csv_df()
+
+    monkeypatch.setattr(download_tsg, 'pd', MockDataFrame)
+
+
+    # Call 'search_cql' and check URLs
+    urls = search_cql('prov', "BLAH LIKE '%BLAH%'", max_features = 30)
+    assert urls == ['https://nvclstore.data.auscope.org.au/NT/8440735_11CPD005.zip',
+                    'https://nvclstore.data.auscope.org.au/NT/8418381_BND1.zip',
+                    'https://nvclstore.data.auscope.org.au/NT/8434796_YG35RD.zip',
+                    'https://nvclstore.data.auscope.org.au/NT/8471153_CCD09.zip']
+
+
+def test_search_cql_exception():
+    pass
+
+def test_downloadTSG():
+    pass
+
+def test_downloadTSG_exception():
+    pass
+
+def test_downloadTSG_Polygon():
+    pass
+
+def test_downloadTSG_BBOX():
+    pass
+
 @pytest.mark.xfail(reason="Testing live servers is not reliable as they are sometimes unavailable")
 def test_downloadTSG_Name_live():
     resLen = downloadTSG('WA', name = '05GJD001', max_features = 1000001)
