@@ -119,7 +119,7 @@ def wfs_get_feature(url: str, type_name: str, bbox: dict, version = "1.1.0", srs
         typeNames=type_name,
         srsName=srs_name,
         bbox=bbox_param,
-        outputFormat="csv"
+        outputFormat=output_format
     )
 
     if max_features is not None:
