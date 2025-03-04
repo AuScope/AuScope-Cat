@@ -102,16 +102,47 @@ def search_cql(prov: str, cql_filter: str, max_features = MAX_FEATURES)->list[st
     LOGGER.info((f'{prov} search_cql return urls: {len(urls)}'))
     return urls
 
-def downloadTSG(prov: str,name: str = None, bbox: str = None, kmlCoords: str = None, max_features = MAX_FEATURES)->int:
+def downloadTSG(prov: str,name: str = None, bbox: str = None, kmlCoords: str = None, max_features = MAX_FEATURES, simulation: bool = False) -> list[str]:
     '''
     Download TSG files with Polygon filter
 
     :param prov: prov
-    :param cql_filter: cql_filter
+    :param name: name
+    :param bbox: bbox
+    :param kmlCoords: kmlCoords
     :param max_features: max_features
-    :return: number of downloaded files
+    :param simulation: simulation
+    :return: a list of url of downloaded TSG files
     '''
     urls = []
+
+    try:
+        urls = search_TSG(prov, name, bbox, kmlCoords, max_features)
+        for url in urls:
+            fn = url.replace('/','-').replace(':','-')
+            LOGGER.info((f'{prov} downloadTSG::downloaded: {fn}'))
+            if (not simulation):
+                download_url(url,fn)
+
+    except Exception as e:
+        LOGGER.exception(f"{prov} returned error exception: {str(e)}")
+        raise AuScopeCatException(
+            f"Error querying data: {e}",
+            500
+        )
+    return urls
+
+def search_TSG(prov: str, name: str = None, bbox: str = None, kmlCoords: str = None,  max_features = MAX_FEATURES) -> list[str]:
+    '''
+    search TSG files with filter
+
+    :param prov: prov
+    :param name: name
+    :param bbox: bbox
+    :param kmlCoords: kmlCoords
+    :param max_features: max_features
+    :return: a list of url of TSG files
+    '''
     cql_filter = ''
     if kmlCoords :
         #KML coordinates are x,y (longitude, latitude), whereas geoserver uses LatLng (or y,x / latitude, longitude).
@@ -135,35 +166,9 @@ def downloadTSG(prov: str,name: str = None, bbox: str = None, kmlCoords: str = N
             cql_filter +=  ' AND '
         cql_filter += f'BBOX(gsmlp:shape,{bbox})'
 
-    try:
-        urls = downloadTSG_CQL(prov, cql_filter, max_features)
-    except Exception as e:
-        LOGGER.exception(f"{prov} returned error exception: {str(e)}")
-        raise AuScopeCatException(
-            f"Error querying data: {e}",
-            500
-        )
-    return len(urls)
-
-def downloadTSG_CQL(prov: str, cql_filter: str, max_features = MAX_FEATURES)->list[str]:
-    '''
-    Download TSG files
-
-    :param prov: prov
-    :param cql_filter: cql_filter
-    :param max_features: max_features
-    :return: number of downloaded files
-    '''
     if prov not in ['NT','QLD']:
         #add nvclCollection filter except NT, QLD.(exception from server)
         cql_filter += ' AND nvclCollection=\'true\''
     urls = search_cql(prov, cql_filter, max_features)
-    if (max_features == 1000001):
-        #if 1000001, just simulate downloading
-        return urls
-    for url in urls:
-        fn = url.replace('/','-').replace(':','-')
-        LOGGER.info((f'{prov} downloadTSG::downloaded: {fn}'))
-        download_url(url,fn)
     return urls
 
