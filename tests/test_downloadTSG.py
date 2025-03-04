@@ -54,24 +54,24 @@ def test_search_cql(monkeypatch):
     monkeypatch.setattr(download_tsg, 'request', mock_request)
 
 
-    # Mocks DataFrame read_csv() method
-    class MockDataFrame():
-        global call_counter
+    # Mocks Pandas read_csv() method
+    class MockPandas():
+        # Keeps track of the number of times 'read_csv()' is called
         call_counter = 0
 
         def read_csv(filepath_or_buffer=None, low_memory=0):
             """ The first time it is called returns a Dataframe of a WFS response
                 The second time it returns a Dataframe of a few rows of https://nvclstore.z8.web.core.windows.net/all.csv
             """
-            global call_counter
-            if call_counter == 0:
-                call_counter += 1
+            if MockPandas.call_counter == 0:
+                MockPandas.call_counter += 1
                 # DataFrame of WFS response
                 return pd.DataFrame({'gsmlp:nvclCollection': {0: True, 1: True, 2: True, 3: True}, 'gsmlp:identifier': {0: 'http://geology.data.nt.gov.au/resource/feature/ntgs/borehole/8440735_11CPD005', 1: 'http://geology.data.nt.gov.au/resource/feature/ntgs/borehole/8418381_BND1', 2: 'http://geology.data.nt.gov.au/resource/feature/ntgs/borehole/8434796_YG35RD', 3: 'http://geology.data.nt.gov.au/resource/feature/ntgs/borehole/8471153_CCD09'}})
             # DataFrame of https://nvclstore.z8.web.core.windows.net/all.csv
             return get_all_csv_df()
 
-    monkeypatch.setattr(download_tsg, 'pd', MockDataFrame)
+    # Sets the 'pd' in src/auscopecat/downloadTSG.py our 'MockPandas' class
+    monkeypatch.setattr(download_tsg, 'pd', MockPandas)
 
 
     # Call 'search_cql' and check URLs
