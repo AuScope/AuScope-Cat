@@ -8,6 +8,11 @@ from types import SimpleNamespace
 API_URL = "https://portal.auscope.org/api/"
 #API_URL = "http://localhost:8080/api/"
 SEARCH_URL = "searchCSWRecords.do"
+SEARCH_FIELDS = [
+    "fileIdentifier", "serviceName", "descriptiveKeywords",
+    "dataIdentificationAbstract", "onlineResources.name",
+    "onlineResources.description"
+]
 
 
 def search(pattern: str, ogc_type: ServiceType = None, spatial_search_type: SpatialSearchType = None,
@@ -49,6 +54,11 @@ def search(pattern: str, ogc_type: ServiceType = None, spatial_search_type: Spat
     if ogc_type is not None and ogc_type != "":
         search_query += f"&ogcServices={ogc_type.value}"
 
+    # Specify CSW fields only in order to ignore KnownLayer results
+    for field in SEARCH_FIELDS:
+        search_query += f"&fields={field}"
+
+    # Spatial search if requested
     if spatial_search_type and bbox:
         search_query += f'&spatialRelation={spatial_search_type.value}' \
                 f'&westBoundLongitude={bbox.get("west")}&eastBoundLongitude={bbox.get("east")}' \
@@ -78,6 +88,18 @@ def search(pattern: str, ogc_type: ServiceType = None, spatial_search_type: Spat
 
 def wfs_get_feature(url: str, type_name: str, bbox: dict, version = "1.1.0", srs_name: str = "EPSG:4326",
                          output_format = "csv", max_features = None) -> Response:
+    """
+    Make a WFS GetFeature request and return the Response object
+
+    :param url: the WFS service URL
+    :param type_name the typeName parameter of the GetFeature request
+    :param bbox: the bounding box for the search data e.g. {"north":-31.456, "east":129.653...}
+    :param version: version number (Optional)
+    :param srs_name the SRS, e.g. "EPSG:4326" (Optional)
+    :output_format: the output format (Optional)
+    :max_features: maximum number of features to return (Optional)
+    :return: the WFS GetFeature Response object
+    """
     if bbox is None:
         raise AuScopeCatException(
             "A bounding box (bbox) must be specified",
@@ -97,7 +119,7 @@ def wfs_get_feature(url: str, type_name: str, bbox: dict, version = "1.1.0", srs
         typeNames=type_name,
         srsName=srs_name,
         bbox=bbox_param,
-        outputFormat="csv"
+        outputFormat=output_format
     )
 
     if max_features is not None:
