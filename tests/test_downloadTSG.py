@@ -4,7 +4,7 @@ import pandas as pd
 import requests
 from requests import RequestException
 import tempfile
-from auscopecat.downloadTSG import downloadTSG, download_url, search_cql, MAX_FEATURES
+from auscopecat.downloadTSG import downloadTSG, download_url, search_TSG, search_cql, MAX_FEATURES
 from auscopecat import downloadTSG as download_tsg
 from auscopecat.auscopecat_types import AuScopeCatException
 from .helpers import get_all_csv_df
@@ -102,18 +102,17 @@ def test_downloadTSG_all(monkeypatch):
     PROVIDER = "utopia"
 
     # A mock function that checks all the parameters are correct
-    def mock_downloadTSG_CQL(prov: str, cql_filter: str, max_features = MAX_FEATURES):
+    def mock_search_TSG(prov: str, name: str, bbox: str, kmlCoords:str, max_features = MAX_FEATURES):
         assert prov == PROVIDER 
         assert max_features == NUM_FEATURES
-        assert cql_filter == "INTERSECTS(gsmlp:shape,POLYGON((-10.230 110.569,-9.445 155.095,-45.161 156.250,-41.021 111.027,-41.010 111.016,-10.230 110.569))) AND name like '%name%' AND BBOX(gsmlp:shape,118,-27.15,120,-27.1)"
         return ["U1", "U2", "U3"]
 
-    # Sets the 'downloadTSG_CQL' in src/auscopecat/downloadTSG.py to our 'mock_downloadTSG_CQL' function
-    monkeypatch.setattr(download_tsg, 'downloadTSG_CQL', mock_downloadTSG_CQL)
+    # Sets the 'search_cql' in src/auscopecat/downloadTSG.py to our 'mock_search_cql' function
+    monkeypatch.setattr(download_tsg, 'search_TSG', mock_search_TSG)
 
     # Start the test by calling 'downloadTSG'
-    url_len = downloadTSG(PROVIDER, "name", bbox="118,-27.15,120,-27.1", kmlCoords="110.569,-10.230 155.095,-9.445 156.250,-45.161 111.027,-41.021 111.016,-41.010 110.569,-10.230", max_features=NUM_FEATURES)
-    assert url_len == 3
+    urls = downloadTSG(PROVIDER, name="name", bbox="118,-27.15,120,-27.1", kmlCoords="110.569,-10.230 155.095,-9.445 156.250,-45.161 111.027,-41.021 111.016,-41.010 110.569,-10.230", max_features=NUM_FEATURES,simulation=True)
+    assert len(urls) == 3
 
 
 def test_downloadTSG_exception(monkeypatch):
@@ -123,11 +122,11 @@ def test_downloadTSG_exception(monkeypatch):
     PROVIDER = "utopia"
 
     # A mock function that raises an exception
-    def mock_downloadTSG_CQL(prov: str, cql_filter: str, max_features = MAX_FEATURES):
+    def mock_search_TSG(prov: str, name: str, bbox: str, kmlCoords:str, max_features = MAX_FEATURES):
         raise Exception("Test Exception", 123)
 
     # Sets the 'downloadTSG_CQL' in src/auscopecat/downloadTSG.py to our 'mock_downloadTSG_CQL' function
-    monkeypatch.setattr(download_tsg, 'downloadTSG_CQL', mock_downloadTSG_CQL)
+    monkeypatch.setattr(download_tsg, 'search_TSG', mock_search_TSG)
 
     # Start the test by calling 'downloadTSG' and catch the exception
     try:
@@ -145,18 +144,17 @@ def test_downloadTSG_Polygon(monkeypatch):
     NAME = "name-ish"
 
     # A mock function that checks all the parameters are correct
-    def mock_downloadTSG_CQL(prov: str, cql_filter: str, max_features = MAX_FEATURES):
+    def mock_search_TSG(prov: str, name: str, bbox: str, kmlCoords:str, max_features = MAX_FEATURES):
         assert prov == PROVIDER
         assert max_features == MAX_FEATURES
-        assert cql_filter == f"INTERSECTS(gsmlp:shape,POLYGON((-10.230 110.569,-9.445 155.095,-45.161 156.250,-41.021 111.027,-41.010 111.016,-10.230 110.569))) AND name like '%{NAME}%'"
         return ["U1", "U2", "U3", "U4", "U5"]
 
     # Sets the 'downloadTSG_CQL' in src/auscopecat/downloadTSG.py to our 'mock_downloadTSG_CQL' function
-    monkeypatch.setattr(download_tsg, 'downloadTSG_CQL', mock_downloadTSG_CQL)
+    monkeypatch.setattr(download_tsg, 'search_TSG', mock_search_TSG)
 
     # Start the test by calling 'downloadTSG'
-    url_len = downloadTSG(PROVIDER, NAME, kmlCoords="110.569,-10.230 155.095,-9.445 156.250,-45.161 111.027,-41.021 111.016,-41.010 110.569,-10.230")
-    assert url_len == 5
+    urls = downloadTSG(PROVIDER, NAME, kmlCoords="110.569,-10.230 155.095,-9.445 156.250,-45.161 111.027,-41.021 111.016,-41.010 110.569,-10.230",simulation=True)
+    assert len(urls) == 5
 
 
 def test_downloadTSG_BBOX(monkeypatch):
@@ -167,18 +165,17 @@ def test_downloadTSG_BBOX(monkeypatch):
     BBOX = "118,-27.15,120,-27.1"
 
     # A mock function that checks all the parameters are correct
-    def mock_downloadTSG_CQL(prov: str, cql_filter: str, max_features = MAX_FEATURES):
+    def mock_search_TSG(prov: str, name: str, bbox: str, kmlCoords:str, max_features = MAX_FEATURES):
         assert prov == PROVIDER
         assert max_features == MAX_FEATURES
-        assert cql_filter == f"name like '%{NAME}%' AND BBOX(gsmlp:shape,{BBOX})"
         return ["U1", "U2", "U3", "U4"]
 
     # Sets the 'downloadTSG_CQL' in src/auscopecat/downloadTSG.py to our 'mock_downloadTSG_CQL' function
-    monkeypatch.setattr(download_tsg, 'downloadTSG_CQL', mock_downloadTSG_CQL)
+    monkeypatch.setattr(download_tsg, 'search_TSG', mock_search_TSG)
 
     # Start the test by calling 'downloadTSG'
-    url_len = downloadTSG(PROVIDER, NAME, bbox=BBOX)
-    assert url_len == 4
+    urls = downloadTSG(PROVIDER, NAME, bbox=BBOX,simulation=True)
+    assert len(urls) == 4
 
 @pytest.mark.xfail(reason="Testing live servers is not reliable as they are sometimes unavailable")
 def test_search_TSG_Name_live():
