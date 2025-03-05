@@ -11,16 +11,21 @@ from .helpers import get_all_csv_df
 
 def test_download_url(monkeypatch):
 
+    # This mocks the requests package 'Response' class
     class MockResponse:
 
         @staticmethod
         def iter_content(chunk_size=1, decode_unicode=False):
             return [b"ABC123"]
 
+    # This mocks the requests package 'get' function, returning a 'MockResponse'
     def mock_get(*args, **kwargs):
         return MockResponse()
 
+    # Overwrite the requests package 'get' function
     monkeypatch.setattr(requests, 'get', mock_get)
+
+    # Call 'download_url' confirm that the file has correct content passed in by the mocking class
     with tempfile.NamedTemporaryFile() as fp:
         download_url("https://blah.blah", fp.name)
         fp.seek(0)
@@ -48,12 +53,11 @@ def test_search_cql(monkeypatch):
                "true,http://geology.data.nt.gov.au/resource/feature/ntgs/borehole/8434796_YG35RD\n" + \
                "true,http://geology.data.nt.gov.au/resource/feature/ntgs/borehole/8471153_CCD09\n"
 
-
     def mock_request(url: str, params: dict = None, method:str = 'GET'):
         return MockResponse()
 
+    # Sets the 'request' in src/auscopecat/downloadTSG.py to our 'mock_request' class
     monkeypatch.setattr(download_tsg, 'request', mock_request)
-
 
     # Mocks Pandas read_csv() method
     class MockPandas:
@@ -66,12 +70,12 @@ def test_search_cql(monkeypatch):
             """
             if MockPandas.call_counter == 0:
                 MockPandas.call_counter += 1
-                # DataFrame of WFS response
+                # First call - return DataFrame of WFS response
                 return pd.DataFrame({'gsmlp:nvclCollection': {0: True, 1: True, 2: True, 3: True}, 'gsmlp:identifier': {0: 'http://geology.data.nt.gov.au/resource/feature/ntgs/borehole/8440735_11CPD005', 1: 'http://geology.data.nt.gov.au/resource/feature/ntgs/borehole/8418381_BND1', 2: 'http://geology.data.nt.gov.au/resource/feature/ntgs/borehole/8434796_YG35RD', 3: 'http://geology.data.nt.gov.au/resource/feature/ntgs/borehole/8471153_CCD09'}})
-            # DataFrame of https://nvclstore.z8.web.core.windows.net/all.csv
+            # Second call - return DataFrame of https://nvclstore.z8.web.core.windows.net/all.csv
             return get_all_csv_df()
 
-    # Sets the 'pd' in src/auscopecat/downloadTSG.py our 'MockPandas' class
+    # Sets the 'pd' in src/auscopecat/downloadTSG.py to our 'MockPandas' class
     monkeypatch.setattr(download_tsg, 'pd', MockPandas)
 
 
@@ -100,7 +104,7 @@ def test_downloadTSG_all(monkeypatch):
         assert cql_filter == "INTERSECTS(gsmlp:shape,POLYGON((-10.230 110.569,-9.445 155.095,-45.161 156.250,-41.021 111.027,-41.010 111.016,-10.230 110.569))) AND name like '%name%' AND BBOX(gsmlp:shape,118,-27.15,120,-27.1)"
         return ["U1", "U2", "U3"]
 
-    # Sets the 'downloadTSG_CQL' in src/auscopecat/downloadTSG.py our 'mock_downloadTSG_CQL' function
+    # Sets the 'downloadTSG_CQL' in src/auscopecat/downloadTSG.py to our 'mock_downloadTSG_CQL' function
     monkeypatch.setattr(download_tsg, 'downloadTSG_CQL', mock_downloadTSG_CQL)
 
     # Start the test by calling 'downloadTSG'
@@ -118,7 +122,7 @@ def test_downloadTSG_exception(monkeypatch):
     def mock_downloadTSG_CQL(prov: str, cql_filter: str, max_features = MAX_FEATURES):
         raise Exception("Test Exception", 123)
 
-    # Sets the 'downloadTSG_CQL' in src/auscopecat/downloadTSG.py our 'mock_downloadTSG_CQL' function
+    # Sets the 'downloadTSG_CQL' in src/auscopecat/downloadTSG.py to our 'mock_downloadTSG_CQL' function
     monkeypatch.setattr(download_tsg, 'downloadTSG_CQL', mock_downloadTSG_CQL)
 
     # Start the test by calling 'downloadTSG' and catch the exception
@@ -143,7 +147,7 @@ def test_downloadTSG_Polygon(monkeypatch):
         assert cql_filter == f"INTERSECTS(gsmlp:shape,POLYGON((-10.230 110.569,-9.445 155.095,-45.161 156.250,-41.021 111.027,-41.010 111.016,-10.230 110.569))) AND name like '%{NAME}%'"
         return ["U1", "U2", "U3", "U4", "U5"]
 
-    # Sets the 'downloadTSG_CQL' in src/auscopecat/downloadTSG.py our 'mock_downloadTSG_CQL' function
+    # Sets the 'downloadTSG_CQL' in src/auscopecat/downloadTSG.py to our 'mock_downloadTSG_CQL' function
     monkeypatch.setattr(download_tsg, 'downloadTSG_CQL', mock_downloadTSG_CQL)
 
     # Start the test by calling 'downloadTSG'
@@ -165,7 +169,7 @@ def test_downloadTSG_BBOX(monkeypatch):
         assert cql_filter == f"name like '%{NAME}%' AND BBOX(gsmlp:shape,{BBOX})"
         return ["U1", "U2", "U3", "U4"]
 
-    # Sets the 'downloadTSG_CQL' in src/auscopecat/downloadTSG.py our 'mock_downloadTSG_CQL' function
+    # Sets the 'downloadTSG_CQL' in src/auscopecat/downloadTSG.py to our 'mock_downloadTSG_CQL' function
     monkeypatch.setattr(download_tsg, 'downloadTSG_CQL', mock_downloadTSG_CQL)
 
     # Start the test by calling 'downloadTSG'
