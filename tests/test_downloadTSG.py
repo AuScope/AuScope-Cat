@@ -26,7 +26,7 @@ def test_download_url(monkeypatch):
     monkeypatch.setattr(requests, 'get', mock_get)
 
     # Call 'download_url' confirm that the file has correct content passed in by the mocking class
-    with tempfile.NamedTemporaryFile() as fp:
+    with tempfile.NamedTemporaryFile(delete=False) as fp:
         download_url("https://blah.blah", fp.name)
         fp.seek(0)
         assert fp.read() == b"ABC123"
