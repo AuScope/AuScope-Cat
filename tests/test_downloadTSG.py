@@ -181,6 +181,27 @@ def test_downloadTSG_BBOX(monkeypatch):
     assert url_len == 4
 
 
+def test_downloadTSG_name(monkeypatch):
+    """ Test 'downloadTSG' function with name parameter passed in
+    """
+    PROVIDER = "knutopia"
+    NAME = "knamed"
+
+    # A mock function that checks all the parameters are correct
+    def mock_downloadTSG_CQL(prov: str, cql_filter: str, max_features = MAX_FEATURES):
+        assert prov == PROVIDER
+        assert max_features == MAX_FEATURES
+        assert cql_filter == f"name like '%{NAME}%'"
+        return ["U1"]
+
+    # Sets the 'downloadTSG_CQL' in src/auscopecat/downloadTSG.py to our 'mock_downloadTSG_CQL' function
+    monkeypatch.setattr(download_tsg, 'downloadTSG_CQL', mock_downloadTSG_CQL)
+
+    # Start the test by calling 'downloadTSG'
+    url_len = downloadTSG(PROVIDER, NAME)
+    assert url_len == 1
+
+
 @pytest.mark.xfail(reason="Testing live servers is not reliable as they are sometimes unavailable")
 def test_downloadTSG_Name_live():
     resLen = downloadTSG('WA', name = '05GJD001', max_features = 1000001)
