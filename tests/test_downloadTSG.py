@@ -44,8 +44,12 @@ def test_download_url(monkeypatch):
 
 
 def test_search_cql(monkeypatch):
+    """ Tests 'search_cql" function 
+        'search_cql' make three function calls to external network resources
+        These functions are mocked to ensure that this test will run independently of network resources
+    """
 
-    # Mocks a CSV version of https://nvclstore.z8.web.core.windows.net/all.csv
+    # Mocks by returning a CSV version of https://nvclstore.z8.web.core.windows.net/all.csv
     class MockResponse:
         text = "gsmlp:nvclCollection,gsmlp:identifier\n" + \
                "true,http://geology.data.nt.gov.au/resource/feature/ntgs/borehole/8440735_11CPD005\n" + \
