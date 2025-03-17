@@ -31,7 +31,7 @@ def search(pattern: str, ogc_types: list[ServiceType] = None,
     :param spatial_search_type: the type of spatial search (intersects, coontains within).
         Used with bbox (Optional)
     :param bbox: the bounding box for the search data e.g. {"north":-31.456, "east":129.653...}
-    :return: a list of SimpleNamespace objects with "url", "type" and "wfs_typename" attributes
+    :return: a list of SimpleNamespace objects of the form: namespace(url, type, name)
     """
     validate_search_inputs(pattern, ogc_types, spatial_search_type, bbox)
     search_query = build_search_query(pattern, ogc_types, spatial_search_type, bbox)
@@ -66,7 +66,7 @@ def search_records(pattern: str, ogc_types: list[ServiceType] = None,
         Used with bbox (Optional)
     :param bbox: the bounding box for the search data e.g. {"north":-31.456, "east":129.653...}
     :return: A simpleNamespace of the form:
-            namespace(
+             namespace(
                 id, name, description, record_info_url,
                 constraints[], use_limit_constraints[], access_constraints[], date,
                 geographic_elements[
