@@ -2,9 +2,9 @@ name: Build and Deploy Documentation
 
 on:
   push:
-    branches: [ main ]
+    branches: [ AUS-4346 ]
   pull_request:
-    branches: [ main ]
+    branches: [ AUS-4346 ]
   # Allow manual trigger
   workflow_dispatch:
 
