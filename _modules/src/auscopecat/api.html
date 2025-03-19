@@ -1,0 +1,331 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>src.auscopecat.api &mdash; AuScope-Cat 0.1.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=fd825880"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            AuScope-Cat
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">GETTING STARTED</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/tutorials.html">Notebook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/citation.html">Citation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">DEVELOPMENT</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/development.html">AuScope-Cat Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/roadmap.html">Feature Requests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/code_of_conduct.html">Code of Conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/contributors.html">Contributors</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API REFERENCE</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/modules.html">Modules</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">AuScope-Cat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">src.auscopecat.api</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for src.auscopecat.api</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numbers</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">auscopecat.auscopecat_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">AuScopeCatException</span><span class="p">,</span> <span class="n">DownloadType</span><span class="p">,</span> <span class="n">ServiceType</span><span class="p">,</span> <span class="n">SpatialSearchType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">auscopecat.network</span><span class="w"> </span><span class="kn">import</span> <span class="n">request</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">requests</span><span class="w"> </span><span class="kn">import</span> <span class="n">Response</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleNamespace</span>
+
+
+<span class="n">API_URL</span> <span class="o">=</span> <span class="s2">&quot;https://portal.auscope.org/api/&quot;</span>
+<span class="c1">#API_URL = &quot;http://localhost:8080/api/&quot;</span>
+<span class="n">SEARCH_URL</span> <span class="o">=</span> <span class="s2">&quot;searchCSWRecords.do&quot;</span>
+<span class="n">SEARCH_FIELDS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;fileIdentifier&quot;</span><span class="p">,</span> <span class="s2">&quot;serviceName&quot;</span><span class="p">,</span> <span class="s2">&quot;descriptiveKeywords&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;dataIdentificationAbstract&quot;</span><span class="p">,</span> <span class="s2">&quot;onlineResources.name&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;onlineResources.description&quot;</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="search">
+<a class="viewcode-back" href="../../../api_reference/auscopecat.api.html#src.auscopecat.api.search">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">search</span><span class="p">(</span><span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ogc_type</span><span class="p">:</span> <span class="n">ServiceType</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">spatial_search_type</span><span class="p">:</span> <span class="n">SpatialSearchType</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+           <span class="n">bbox</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SimpleNamespace</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Searches catalogue for services</span>
+
+<span class="sd">    :param pattern: search for this string</span>
+<span class="sd">    :param ogc_type: search for a certain kind of OGC service (Optional)</span>
+<span class="sd">    :param bbox: the bounding box for the search data e.g. {&quot;north&quot;:-31.456, &quot;east&quot;:129.653...}</span>
+<span class="sd">    :return: a list of SimpleNamespace objects with &quot;url&quot;, &quot;type&quot; and &quot;wfs_typename&quot; attributes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">pattern</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">pattern</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">AuScopeCatException</span><span class="p">(</span>
+            <span class="s2">&quot;Parameter pattern can not be empty&quot;</span><span class="p">,</span>
+            <span class="mi">500</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">ogc_type</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ogc_type</span><span class="p">,</span> <span class="n">ServiceType</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">AuScopeCatException</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Unknown service type: </span><span class="si">{</span><span class="n">ogc_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="mi">500</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">spatial_search_type</span> <span class="ow">and</span> <span class="n">bbox</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spatial_search_type</span><span class="p">,</span> <span class="n">SpatialSearchType</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">AuScopeCatException</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Unknown spatial search type: </span><span class="si">{</span><span class="n">spatial_search_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="mi">500</span>
+            <span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">validate_bbox</span><span class="p">(</span><span class="n">bbox</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">raise</span>
+
+    <span class="c1"># Build search query</span>
+    <span class="n">search_query</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">API_URL</span><span class="si">}{</span><span class="n">SEARCH_URL</span><span class="si">}</span><span class="s2">?query=</span><span class="si">{</span><span class="n">pattern</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="c1"># TODO: include multiple services</span>
+    <span class="k">if</span> <span class="n">ogc_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">ogc_type</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="n">search_query</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&amp;ogcServices=</span><span class="si">{</span><span class="n">ogc_type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="c1"># Specify CSW fields only in order to ignore KnownLayer results</span>
+    <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">SEARCH_FIELDS</span><span class="p">:</span>
+        <span class="n">search_query</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&amp;fields=</span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="c1"># Spatial search if requested</span>
+    <span class="k">if</span> <span class="n">spatial_search_type</span> <span class="ow">and</span> <span class="n">bbox</span><span class="p">:</span>
+        <span class="n">search_query</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;&amp;spatialRelation=</span><span class="si">{</span><span class="n">spatial_search_type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1">&#39;</span> \
+                <span class="sa">f</span><span class="s1">&#39;&amp;westBoundLongitude=</span><span class="si">{</span><span class="n">bbox</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;west&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">&amp;eastBoundLongitude=</span><span class="si">{</span><span class="n">bbox</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;east&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span> \
+                <span class="sa">f</span><span class="s1">&#39;&amp;southBoundLatitude=</span><span class="si">{</span><span class="n">bbox</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;south&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">&amp;northBoundLatitude=</span><span class="si">{</span><span class="n">bbox</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;north&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">search_request</span> <span class="o">=</span> <span class="n">request</span><span class="p">(</span><span class="n">search_query</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">AuScopeCatException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span>
+
+    <span class="n">search_results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">search_request</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+        <span class="n">results_json</span> <span class="o">=</span> <span class="n">search_request</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">results_json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">results_json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;totalCSWRecordHits&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results_json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cswRecords&quot;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;onlineResources&quot;</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">online_resource</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;onlineResources&quot;</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="n">ogc_type</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">online_resource</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">ogc_type</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+                            <span class="n">search_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SimpleNamespace</span><span class="p">(</span>
+                                   <span class="n">url</span> <span class="o">=</span> <span class="n">online_resource</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;url&quot;</span><span class="p">),</span>
+                                   <span class="nb">type</span> <span class="o">=</span> <span class="n">online_resource</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">),</span>
+                                   <span class="n">name</span> <span class="o">=</span> <span class="n">online_resource</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
+                            <span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">search_results</span></div>
+
+
+
+<div class="viewcode-block" id="wfs_get_feature">
+<a class="viewcode-back" href="../../../api_reference/auscopecat.api.html#src.auscopecat.api.wfs_get_feature">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">wfs_get_feature</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">bbox</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;1.1.0&quot;</span><span class="p">,</span> <span class="n">srs_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;EPSG:4326&quot;</span><span class="p">,</span>
+                         <span class="n">output_format</span> <span class="o">=</span> <span class="s2">&quot;csv&quot;</span><span class="p">,</span> <span class="n">max_features</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Make a WFS GetFeature request and return the Response object</span>
+
+<span class="sd">    :param url: the WFS service URL</span>
+<span class="sd">    :param type_name the typeName parameter of the GetFeature request</span>
+<span class="sd">    :param bbox: the bounding box for the search data e.g. {&quot;north&quot;:-31.456, &quot;east&quot;:129.653...}</span>
+<span class="sd">    :param version: version number (Optional)</span>
+<span class="sd">    :param srs_name the SRS, e.g. &quot;EPSG:4326&quot; (Optional)</span>
+<span class="sd">    :output_format: the output format (Optional)</span>
+<span class="sd">    :max_features: maximum number of features to return (Optional)</span>
+<span class="sd">    :return: the WFS GetFeature Response object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">bbox</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">AuScopeCatException</span><span class="p">(</span>
+            <span class="s2">&quot;A bounding box (bbox) must be specified&quot;</span><span class="p">,</span>
+            <span class="mi">500</span>
+        <span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">validate_bbox</span><span class="p">(</span><span class="n">bbox</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">raise</span>
+
+    <span class="n">bbox_param</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">bbox</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;south&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">bbox</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;west&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">bbox</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;north&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">bbox</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;east&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+
+    <span class="n">request_params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">service</span><span class="o">=</span><span class="s2">&quot;wfs&quot;</span><span class="p">,</span>
+        <span class="n">version</span><span class="o">=</span><span class="n">version</span><span class="p">,</span>
+        <span class="n">request</span><span class="o">=</span><span class="s2">&quot;GetFeature&quot;</span><span class="p">,</span>
+        <span class="n">typeNames</span><span class="o">=</span><span class="n">type_name</span><span class="p">,</span>
+        <span class="n">srsName</span><span class="o">=</span><span class="n">srs_name</span><span class="p">,</span>
+        <span class="n">bbox</span><span class="o">=</span><span class="n">bbox_param</span><span class="p">,</span>
+        <span class="n">outputFormat</span><span class="o">=</span><span class="n">output_format</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">max_features</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">request_params</span><span class="p">[</span><span class="s2">&quot;maxFeatures&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_features</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">request</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">request_params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span></div>
+
+
+
+<div class="viewcode-block" id="download">
+<a class="viewcode-back" href="../../../api_reference/auscopecat.api.html#src.auscopecat.api.download">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">SimpleNamespace</span><span class="p">,</span> <span class="n">download_type</span><span class="p">:</span> <span class="n">DownloadType</span><span class="p">,</span> <span class="n">bbox</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">srs_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;EPSG:4326&quot;</span><span class="p">,</span>
+             <span class="n">max_features</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;1.1.0&quot;</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;download.csv&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Downloads data from object</span>
+
+<span class="sd">    :param obj: SimpleNamespace objects with &quot;url&quot;, &quot;type&quot; and &quot;name&quot; attributes</span>
+<span class="sd">    :param download_type: type of download</span>
+<span class="sd">    :param bbox: the bounding box for the download data e.g. {&quot;north&quot;:-31.456, &quot;east&quot;:129.653...}</span>
+<span class="sd">    :param srs_name: the SRS name, e.g. &quot;EPGS:4326&quot; (Optional)</span>
+<span class="sd">    :param max_features: maximum number of features to return (Optional)</span>
+<span class="sd">    :param version: WFS version, e.g. &quot;1.1.0&quot; (Optional)</span>
+<span class="sd">    :param file_name: the file name for the download (Optional)</span>
+<span class="sd">    :return: CSV dataclear</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">download_type</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">download_type</span><span class="p">,</span> <span class="n">DownloadType</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">AuScopeCatException</span><span class="p">(</span>
+            <span class="s2">&quot;Unsupported download type&quot;</span><span class="p">,</span>
+            <span class="mi">500</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">bbox</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">AuScopeCatException</span><span class="p">(</span>
+            <span class="s2">&quot;A bounding box (bbox) must be specified&quot;</span><span class="p">,</span>
+            <span class="mi">500</span>
+        <span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">validate_bbox</span><span class="p">(</span><span class="n">bbox</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">raise</span>
+    <span class="c1"># TODO: Check to see if zip file, or append .zip if no extension</span>
+    <span class="k">if</span> <span class="n">file_name</span> <span class="ow">and</span> <span class="n">file_name</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">AuScopeCatException</span><span class="p">(</span>
+            <span class="s2">&quot;If file_name is specified it cannot be empty&quot;</span><span class="p">,</span>
+            <span class="mi">500</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">download_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">download_type</span> <span class="o">=</span> <span class="n">DownloadType</span><span class="o">.</span><span class="n">CSV</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">wfs_get_feature</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">obj</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">bbox</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="n">version</span><span class="p">,</span> <span class="n">srs_name</span> <span class="o">=</span> <span class="n">srs_name</span><span class="p">,</span>
+                         <span class="n">output_format</span> <span class="o">=</span> <span class="s2">&quot;csv&quot;</span><span class="p">,</span> <span class="n">max_features</span> <span class="o">=</span> <span class="n">max_features</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">response</span> <span class="ow">and</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="ow">and</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="n">f_name</span> <span class="o">=</span> <span class="s2">&quot;download.csv&quot;</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">file_name</span> <span class="k">else</span> <span class="n">file_name</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">f_name</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">AuScopeCatException</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Error downloading data: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">reason</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
+            <span class="p">)</span>
+    <span class="k">except</span> <span class="n">AuScopeCatException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span></div>
+
+
+
+<div class="viewcode-block" id="validate_bbox">
+<a class="viewcode-back" href="../../../api_reference/auscopecat.api.html#src.auscopecat.api.validate_bbox">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_bbox</span><span class="p">(</span><span class="n">bbox</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Validate a bounding box</span>
+<span class="sd">    :param bbox: the bounding box, a dict with &quot;north&quot;, &quot;south&quot;, &quot;east&quot; and &quot;west&quot; keys</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">bbox</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;north&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bbox</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;north&quot;</span><span class="p">),</span> <span class="n">numbers</span><span class="o">.</span><span class="n">Number</span><span class="p">)</span> <span class="ow">or</span>
+            <span class="n">bbox</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;south&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bbox</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;south&quot;</span><span class="p">),</span> <span class="n">numbers</span><span class="o">.</span><span class="n">Number</span><span class="p">)</span> <span class="ow">or</span>
+            <span class="n">bbox</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;east&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bbox</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;east&quot;</span><span class="p">),</span> <span class="n">numbers</span><span class="o">.</span><span class="n">Number</span><span class="p">)</span> <span class="ow">or</span>
+            <span class="n">bbox</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;west&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bbox</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;west&quot;</span><span class="p">),</span> <span class="n">numbers</span><span class="o">.</span><span class="n">Number</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="n">AuScopeCatException</span><span class="p">(</span>
+            <span class="s2">&quot;Please check bbox values&quot;</span><span class="p">,</span>
+            <span class="mi">500</span>
+        <span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, AuScope MAINTAIN.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
