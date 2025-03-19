@@ -36,10 +36,8 @@ The documentation is organized into the following sections:
 
 - **DEVELOPMENT**: Information for developers who want to contribute to AuScope-Cat
   - Development
-  - Changelog
   - Roadmap
   - Code of Conduct
-  - Contributing
   - Contributors
 
 - **API REFERENCE**: Detailed API documentation

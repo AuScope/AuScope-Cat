@@ -19,10 +19,8 @@ AuScope-Cat is a Python package that provides access to AuScope's catalogue of g
    :caption: DEVELOPMENT
 
    development/development
-   development/changelog
    development/roadmap
    development/code_of_conduct
-   development/contributing
    development/contributors
 
 .. toctree::

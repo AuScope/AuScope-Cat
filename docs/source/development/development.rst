@@ -1,56 +1,18 @@
-Development
-===========
+AuScope-Cat Documentation
+========================
 
-This page provides information for developers who want to contribute to AuScope-Cat.
+This directory contains the documentation for the AuScope-Cat package.
 
-Setting Up a Development Environment
+Building the Documentation Locally
 ---------------------------------
 
-1. Clone the repository:
+To build the documentation locally, follow these steps:
+
+1. Install the documentation dependencies:
 
 .. code-block:: bash
 
-    git clone https://github.com/AuScope/AuScope-Cat.git
-    cd AuScope-Cat
-
-2. Create a virtual environment and install the package in development mode:
-
-.. code-block:: bash
-
-    python -m venv venv
-    source venv/bin/activate  # On Windows: venv\Scripts\activate
-    pip install -e .
-
-3. Install development dependencies:
-
-.. code-block:: bash
-
-    pip install pytest pytest-mock
-
-Running Tests
------------
-
-To run the test suite:
-
-.. code-block:: bash
-
-    pytest
-
-Code Style
----------
-
-AuScope-Cat follows PEP 8 style guidelines. Please ensure your code adheres to these guidelines before submitting a pull request.
-
-Building Documentation
--------------------
-
-To build the documentation locally:
-
-1. Install documentation dependencies:
-
-.. code-block:: bash
-
-    pip install -r docs/requirements.txt
+    pip install -r requirements.txt
 
 2. Build the documentation:
 
@@ -59,4 +21,38 @@ To build the documentation locally:
     cd docs
     make html
 
-The documentation will be available in the `docs/build/html` directory. 
+3. View the documentation:
+
+The built documentation will be available in the ``build/html`` directory. You can open ``build/html/index.html`` in your web browser to view it.
+
+Documentation Structure
+----------------------
+
+The documentation is organized into the following sections:
+
+- **GETTING STARTED**: Basic information for users to get started with AuScope-Cat
+  - Installation
+  - Getting Started
+  - Examples
+  - Tutorials
+  - Citation
+
+- **DEVELOPMENT**: Information for developers who want to contribute to AuScope-Cat
+  - Development
+  - Roadmap
+  - Code of Conduct
+  - Contributors
+
+- **API REFERENCE**: Detailed API documentation
+  - API
+  - Modules
+
+Updating the Documentation
+-------------------------
+
+To update the documentation:
+
+1. Edit the relevant ``.rst`` files in the ``source`` directory
+2. Build the documentation to preview your changes
+3. Commit your changes and push them to GitHub
+4. The GitHub Action will automatically build and deploy the documentation to GitHub Pages
