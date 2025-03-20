@@ -1,4 +1,10 @@
 repos:
+- repo: https://github.com/astral-sh/uv-pre-commit
+  # uv version.
+  rev: 0.6.8
+  hooks:
+    # Ensure uv lock file is up-to-date
+    - id: uv-lock
 - repo: https://github.com/astral-sh/ruff-pre-commit
   # Ruff version.
   rev: v0.11.0
