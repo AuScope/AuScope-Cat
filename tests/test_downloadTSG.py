@@ -1,8 +1,6 @@
-import sys
 import pytest
 import pandas as pd
 import requests
-from requests import RequestException
 import tempfile
 from auscopecat.downloadTSG import downloadTSG, download_url, search_TSG, search_cql, MAX_FEATURES
 from auscopecat import downloadTSG as download_tsg

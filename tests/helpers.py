@@ -19,7 +19,7 @@ def make_mock_session_fn(inp: str, code: int = 200):
     # If it is parseable JSON then return this also
     try:
         json_obj = json.loads(resp_str)
-    except (TypeError, json.JSONDecodeError, UnicodeDecodeError) as e:
+    except (TypeError, json.JSONDecodeError, UnicodeDecodeError):
         json_obj = {}
 
     # This is what our function will return
