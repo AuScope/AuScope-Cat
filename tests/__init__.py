@@ -1,4 +1,5 @@
-import sys, os
+import os
+import sys
 
 srcPath = f'{os.getcwd()}/src'
 print(srcPath)

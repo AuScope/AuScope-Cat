@@ -1,8 +1,7 @@
 import logging
 import pytest
 from auscopecat.auscopecat_types import AuScopeCatException
-from requests import Session, RequestException
-from urllib3.exceptions import HTTPError
+from requests import Session
 
 # Local imports
 from auscopecat.network import request
@@ -40,7 +39,7 @@ def test_request_return_500(fn, monkeypatch, caplog):
     mock_fn = make_mock_session_fn(err_msg, 500)
     monkeypatch.setattr(Session, fn, mock_fn)
 
-    res = request("https://blah.com", {}, fn.upper())
+    request("https://blah.com", {}, fn.upper())
     assert f"returned error 500 in response: {err_msg}" in caplog.text
     caplog.clear()
 
@@ -60,7 +59,7 @@ def test_request_exceptions(excp, message, error_code, fn, monkeypatch, caplog):
 
     monkeypatch.setattr(Session, fn, mock_get_http_exc)
     with pytest.raises(AuScopeCatException):
-        res = request("https://blah.com", {}, fn.upper())
+        request("https://blah.com", {}, fn.upper())
 
         assert message in caplog.text
         caplog.clear()
