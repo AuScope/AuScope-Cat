@@ -21,7 +21,7 @@ SEARCH_FIELDS = [
 
 def search(pattern: str, ogc_types: list[ServiceType] = None,
            spatial_search_type: SpatialSearchType = None,
-           bbox: dict = None) -> list[SimpleNamespace]:
+           bbox: dict = None, polygon: list[list[float]] = None) -> list[SimpleNamespace]:
     """
     Searches catalogue for service online resource results
 
@@ -31,9 +31,11 @@ def search(pattern: str, ogc_types: list[ServiceType] = None,
     :param spatial_search_type: the type of spatial search (intersects, coontains within).
         Used with bbox (Optional)
     :param bbox: the bounding box for the search data e.g. {"north":-31.456, "east":129.653...}
+    :param polygon: a list of points defined as a 2 element list of [latitude, longitude],
+        e.g. [[-31.0, 125.0], [-32, 128.0], [-31.0, 128.0], [-31.0, 125.0]] (Optional)
     :return: a list of SimpleNamespace objects of the form: namespace(url, type, name)
     """
-    validate_search_inputs(pattern, ogc_types, spatial_search_type, bbox)
+    validate_search_inputs(pattern, ogc_types, spatial_search_type, bbox, polygon)
     search_query = build_search_query(pattern, ogc_types, spatial_search_type, bbox)
     search_request = request(search_query)
     search_results = []
@@ -56,7 +58,7 @@ def search(pattern: str, ogc_types: list[ServiceType] = None,
 
 def search_records(pattern: str, ogc_types: list[ServiceType] = None,
                    spatial_search_type: SpatialSearchType = None,
-                   bbox: dict = None) -> list[SimpleNamespace]:
+                   bbox: dict = None, polygon: list[list[float]] = None) -> list[SimpleNamespace]:
     """
     Searches catalogue for records
 
@@ -65,6 +67,8 @@ def search_records(pattern: str, ogc_types: list[ServiceType] = None,
     :param spatial_search_type: the type of spatial search (intersects, coontains within).
         Used with bbox (Optional)
     :param bbox: the bounding box for the search data e.g. {"north":-31.456, "east":129.653...}
+    :param polygon: a list of points defined as a 2 element list of [latitude, longitude],
+        e.g. [[-31.0, 125.0], [-32, 128.0], [-31.0, 128.0], [-31.0, 125.0]] (Optional)
     :return: A simpleNamespace of the form:
              namespace(
                 id, name, description, record_info_url,
@@ -77,7 +81,7 @@ def search_records(pattern: str, ogc_types: list[ServiceType] = None,
                 ]
             )
     """
-    validate_search_inputs(pattern, ogc_types, spatial_search_type, bbox)
+    validate_search_inputs(pattern, ogc_types, spatial_search_type, bbox, polygon)
     search_query = build_search_query(pattern, spatial_search_type=spatial_search_type, bbox=bbox)
     search_request = request(search_query)
     search_results = []
@@ -230,9 +234,25 @@ def validate_bbox(bbox: dict):
         )
 
 
+def validate_polygon(polygon: list[list[float]]):
+    """
+    Validate a polygon
+    :param the polygon as a list of points, where each point  is a 2 element list (lat, lon)
+    """
+    point_count = len(polygon)
+    if point_count < 3:
+        raise AuScopeCatException(
+            "A polygon must contain at least 3 points",
+            500
+        )
+    # If the first/last points don't match, add the first point to the end
+    if polygon[0][0] != polygon[point_count - 1][0] or polygon[0][1] != polygon[point_count - 1][1]:
+        polygon.append([polygon[0][0], polygon[0][1]])
+
+
 def validate_search_inputs(pattern: str, ogc_types: list[ServiceType] = None,
            spatial_search_type: SpatialSearchType = None,
-           bbox: dict = None):
+           bbox: dict = None, polygon: list[list[float]] = None):
     """
     Validate search inputs. Raises AuScopeCatExceptin if validation fails.
     :param pattern: search for this string
@@ -241,6 +261,8 @@ def validate_search_inputs(pattern: str, ogc_types: list[ServiceType] = None,
     :param spatial_search_type: the type of spatial search (intersects, coontains within).
         Used with bbox (Optional)
     :param bbox: the bounding box for the search data e.g. {"north":-31.456, "east":129.653...}
+    :param polygon: a list of points defined as a 2 element list of [latitude, longitude],
+        e.g. [[-31.0, 125.0], [-32, 128.0], [-31.0, 128.0], [-31.0, 125.0]] (Optional)
     """
     if pattern is None or pattern == "":
         raise AuScopeCatException(
@@ -257,30 +279,35 @@ def validate_search_inputs(pattern: str, ogc_types: list[ServiceType] = None,
                     f"Unknown service type(s): {invalid_ogc_types}",
                     500
                 )
-    if spatial_search_type and bbox is None:
+    if spatial_search_type and (bbox is None and polygon is None):
         raise AuScopeCatException(
-            "Spatial search requires a bbox (bounding box) be specified",
+            "Spatial search requires a bbox (bounding box) or polygon (polygon) to be specified",
             500
         )
-    if spatial_search_type and bbox:
+    if spatial_search_type and (bbox or polygon):
         if not isinstance(spatial_search_type, SpatialSearchType):
             raise AuScopeCatException(
                 f"Unknown spatial search type: {spatial_search_type}",
                 500
             )
-        validate_bbox(bbox)
+        if bbox:
+            validate_bbox(bbox)
+        if polygon:
+            validate_polygon(polygon)
 
 
 def build_search_query(pattern: str, ogc_types: list[ServiceType] = None,
            spatial_search_type: SpatialSearchType = None,
-           bbox: dict = None) -> str:
+           bbox: dict = None, polygon: list[list[float]] = None) -> str:
     """
     :param pattern: search for this string
     :param ogc_types: limit results to those containing one or more of the specified OGC service
                       types (Optional)
     :param spatial_search_type: the type of spatial search (intersects, coontains within).
-        Used with bbox (Optional)
+        Used with either bbox or polygon (Optional)
     :param bbox: the bounding box for the search data e.g. {"north":-31.456, "east":129.653...}
+    :param polygon: a list of points defined as a 2 element list of [latitude, longitude],
+        e.g. [[-31.0, 125.0], [-32, 128.0], [-31.0, 128.0], [-31.0, 125.0]] (Optional)
     :return the search query as a string
     """
     # Build search query
@@ -296,8 +323,13 @@ def build_search_query(pattern: str, ogc_types: list[ServiceType] = None,
         search_query += f"&fields={field}"
 
     # Spatial search if requested
-    if spatial_search_type and bbox:
-        search_query += f'&spatialRelation={spatial_search_type.value}' \
-                f'&westBoundLongitude={bbox.get("west")}&eastBoundLongitude={bbox.get("east")}' \
-                f'&southBoundLatitude={bbox.get("south")}&northBoundLatitude={bbox.get("north")}'
+    if spatial_search_type and (bbox or polygon):
+        search_query += f"&spatialRelation={spatial_search_type.value}"
+        if (bbox):
+            search_query += f'&westBoundLongitude={bbox.get("west")}&eastBoundLongitude={bbox.get("east")}' \
+                            f'&southBoundLatitude={bbox.get("south")}&northBoundLatitude={bbox.get("north")}'
+        else:
+            for point in polygon:
+                search_query += f"&points=[{point[0]},{point[1]}]"
+
     return search_query
