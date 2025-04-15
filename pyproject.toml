@@ -31,7 +31,9 @@ dev = [
     "pre-commit>=4.2.0",
     "pytest>=5.0",
     "pytest-mock",
-    "ruff"
+    "ruff",
+    "pytest-cov",
+    "coverage-badge"
 ]
 
 [project.urls]
