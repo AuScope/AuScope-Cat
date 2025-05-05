@@ -46,18 +46,6 @@ jobs:
       run: |
         uv run coverage-badge -f -o .github/badges/coverage.svg
 
-    - name: Deploy coverage badge to main branch
-      # Only run on push events to the main branch
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-      uses: JamesIves/github-pages-deploy-action@v4
-      with:
-          # The folder the action should deploy.
-          folder: .github/badges 
-          # The directory to deploy to in the target branch gh-pages
-          target-folder: .github/badges
-          # Do not remove existing files in the target folder
-          clean: false 
-
     - name: Commit coverage badge to main branch
       run: |
         git config --global user.name 'github-actions[bot]'
