@@ -41,7 +41,7 @@ jobs:
 
     - name: Generate coverage badge
       run: |
-        uv run coverage-badge -o .github/badges/coverage.svg
+        uv run coverage-badge -f -o .github/badges/coverage.svg
 
     - name: Deploy coverage badge to main branch
       # Only run on push events to the main branch
