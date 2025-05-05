@@ -12,6 +12,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -54,3 +57,12 @@ jobs:
           target-folder: .github/badges
           # Do not remove existing files in the target folder
           clean: false 
+
+    - name: Commit coverage badge to main branch
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        git add .github/badges/coverage.svg
+        git commit -m '[skip ci] Updated coverage badge'
+        git push
+
