@@ -48,8 +48,6 @@ jobs:
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       uses: JamesIves/github-pages-deploy-action@v4
       with:
-          # The branch the action should deploy to.
-          branch: main 
           # The folder the action should deploy.
           folder: .github/badges 
           # The directory to deploy to in the target branch gh-pages
