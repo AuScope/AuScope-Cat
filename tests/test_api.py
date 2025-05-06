@@ -17,6 +17,8 @@ INVALID_BBOX = {
     "south": -25.793715746583374, "west": 129.77844446004175
 }
 
+VALID_POLYGON = [[-32.0, 125.0], [-35.0, 128.0], [-32.0, 131.0], [-32.0, 125.0]]
+
 SEARCH_RESULT = SimpleNamespace(
     url = "https://geossdi.dmp.wa.gov.au/services/wfs",
     type = "WFS",
@@ -133,6 +135,28 @@ def test_search_records():
     ogc_types = [ServiceType.WFS]
     spatial_search_type = SpatialSearchType.INTERSECTS
     results = search_records(pattern, ogc_types, spatial_search_type, VALID_BBOX)
+    assert isinstance(results, list)
+    for result in results:
+        assert isinstance(result, SimpleNamespace)
+        assert hasattr(result, 'id')
+        assert hasattr(result, 'name')
+        assert hasattr(result, 'description')
+        assert hasattr(result, 'record_info_url')
+        assert hasattr(result, 'constraints')
+        assert hasattr(result, 'use_limit_constraints')
+        assert hasattr(result, 'access_constraints')
+        assert hasattr(result, 'date')
+        assert hasattr(result, 'geographic_elements')
+        assert hasattr(result, 'online_resources')
+
+# Search records using polygon
+@pytest.mark.xfail(reason="Testing live servers is not reliable as they are sometimes unavailable")
+def test_search_records_polygon():
+    pattern = "flinders"
+    ogc_types = [ServiceType.WFS]
+    spatial_search_type = SpatialSearchType.INTERSECTS
+    results = search_records(pattern, ogc_types=ogc_types,
+                             spatial_search_type=spatial_search_type, polygon=VALID_POLYGON)
     assert isinstance(results, list)
     for result in results:
         assert isinstance(result, SimpleNamespace)
