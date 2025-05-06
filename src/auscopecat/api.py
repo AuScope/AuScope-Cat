@@ -330,6 +330,6 @@ def build_search_query(pattern: str, ogc_types: list[ServiceType] = None,
                             f'&southBoundLatitude={bbox.get("south")}&northBoundLatitude={bbox.get("north")}'
         else:
             for point in polygon:
-                search_query += f"&points=[{point[0]},{point[1]}]"
+                search_query += f"&points={point[0]},{point[1]}"
 
     return search_query
