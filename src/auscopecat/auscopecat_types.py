@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import TypedDict
 
 class ServiceType(Enum):
     WMS = "wms"
@@ -19,3 +20,9 @@ class AuScopeCatException(Exception):
         self.message = message
         self.error_code = error_code
         super().__init__(self.message)
+
+class BoundingBox(TypedDict):
+    north: float
+    east: float
+    south: float
+    west: float
