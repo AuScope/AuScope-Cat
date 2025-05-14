@@ -1,12 +1,12 @@
 """
 Python library for accessing the AuScope Portal's API methods.
 """
-import numbers
 from types import SimpleNamespace
 from requests import Response
 from auscopecat.auscopecat_types import AuScopeCatException, DownloadType, \
         ServiceType, SpatialSearchType
 from auscopecat.network import request
+from auscopecat.utils import validate_bbox, validate_polygon
 
 
 API_URL = "https://portal.auscope.org/api/"
@@ -35,8 +35,8 @@ def search(pattern: str, ogc_types: list[ServiceType] = None,
         e.g. [[-31.0, 125.0], [-32, 128.0], [-31.0, 128.0], [-31.0, 125.0]] (Optional)
     :return: a list of SimpleNamespace objects of the form: namespace(url, type, name)
     """
-    validate_search_inputs(pattern, ogc_types, spatial_search_type, bbox, polygon)
-    search_query = build_search_query(pattern, ogc_types, spatial_search_type, bbox, polygon)
+    _validate_search_inputs(pattern, ogc_types, spatial_search_type, bbox, polygon)
+    search_query = _build_search_query(pattern, ogc_types, spatial_search_type, bbox, polygon)
     search_request = request(search_query)
     search_results = []
     if search_request.status_code == 200:
@@ -81,8 +81,8 @@ def search_records(pattern: str, ogc_types: list[ServiceType] = None,
                 ]
             )
     """
-    validate_search_inputs(pattern, ogc_types, spatial_search_type, bbox, polygon)
-    search_query = build_search_query(pattern, ogc_types, spatial_search_type, bbox, polygon)
+    _validate_search_inputs(pattern, ogc_types, spatial_search_type, bbox, polygon)
+    search_query = _build_search_query(pattern, ogc_types, spatial_search_type, bbox, polygon)
     search_request = request(search_query)
     search_results = []
     if search_request.status_code == 200:
@@ -128,7 +128,7 @@ def search_records(pattern: str, ogc_types: list[ServiceType] = None,
     return search_results
 
 
-def wfs_get_feature(url: str, type_name: str, bbox: dict, version = "1.1.0",
+def _wfs_get_feature(url: str, type_name: str, bbox: dict, version = "1.1.0",
                     srs_name: str = "EPSG:4326", output_format = "csv",
                     max_features = None) -> Response:
     """
@@ -207,7 +207,7 @@ def download(obj: SimpleNamespace, download_type: DownloadType,
     if download_type is None:
         download_type = DownloadType.CSV
 
-    response = wfs_get_feature(obj.url, obj.name, bbox, version = version, srs_name = srs_name,
+    response = _wfs_get_feature(obj.url, obj.name, bbox, version = version, srs_name = srs_name,
                         output_format = "csv", max_features = max_features)
     if response and response.status_code and response.status_code == 200:
         f_name = "download.csv" if not file_name else file_name
@@ -220,37 +220,7 @@ def download(obj: SimpleNamespace, download_type: DownloadType,
         )
 
 
-def validate_bbox(bbox: dict):
-    """
-    Validate a bounding box
-    :param bbox: the bounding box, a dict with "north", "south", "east" and "west" keys
-    """
-    if not all(bbox.get(x) is not None and \
-               isinstance(bbox.get(x), numbers.Number) \
-                for x in ["north", "south", "east", "west"]):
-        raise AuScopeCatException(
-            "Please check bbox values",
-            500
-        )
-
-
-def validate_polygon(polygon: list[list[float]]):
-    """
-    Validate a polygon
-    :param the polygon as a list of points, where each point  is a 2 element list (lat, lon)
-    """
-    point_count = len(polygon)
-    if point_count < 3:
-        raise AuScopeCatException(
-            "A polygon must contain at least 3 points",
-            500
-        )
-    # If the first/last points don't match, add the first point to the end
-    if polygon[0][0] != polygon[point_count - 1][0] or polygon[0][1] != polygon[point_count - 1][1]:
-        polygon.append([polygon[0][0], polygon[0][1]])
-
-
-def validate_search_inputs(pattern: str, ogc_types: list[ServiceType] = None,
+def _validate_search_inputs(pattern: str, ogc_types: list[ServiceType] = None,
            spatial_search_type: SpatialSearchType = None,
            bbox: dict = None, polygon: list[list[float]] = None):
     """
@@ -296,7 +266,7 @@ def validate_search_inputs(pattern: str, ogc_types: list[ServiceType] = None,
             validate_polygon(polygon)
 
 
-def build_search_query(pattern: str, ogc_types: list[ServiceType] = None,
+def _build_search_query(pattern: str, ogc_types: list[ServiceType] = None,
            spatial_search_type: SpatialSearchType = None,
            bbox: dict = None, polygon: list[list[float]] = None) -> str:
     """

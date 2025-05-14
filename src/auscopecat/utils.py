@@ -1,0 +1,76 @@
+"""
+Util functions for the AuScopeCat library
+"""
+import numbers
+from auscopecat.auscopecat_types import AuScopeCatException, BoundingBox
+
+
+def validate_bbox(bbox: dict, adjust_bounds = False) -> BoundingBox:
+    """
+    Validate a bounding box
+    :param bbox: the bounding box, a dict with "north", "south", "east" and
+        "west" keys
+    :param adjust_bounds: if True, and the bounds are outside of the allowable
+        range (i.e. north > 90.0, south < -90.0, east > 180.0 and west <
+        -180.0) then an Exception will not be thrown but instead the values
+        will be corrected to the closest lowest/highest value for that
+        coordinate
+    :return the validated bounding box provided no AuScopeCatException is
+        thrown
+    """
+    if not all(bbox.get(x) is not None and \
+               isinstance(bbox.get(x), numbers.Number) \
+                for x in ["north", "south", "east", "west"]):
+        raise AuScopeCatException(
+            "Please check bbox values",
+            500
+        )
+    if bbox.get("north") > 90.0:
+        if adjust_bounds:
+            bbox["north"] = 90.0
+        else:
+            raise AuScopeCatException(
+                "bbox['north'] cannot exceed 90.0",
+                500
+            )
+    if bbox.get("south") < -90.0:
+        if adjust_bounds:
+            bbox["south"] = -90.0
+        else:
+            raise AuScopeCatException(
+                "bbox['south'] cannot be less than -90.0",
+                500
+            )
+    if bbox.get("west") < -180.0:
+        if adjust_bounds:
+            bbox["west"] = -180.0
+        else:
+            raise AuScopeCatException(
+                "bbox['west'] cannot be less than -180.0",
+                500
+            )
+    if bbox.get("east") > 180.0:
+        if adjust_bounds:
+            bbox["east"] = 180.0
+        else:
+            raise AuScopeCatException(
+                "bbox['east'] cannot exceed 180.0",
+                500
+            )
+    return bbox
+
+
+def validate_polygon(polygon: list[list[float]]):
+    """
+    Validate a polygon
+    :param the polygon as a list of points, where each point  is a 2 element list (lat, lon)
+    """
+    point_count = len(polygon)
+    if point_count < 3:
+        raise AuScopeCatException(
+            "A polygon must contain at least 3 points",
+            500
+        )
+    # If the first/last points don't match, add the first point to the end
+    if polygon[0][0] != polygon[point_count - 1][0] or polygon[0][1] != polygon[point_count - 1][1]:
+        polygon.append([polygon[0][0], polygon[0][1]])
