@@ -2,7 +2,7 @@ import pytest
 import pandas as pd
 import requests
 import tempfile
-from auscopecat.downloadTSG import downloadTSG, download_url, search_TSG, search_cql, MAX_FEATURES
+from auscopecat.downloadTSG import downloadTSG, download_url, search_TSG, search_cql_TSG, MAX_FEATURES
 from auscopecat import downloadTSG as download_tsg
 from auscopecat.auscopecat_types import AuScopeCatException
 from .helpers import get_all_csv_df
@@ -41,9 +41,9 @@ def test_download_url(monkeypatch):
 
 
 
-def test_search_cql(monkeypatch):
-    """ Tests 'search_cql" function 
-        'search_cql' make three function calls to external network resources
+def test_search_cql_TSG(monkeypatch):
+    """ Tests 'search_cql_TSG" function 
+        'search_cql_TSG' make three function calls to external network resources
         These functions are mocked to ensure that this test will run independently of network resources
     """
 
@@ -81,15 +81,15 @@ def test_search_cql(monkeypatch):
     monkeypatch.setattr(download_tsg, 'pd', MockPandas)
 
 
-    # Call 'search_cql' and check URLs
-    urls = search_cql('prov', "BLAH LIKE '%BLAH%'", max_features = 30)
+    # Call 'search_cql_TSG' and check URLs
+    urls = search_cql_TSG('prov', "BLAH LIKE '%BLAH%'", max_features = 30)
     assert urls == ['https://nvclstore.data.auscope.org.au/NT/8440735_11CPD005.zip',
                     'https://nvclstore.data.auscope.org.au/NT/8418381_BND1.zip',
                     'https://nvclstore.data.auscope.org.au/NT/8434796_YG35RD.zip',
                     'https://nvclstore.data.auscope.org.au/NT/8471153_CCD09.zip']
 
 
-def test_search_cql_exception():
+def test_search_cql_TSG_exception():
     pass
 
 
