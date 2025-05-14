@@ -54,9 +54,29 @@ def download_url(url: str, save_path: str, chunk_size=1024*64):
         for chunk in r.iter_content(chunk_size=chunk_size):
             fd.write(chunk)
 
-def search_cql(prov: str, cql_filter: str, max_features = MAX_FEATURES)->list[str]:
+def search_cql(url: str, params: dict, max_features = MAX_FEATURES)->any:
     '''
-    Download a file from url
+    search_cql from url
+
+    :param url: url
+    :param params: params
+    :param max_features: max_features
+    :return: DataFrame
+    '''
+    try:
+        response = request(url,params,'POST')
+    except Exception as e:
+        raise AuScopeCatException(
+            f'Error querying data: {e}',
+            500
+        )
+    csvBuffer = StringIO(response.text)
+    df = pd.read_csv(filepath_or_buffer = csvBuffer, low_memory=False)
+    return df
+
+def search_cql_TSG(prov: str, cql_filter: str, max_features = MAX_FEATURES)->list[str]:
+    '''
+    Search TSG files by CQL
 
     :param prov: prov
     :param cql_filter: cql_filter
@@ -75,14 +95,13 @@ def search_cql(prov: str, cql_filter: str, max_features = MAX_FEATURES)->list[st
               'maxFeatures': str(max_features)
              }
     try:
-        response = request(url,params,'POST')
+        df = search_cql(url, params)
     except Exception as e:
         raise AuScopeCatException(
             f'Error querying data: {e}',
             500
         )
-    csvBuffer = StringIO(response.text)
-    df = pd.read_csv(filepath_or_buffer = csvBuffer, low_memory=False)
+
     urlAll = 'https://nvclstore.z8.web.core.windows.net/all.csv'
     dfA = pd.read_csv(urlAll)
     LOGGER.info((f'{prov} cql return: {df.shape[0]} : dfAll return {dfA.shape[0]}'))
@@ -169,5 +188,5 @@ def search_TSG(prov: str, name: str = None, bbox: str = None, kmlCoords: str = N
     if prov not in ['NT','QLD']:
         #add nvclCollection filter except NT, QLD.(exception from server)
         cql_filter += ' AND nvclCollection=\'true\''
-    urls = search_cql(prov, cql_filter, max_features)
+    urls = search_cql_TSG(prov, cql_filter, max_features)
     return urls
