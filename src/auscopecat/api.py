@@ -25,7 +25,10 @@ def search(pattern: str, ogc_types: list[ServiceType] = None,
     """
     Searches catalogue for service online resource results
 
-    :param pattern: search for this string
+    :param pattern: search string. If there are multiple words, any result
+        that contains any one of the words will be considered a match. To
+        match an exact series of words, use quotation marks, e.g.
+        "Broken Hill".
     :param ogc_types: limit results to those containing one or more of the specified OGC service
         types (Optional)
     :param spatial_search_type: the type of spatial search (intersects, coontains within).
@@ -62,7 +65,10 @@ def search_records(pattern: str, ogc_types: list[ServiceType] = None,
     """
     Searches catalogue for records
 
-    :param pattern: search for this string
+    :param pattern: search string. If there are multiple words, any result
+        that contains any one of the words will be considered a match. To
+        match an exact series of words, use quotation marks, e.g.
+        "Broken Hill".
     :param ogc_type: search for a certain kind of OGC service (Optional)
     :param spatial_search_type: the type of spatial search (intersects, coontains within).
         Used with bbox (Optional)
