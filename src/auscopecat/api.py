@@ -36,7 +36,7 @@ def search(pattern: str, ogc_types: list[ServiceType] = None,
     :return: a list of SimpleNamespace objects of the form: namespace(url, type, name)
     """
     _validate_search_inputs(pattern, ogc_types, spatial_search_type, bbox, polygon)
-    search_query = build_search_query(pattern, ogc_types, spatial_search_type, bbox, polygon)
+    search_query = _build_search_query(pattern, ogc_types, spatial_search_type, bbox, polygon)
     search_request = request(search_query)
     search_results = []
     if search_request.status_code == 200:
@@ -82,7 +82,7 @@ def search_records(pattern: str, ogc_types: list[ServiceType] = None,
             )
     """
     _validate_search_inputs(pattern, ogc_types, spatial_search_type, bbox, polygon)
-    search_query = build_search_query(pattern, ogc_types, spatial_search_type, bbox, polygon)
+    search_query = _build_search_query(pattern, ogc_types, spatial_search_type, bbox, polygon)
     search_request = request(search_query)
     search_results = []
     if search_request.status_code == 200:
@@ -266,7 +266,7 @@ def _validate_search_inputs(pattern: str, ogc_types: list[ServiceType] = None,
             validate_polygon(polygon)
 
 
-def build_search_query(pattern: str, ogc_types: list[ServiceType] = None,
+def _build_search_query(pattern: str, ogc_types: list[ServiceType] = None,
            spatial_search_type: SpatialSearchType = None,
            bbox: dict = None, polygon: list[list[float]] = None) -> str:
     """
