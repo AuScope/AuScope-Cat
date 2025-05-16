@@ -2,8 +2,9 @@ import pytest
 import pandas as pd
 import requests
 import tempfile
-from auscopecat.downloadTSG import downloadTSG, download_url, search_TSG, search_cql_TSG, MAX_FEATURES
-from auscopecat import downloadTSG as download_tsg
+from auscopecat.nvcl import downloadTSG, search_TSG, search_cql_TSG, MAX_FEATURES
+from auscopecat.utils import download_url
+from auscopecat import nvcl
 from auscopecat.auscopecat_types import AuScopeCatException
 from .helpers import get_all_csv_df
 
@@ -58,8 +59,8 @@ def test_search_cql_TSG(monkeypatch):
     def mock_request(url: str, params: dict = None, method:str = 'GET'):
         return MockResponse()
 
-    # Sets the 'request' in src/auscopecat/downloadTSG.py to our 'mock_request' class
-    monkeypatch.setattr(download_tsg, 'request', mock_request)
+    # Sets the 'request' in src/auscopecat/nvcl.py to our 'mock_request' class
+    monkeypatch.setattr(nvcl, 'request', mock_request)
 
     # Mocks Pandas read_csv() method
     class MockPandas:
@@ -77,9 +78,8 @@ def test_search_cql_TSG(monkeypatch):
             # Second call - return DataFrame of https://nvclstore.z8.web.core.windows.net/all.csv
             return get_all_csv_df()
 
-    # Sets the 'pd' in src/auscopecat/downloadTSG.py to our 'MockPandas' class
-    monkeypatch.setattr(download_tsg, 'pd', MockPandas)
-
+    # Sets the 'pd' in src/auscopecat/nvcl.py to our 'MockPandas' class
+    monkeypatch.setattr(nvcl, 'pd', MockPandas)
 
     # Call 'search_cql_TSG' and check URLs
     urls = search_cql_TSG('prov', "BLAH LIKE '%BLAH%'", max_features = 30)
@@ -105,8 +105,8 @@ def test_downloadTSG_all(monkeypatch):
         assert max_features == NUM_FEATURES
         return ["U1", "U2", "U3"]
 
-    # Sets the 'search_cql' in src/auscopecat/downloadTSG.py to our 'mock_search_cql' function
-    monkeypatch.setattr(download_tsg, 'search_TSG', mock_search_TSG)
+    # Sets the 'search_TSG' in src/auscopecat/nvcl.py to our 'mock_search_TSG' function
+    monkeypatch.setattr(nvcl, 'search_TSG', mock_search_TSG)
 
     # Start the test by calling 'downloadTSG'
     urls = downloadTSG(PROVIDER, name="name", bbox="118,-27.15,120,-27.1", kmlCoords="110.569,-10.230 155.095,-9.445 156.250,-45.161 111.027,-41.021 111.016,-41.010 110.569,-10.230", max_features=NUM_FEATURES,simulation=True)
@@ -123,8 +123,8 @@ def test_downloadTSG_exception(monkeypatch):
     def mock_search_TSG(prov: str, name: str, bbox: str, kmlCoords:str, max_features = MAX_FEATURES):
         raise Exception("Test Exception", 123)
 
-    # Sets the 'downloadTSG_CQL' in src/auscopecat/downloadTSG.py to our 'mock_downloadTSG_CQL' function
-    monkeypatch.setattr(download_tsg, 'search_TSG', mock_search_TSG)
+    # Sets the 'search_TSG' in src/auscopecat/nvcl.py to our 'mock_search_TSG' function
+    monkeypatch.setattr(nvcl, 'search_TSG', mock_search_TSG)
 
     # Start the test by calling 'downloadTSG' and catch the exception
     try:
@@ -147,8 +147,8 @@ def test_downloadTSG_Polygon(monkeypatch):
         assert max_features == MAX_FEATURES
         return ["U1", "U2", "U3", "U4", "U5"]
 
-    # Sets the 'downloadTSG_CQL' in src/auscopecat/downloadTSG.py to our 'mock_downloadTSG_CQL' function
-    monkeypatch.setattr(download_tsg, 'search_TSG', mock_search_TSG)
+    # Sets the 'search_TSG' in src/auscopecat/nvcl.py to our 'mock_search_TSG' function
+    monkeypatch.setattr(nvcl, 'search_TSG', mock_search_TSG)
 
     # Start the test by calling 'downloadTSG'
     urls = downloadTSG(PROVIDER, NAME, kmlCoords="110.569,-10.230 155.095,-9.445 156.250,-45.161 111.027,-41.021 111.016,-41.010 110.569,-10.230",simulation=True)
@@ -168,8 +168,8 @@ def test_downloadTSG_BBOX(monkeypatch):
         assert max_features == MAX_FEATURES
         return ["U1", "U2", "U3", "U4"]
 
-    # Sets the 'downloadTSG_CQL' in src/auscopecat/downloadTSG.py to our 'mock_downloadTSG_CQL' function
-    monkeypatch.setattr(download_tsg, 'search_TSG', mock_search_TSG)
+    # Sets the 'search_TSG' in src/auscopecat/nvcl.py to our 'mock_search_TSG' function
+    monkeypatch.setattr(nvcl, 'search_TSG', mock_search_TSG)
 
     # Start the test by calling 'downloadTSG'
     urls = downloadTSG(PROVIDER, NAME, bbox=BBOX,simulation=True)
