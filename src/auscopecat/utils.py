@@ -2,6 +2,7 @@
 Util functions for the AuScopeCat library
 """
 import numbers
+import requests
 from auscopecat.auscopecat_types import AuScopeCatException, BoundingBox
 
 
@@ -74,3 +75,16 @@ def validate_polygon(polygon: list[list[float]]):
     # If the first/last points don't match, add the first point to the end
     if polygon[0][0] != polygon[point_count - 1][0] or polygon[0][1] != polygon[point_count - 1][1]:
         polygon.append([polygon[0][0], polygon[0][1]])
+
+def download_url(url: str, save_path: str, chunk_size=1024*64):
+    '''
+    Download a file from url
+
+    :param url: url
+    :param save_path: save_path
+    :param chunk_size: chunk_size (Optional)
+    '''
+    r = requests.get(url, stream=True)
+    with open(save_path, 'wb') as fd:
+        for chunk in r.iter_content(chunk_size=chunk_size):
+            fd.write(chunk)

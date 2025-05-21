@@ -1,11 +1,8 @@
-from io import StringIO
 import logging
 import sys
-
-import requests
-
 from auscopecat.auscopecat_types import AuScopeCatException
-from auscopecat.network import request
+from auscopecat.api import search_cql, MAX_FEATURES
+from auscopecat.utils import download_url
 import pandas as pd
 
 NVCL_URLS = {
@@ -18,7 +15,6 @@ NVCL_URLS = {
     'CSIRO': 'https://nvclwebservices.csiro.au/geoserver/wfs',
     'TAS': 'https://www.mrt.tas.gov.au/web-services/wfs'
 }
-MAX_FEATURES = 1000000
 LOG_LVL = logging.INFO
 ''' Initialise debug level, set to 'logging.INFO' or 'logging.DEBUG'
 '''
@@ -40,39 +36,6 @@ if not LOGGER.hasHandlers():
 
     # Add handler to LOGGER and set level
     LOGGER.addHandler(HANDLER)
-
-def download_url(url: str, save_path: str, chunk_size=1024*64):
-    '''
-    Download a file from url
-
-    :param url: url
-    :param save_path: save_path
-    :param chunk_size: chunk_size (Optional)
-    '''
-    r = requests.get(url, stream=True)
-    with open(save_path, 'wb') as fd:
-        for chunk in r.iter_content(chunk_size=chunk_size):
-            fd.write(chunk)
-
-def search_cql(url: str, params: dict, max_features = MAX_FEATURES)->any:
-    '''
-    search_cql from url
-
-    :param url: url
-    :param params: params
-    :param max_features: max_features
-    :return: DataFrame
-    '''
-    try:
-        response = request(url,params,'POST')
-    except Exception as e:
-        raise AuScopeCatException(
-            f'Error querying data: {e}',
-            500
-        )
-    csvBuffer = StringIO(response.text)
-    df = pd.read_csv(filepath_or_buffer = csvBuffer, low_memory=False)
-    return df
 
 def search_cql_TSG(prov: str, cql_filter: str, max_features = MAX_FEATURES)->list[str]:
     '''

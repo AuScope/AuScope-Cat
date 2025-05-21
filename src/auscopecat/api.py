@@ -1,7 +1,9 @@
 """
 Python library for accessing the AuScope Portal's API methods.
 """
+from io import StringIO
 from types import SimpleNamespace
+import pandas as pd
 from requests import Response
 from auscopecat.auscopecat_types import AuScopeCatException, DownloadType, \
         ServiceType, SpatialSearchType
@@ -17,7 +19,7 @@ SEARCH_FIELDS = [
     "dataIdentificationAbstract", "onlineResources.name",
     "onlineResources.description"
 ]
-
+MAX_FEATURES = 1000000
 
 def search(pattern: str, ogc_types: list[ServiceType | str] = None,
            spatial_search_type: SpatialSearchType | str = None,
@@ -333,3 +335,23 @@ def _build_search_query(pattern: str, ogc_types: list[ServiceType | str] = None,
                 search_query += f"&points={point[0]},{point[1]}"
 
     return search_query
+
+def search_cql(url: str, params: dict, max_features = MAX_FEATURES)->any:
+    '''
+    search_cql from url
+
+    :param url: url
+    :param params: params
+    :param max_features: max_features
+    :return: DataFrame
+    '''
+    try:
+        response = request(url,params,'POST')
+    except Exception as e:
+        raise AuScopeCatException(
+            f'Error querying data: {e}',
+            500
+        )
+    csvBuffer = StringIO(response.text)
+    df = pd.read_csv(filepath_or_buffer = csvBuffer, low_memory=False)
+    return df
