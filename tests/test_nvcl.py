@@ -4,7 +4,7 @@ import requests
 import tempfile
 from auscopecat.nvcl import downloadTSG, search_TSG, search_cql_TSG, MAX_FEATURES
 from auscopecat.utils import download_url
-from auscopecat import nvcl
+from auscopecat import nvcl, api
 from auscopecat.auscopecat_types import AuScopeCatException
 from .helpers import get_all_csv_df
 
@@ -60,7 +60,7 @@ def test_search_cql_TSG(monkeypatch):
         return MockResponse()
 
     # Sets the 'request' in src/auscopecat/nvcl.py to our 'mock_request' class
-    monkeypatch.setattr(nvcl, 'request', mock_request)
+    monkeypatch.setattr(api, 'request', mock_request)
 
     # Mocks Pandas read_csv() method
     class MockPandas:
@@ -74,7 +74,32 @@ def test_search_cql_TSG(monkeypatch):
             if MockPandas.call_counter == 0:
                 MockPandas.call_counter += 1
                 # First call - return DataFrame of WFS response
-                return pd.DataFrame({'gsmlp:nvclCollection': {0: True, 1: True, 2: True, 3: True}, 'gsmlp:identifier': {0: 'http://geology.data.nt.gov.au/resource/feature/ntgs/borehole/8440735_11CPD005', 1: 'http://geology.data.nt.gov.au/resource/feature/ntgs/borehole/8418381_BND1', 2: 'http://geology.data.nt.gov.au/resource/feature/ntgs/borehole/8434796_YG35RD', 3: 'http://geology.data.nt.gov.au/resource/feature/ntgs/borehole/8471153_CCD09'}})
+                return pd.DataFrame({
+                    'gsmlp:nvclCollection': {
+                        0: True,
+                        1: True,
+                        2: True,
+                        3: True
+                    },
+                    'gsmlp:identifier': {
+                        0: 'http://geology.data.nt.gov.au/resource/feature/ntgs/borehole/8440735_11CPD005',
+                        1: 'http://geology.data.nt.gov.au/resource/feature/ntgs/borehole/8418381_BND1',
+                        2: 'http://geology.data.nt.gov.au/resource/feature/ntgs/borehole/8434796_YG35RD',
+                        3: 'http://geology.data.nt.gov.au/resource/feature/ntgs/borehole/8471153_CCD09'
+                    },
+                    'BoreholeURI': {
+                        0:'http://geology.data.nt.gov.au/resource/feature/ntgs/borehole/8440735_11CPD005',
+                        1:'http://geology.data.nt.gov.au/resource/feature/ntgs/borehole/8418381_BND1',
+                        2:'http://geology.data.nt.gov.au/resource/feature/ntgs/borehole/8434796_YG35RD',
+                        3:'http://geology.data.nt.gov.au/resource/feature/ntgs/borehole/8471153_CCD09'
+                    },
+                    'DownloadLink': {
+                        0:'https://nvclstore.data.auscope.org.au/NT/8440735_11CPD005.zip',
+                        1:'https://nvclstore.data.auscope.org.au/NT/8418381_BND1.zip',
+                        2:'https://nvclstore.data.auscope.org.au/NT/8434796_YG35RD.zip',
+                        3:'https://nvclstore.data.auscope.org.au/NT/8471153_CCD09.zip'
+                    }
+                })
             # Second call - return DataFrame of https://nvclstore.z8.web.core.windows.net/all.csv
             return get_all_csv_df()
 
