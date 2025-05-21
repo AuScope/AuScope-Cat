@@ -127,6 +127,17 @@ def test_successful_download(mocker):
     except AuScopeCatException as e:
         assert False, f"Error downloading: {e}"
 
+@pytest.mark.xfail(reason="Testing live servers is not reliable as they are sometimes unavailable")
+def test_successful_download_string_params(mocker):
+    try:
+        mock_file = mocker.mock_open()
+        mocker.patch("builtins.open", mock_file)
+        download(SEARCH_RESULT, "csv", VALID_BBOX, "EPSG:4236", 10,
+                 file_name="test_download.csv")
+        mock_file.assert_called_once_with("test_download.csv", "wb")
+    except AuScopeCatException as e:
+        assert False, f"Error downloading: {e}"
+
 # combined tests
 @pytest.mark.xfail(reason="Testing live servers is not reliable as they are sometimes unavailable")
 def test_search_and_download(mocker):
@@ -149,6 +160,27 @@ def test_search_records():
     pattern = "flinders"
     ogc_types = [ServiceType.WFS]
     spatial_search_type = SpatialSearchType.INTERSECTS
+    results = search_records(pattern, ogc_types, spatial_search_type, VALID_BBOX)
+    assert isinstance(results, list)
+    for result in results:
+        assert isinstance(result, SimpleNamespace)
+        assert hasattr(result, 'id')
+        assert hasattr(result, 'name')
+        assert hasattr(result, 'description')
+        assert hasattr(result, 'record_info_url')
+        assert hasattr(result, 'constraints')
+        assert hasattr(result, 'use_limit_constraints')
+        assert hasattr(result, 'access_constraints')
+        assert hasattr(result, 'date')
+        assert hasattr(result, 'geographic_elements')
+        assert hasattr(result, 'online_resources')
+
+# search_record tests with string ogc and spatial type
+pytest.mark.xfail(reason="Testing live servers is not reliable as they are sometimes unavailable")
+def test_search_records_string_params():
+    pattern = "flinders"
+    ogc_types = ["wfs"]
+    spatial_search_type = "intersects"
     results = search_records(pattern, ogc_types, spatial_search_type, VALID_BBOX)
     assert isinstance(results, list)
     for result in results:

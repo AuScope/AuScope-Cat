@@ -19,8 +19,8 @@ SEARCH_FIELDS = [
 ]
 
 
-def search(pattern: str, ogc_types: list[ServiceType] = None,
-           spatial_search_type: SpatialSearchType = None,
+def search(pattern: str, ogc_types: list[ServiceType | str] = None,
+           spatial_search_type: SpatialSearchType | str = None,
            bbox: dict = None, polygon: list[list[float]] = None) -> list[SimpleNamespace]:
     """
     Searches catalogue for service online resource results
@@ -30,9 +30,9 @@ def search(pattern: str, ogc_types: list[ServiceType] = None,
         match an exact series of words, use quotation marks, e.g.
         "Broken Hill".
     :param ogc_types: limit results to those containing one or more of the specified OGC service
-        types (Optional)
+        types. This can be a list of ServiceTypes or strings. (Optional)
     :param spatial_search_type: the type of spatial search (intersects, coontains within).
-        Used with bbox (Optional)
+        Used with bbox and polygon. This can be a SpatialSearchType or string. (Optional)
     :param bbox: the bounding box for the search data e.g. {"north":-31.456, "east":129.653...}
     :param polygon: a list of points defined as a 2 element list of [latitude, longitude],
         e.g. [[-31.0, 125.0], [-32, 128.0], [-31.0, 128.0], [-31.0, 125.0]] (Optional)
@@ -48,9 +48,8 @@ def search(pattern: str, ogc_types: list[ServiceType] = None,
             for result in results_json.get("data").get("cswRecords"):
                 if result.get("onlineResources"):
                     for online_resource in result.get("onlineResources"):
-                        if ogc_types is None or len(ogc_types) == 0 or next(\
-                                (x for x in ogc_types if x.value.lower() == \
-                                 online_resource.get("type").lower()), None):
+                        # Compare onlineResource type with specified OGC type(s)
+                        if ogc_types is None or len(ogc_types) == 0 or next((x for x in ogc_types if (x.value.lower() if isinstance(x, ServiceType) else x.lower()) == online_resource.get("type").lower()), None):
                             search_results.append(SimpleNamespace(
                                    url = online_resource.get("url"),
                                    type = online_resource.get("type"),
@@ -59,8 +58,8 @@ def search(pattern: str, ogc_types: list[ServiceType] = None,
     return search_results
 
 
-def search_records(pattern: str, ogc_types: list[ServiceType] = None,
-                   spatial_search_type: SpatialSearchType = None,
+def search_records(pattern: str, ogc_types: list[ServiceType | str] = None,
+                   spatial_search_type: SpatialSearchType | str = None,
                    bbox: dict = None, polygon: list[list[float]] = None) -> list[SimpleNamespace]:
     """
     Searches catalogue for records
@@ -69,9 +68,10 @@ def search_records(pattern: str, ogc_types: list[ServiceType] = None,
         that contains any one of the words will be considered a match. To
         match an exact series of words, use quotation marks, e.g.
         "Broken Hill".
-    :param ogc_type: search for a certain kind of OGC service (Optional)
+    :param ogc_type: search for a certain kind of OGC service. This can be a list of ServiceTypes
+        or strings. (Optional)
     :param spatial_search_type: the type of spatial search (intersects, coontains within).
-        Used with bbox (Optional)
+        Used with bbox and polygon. This can be a SpatialSearchType or string. (Optional)
     :param bbox: the bounding box for the search data e.g. {"north":-31.456, "east":129.653...}
     :param polygon: a list of points defined as a 2 element list of [latitude, longitude],
         e.g. [[-31.0, 125.0], [-32, 128.0], [-31.0, 128.0], [-31.0, 125.0]] (Optional)
@@ -119,16 +119,22 @@ def search_records(pattern: str, ogc_types: list[ServiceType] = None,
                 online_resources = []
                 if result.get("onlineResources"):
                     for resource in result.get("onlineResources"):
-                        if ogc_types is None or len(ogc_types) == 0 or next(\
-                                (x for x in ogc_types if x.value.lower() == \
-                                 resource.get("type").lower()), None):
-                            online_resources.append(SimpleNamespace(
-                                    url = resource.get("url", ""),
-                                    type = resource.get("type", ""),
-                                    name = resource.get("name", ""),
-                                    description = resource.get("description", ""),
-                                    version = resource.get("version", "")
-                            ))
+                        # Compare onlineResource type with specified OGC type(s)
+                        if ogc_types is None or len(ogc_types) == 0 or next(
+                            (x for x in ogc_types if (
+                                x.value.lower() if isinstance(x, ServiceType) else x.lower()
+                            ) == resource.get("type").lower()), 
+                            None
+                        ):
+                            online_resources.append(
+                                SimpleNamespace(
+                                    url=resource.get("url", ""),
+                                    type=resource.get("type", ""),
+                                    name=resource.get("name", ""),
+                                    description=resource.get("description", ""),
+                                    version=resource.get("version", "")
+                                )
+                            )
                 record.online_resources = online_resources
                 search_results.append(record)
     return search_results
@@ -175,23 +181,24 @@ def _wfs_get_feature(url: str, type_name: str, bbox: dict, version = "1.1.0",
     return response
 
 
-def download(obj: SimpleNamespace, download_type: DownloadType,
+def download(obj: SimpleNamespace, download_type: DownloadType | str,
              bbox: dict = None, srs_name: str = "EPSG:4326",
              max_features: int = None, version: str = "1.1.0",
-             file_name: str = "download.csv") -> any:
+             file_name: str = None) -> any:
     """
     Downloads data from object
 
     :param obj: SimpleNamespace objects with "url", "type" and "name" attributes
-    :param download_type: type of download
+    :param download_type: type of download. This can be a DownloadType or string.
     :param bbox: the bounding box for the download data e.g. {"north":-31.456, "east":129.653...}
     :param srs_name: the SRS name, e.g. "EPGS:4326" (Optional)
     :param max_features: maximum number of features to return (Optional)
     :param version: WFS version, e.g. "1.1.0" (Optional)
     :param file_name: the file name for the download (Optional)
-    :return: CSV dataclear
+    :return: CSV data
     """
-    if download_type and not isinstance(download_type, DownloadType):
+    valid_download_types = {download.value for download in DownloadType}
+    if download_type and not isinstance(download_type, DownloadType) and download_type not in valid_download_types:
         raise AuScopeCatException(
             "Unsupported download type",
             500
@@ -213,8 +220,11 @@ def download(obj: SimpleNamespace, download_type: DownloadType,
     if download_type is None:
         download_type = DownloadType.CSV
 
+    if isinstance(download_type, DownloadType):
+        download_type = download_type.value
+
     response = _wfs_get_feature(obj.url, obj.name, bbox, version = version, srs_name = srs_name,
-                        output_format = "csv", max_features = max_features)
+                        output_format = download_type, max_features = max_features)
     if response and response.status_code and response.status_code == 200:
         f_name = "download.csv" if not file_name else file_name
         with open(f_name, "wb") as f:
@@ -226,16 +236,16 @@ def download(obj: SimpleNamespace, download_type: DownloadType,
         )
 
 
-def _validate_search_inputs(pattern: str, ogc_types: list[ServiceType] = None,
-           spatial_search_type: SpatialSearchType = None,
+def _validate_search_inputs(pattern: str, ogc_types: list[ServiceType | str] = None,
+           spatial_search_type: SpatialSearchType | str = None,
            bbox: dict = None, polygon: list[list[float]] = None):
     """
     Validate search inputs. Raises AuScopeCatExceptin if validation fails.
     :param pattern: search for this string
     :param ogc_types: limit results to those containing one or more of the specified OGC service
-                      types (Optional)
+                      types. This can be a list of ServiceTypes or strings. (Optional)
     :param spatial_search_type: the type of spatial search (intersects, coontains within).
-        Used with bbox (Optional)
+        Used with bbox and polygon. This can be a SpatialSearchType or string. (Optional)
     :param bbox: the bounding box for the search data e.g. {"north":-31.456, "east":129.653...}
     :param polygon: a list of points defined as a 2 element list of [latitude, longitude],
         e.g. [[-31.0, 125.0], [-32, 128.0], [-31.0, 128.0], [-31.0, 125.0]] (Optional)
@@ -246,9 +256,10 @@ def _validate_search_inputs(pattern: str, ogc_types: list[ServiceType] = None,
             500
         )
     if ogc_types is not None and len(ogc_types) > 0:
+        valid_ogc_types = {service.value for service in ServiceType}
         invalid_ogc_types = []
         for ogc in ogc_types:
-            if not isinstance(ogc, ServiceType):
+            if not isinstance(ogc, ServiceType) and ogc.lower() not in valid_ogc_types:
                 invalid_ogc_types.append(ogc)
         if len(invalid_ogc_types) > 0:
             raise AuScopeCatException(
@@ -261,7 +272,8 @@ def _validate_search_inputs(pattern: str, ogc_types: list[ServiceType] = None,
             500
         )
     if spatial_search_type and (bbox or polygon):
-        if not isinstance(spatial_search_type, SpatialSearchType):
+        valid_spatial_types = {spatial.value for spatial in SpatialSearchType}
+        if not isinstance(spatial_search_type, SpatialSearchType) and spatial_search_type not in valid_spatial_types:
             raise AuScopeCatException(
                 f"Unknown spatial search type: {spatial_search_type}",
                 500
@@ -272,15 +284,15 @@ def _validate_search_inputs(pattern: str, ogc_types: list[ServiceType] = None,
             validate_polygon(polygon)
 
 
-def _build_search_query(pattern: str, ogc_types: list[ServiceType] = None,
-           spatial_search_type: SpatialSearchType = None,
+def _build_search_query(pattern: str, ogc_types: list[ServiceType | str] = None,
+           spatial_search_type: SpatialSearchType | str = None,
            bbox: dict = None, polygon: list[list[float]] = None) -> str:
     """
     :param pattern: search for this string
     :param ogc_types: limit results to those containing one or more of the specified OGC service
-                      types (Optional)
+                      types. This can be a list of ServiceTypes or strings. (Optional)
     :param spatial_search_type: the type of spatial search (intersects, coontains within).
-        Used with either bbox or polygon (Optional)
+        Used with either bbox or polygon. This can be a SpatialSearchType or string. (Optional)
     :param bbox: the bounding box for the search data e.g. {"north":-31.456, "east":129.653...}
     :param polygon: a list of points defined as a 2 element list of [latitude, longitude],
         e.g. [[-31.0, 125.0], [-32, 128.0], [-31.0, 128.0], [-31.0, 125.0]] (Optional)
@@ -292,7 +304,12 @@ def _build_search_query(pattern: str, ogc_types: list[ServiceType] = None,
     # OGC services (WFS, WMS etc)
     if ogc_types is not None and len(ogc_types) > 0:
         for ogc in ogc_types:
-            search_query += f"&ogcServices={ogc.value}"
+            if isinstance(ogc, ServiceType):
+                search_query += f"&ogcServices={ogc.value}"
+            elif isinstance(ogc, str):
+                search_query += f"&ogcServices={ogc}"
+            else:
+                raise AuScopeCatException(f"Invalid service type: {ogc}", 500)
 
     # Specify CSW fields only in order to ignore KnownLayer results
     for field in SEARCH_FIELDS:
@@ -300,10 +317,17 @@ def _build_search_query(pattern: str, ogc_types: list[ServiceType] = None,
 
     # Spatial search if requested
     if spatial_search_type and (bbox or polygon):
-        search_query += f"&spatialRelation={spatial_search_type.value}"
-        if (bbox):
-            search_query += f'&westBoundLongitude={bbox.get("west")}&eastBoundLongitude={bbox.get("east")}' \
-                            f'&southBoundLatitude={bbox.get("south")}&northBoundLatitude={bbox.get("north")}'
+        if isinstance(spatial_search_type, SpatialSearchType):
+            search_query += f"&spatialRelation={spatial_search_type.value}"
+        elif isinstance(spatial_search_type, str):
+            search_query += f"&spatialRelation={spatial_search_type}"
+        else:
+            raise AuScopeCatException(f"Invalid spatial search type: {spatial_search_type}", 500)
+        if bbox:
+            search_query += f'&westBoundLongitude={bbox.get("west")}&' \
+                            f'eastBoundLongitude={bbox.get("east")}&' \
+                            f'southBoundLatitude={bbox.get("south")}&' \
+                            f'northBoundLatitude={bbox.get("north")}'
         else:
             for point in polygon:
                 search_query += f"&points={point[0]},{point[1]}"
