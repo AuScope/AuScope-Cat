@@ -15,14 +15,14 @@ Home of 'auscopecat', a Python package that aims to allow access to AuScope's ca
 ### To create and activate a new Python environment
 
 ```
-$ uv venv
-$ source .venv/bin/activate
-$ uv sync
+uv venv
+source .venv/bin/activate
+uv sync
 ```
 
 And to deactivate:
 ```
-$ deactivate
+deactivate
 ```
 
 **ALSO**
