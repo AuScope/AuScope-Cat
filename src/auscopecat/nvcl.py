@@ -4,7 +4,7 @@ from auscopecat.auscopecat_types import AuScopeCatException
 from auscopecat.api import search_cql, MAX_FEATURES
 from auscopecat.utils import download_url
 import pandas as pd
-
+from pandas import DataFrame
 NVCL_URLS = {
     'VIC': 'https://geology.data.vic.gov.au/nvcl/wfs',
     'NSW': 'https://gs.geoscience.nsw.gov.au/geoserver/wfs',
@@ -84,6 +84,91 @@ def search_cql_TSG(prov: str, cql_filter: str, max_features = MAX_FEATURES)->lis
     LOGGER.info((f'{prov} search_cql return urls: {len(urls)}'))
     return urls
 
+def get_cql_filter(layerName:str, geometryName:str, name: str = None, bbox: str = None, kmlCoords: str = None, max_features = MAX_FEATURES, isNvcl = False, prov: str = None)->str:
+    cql_filter = ''
+    if kmlCoords :
+        #KML coordinates are x,y (longitude, latitude), whereas geoserver uses LatLng (or y,x / latitude, longitude).
+        lonlatList = kmlCoords.split(' ')
+        latlonList = []
+        for lonlat in lonlatList:
+            (lon,lat) = lonlat.split(',')
+            latlonList.append(f'{lat} {lon}')
+        latlonStr = ','.join(latlonList)
+        if cql_filter.strip() != "":
+            cql_filter +=  ' AND '
+        cql_filter += f'INTERSECTS({geometryName},POLYGON(({latlonStr})))'
+
+    if name :
+        if cql_filter.strip() != "":
+            cql_filter +=  ' AND '
+        cql_filter += f'name like \'%{name}%\''
+
+    if bbox :
+        if cql_filter.strip() != "":
+            cql_filter +=  ' AND '
+        cql_filter += f'BBOX({geometryName},{bbox})'
+
+    if isNvcl and prov not in ['NT','QLD']:
+        #add nvclCollection filter except NT, QLD.(exception from server)
+        cql_filter += ' AND nvclCollection=\'true\''
+    return cql_filter
+
+def get_cql_params(layerName:str, geometryName:str, name: str = None, bbox: str = None, kmlCoords: str = None, max_features = MAX_FEATURES, isNvcl = False, prov: str = None)->dict:
+    cql_filter = get_cql_filter(layerName, geometryName, name, bbox, kmlCoords, max_features, True, prov)
+    cql_params = {
+              'service': 'WFS',
+              'version': '1.1.0',
+              'request': 'GetFeature',
+              'typename': layerName,
+              'outputFormat': 'csv',
+              'srsname': 'EPSG:4326',
+              'CQL_FILTER': cql_filter,
+              'maxFeatures': str(max_features)
+             }
+    return cql_params
+
+def add_tsg_urls(prov:str, df:DataFrame)->any:
+    urlAll = 'https://nvclstore.z8.web.core.windows.net/all.csv'
+    dfA = pd.read_csv(urlAll)
+    LOGGER.info((f'{prov} cql return: {df.shape[0]} : dfAll return {dfA.shape[0]}'))
+    if df.shape[0] < 1:
+        return []
+    df = df.loc[df['gsmlp:nvclCollection']]
+    df['DownloadLink'] = ''
+    for index,bhIdentifier in enumerate(df['gsmlp:identifier']):
+        bhIdentifier1 = bhIdentifier.split('://')[1]
+        dfMask = dfA['BoreholeURI'].str.contains(bhIdentifier1, na=False, case=False, regex=False)
+        dfUrls = dfA[dfMask].reset_index()
+        if dfUrls.shape[0] > 0:
+            df.loc[index,'DownloadLink'] = dfUrls.loc[0,'DownloadLink']
+    return df
+
+def search_cql_TSG_df(prov: str,name: str = None, bbox: str = None, kmlCoords: str = None, max_features = MAX_FEATURES)->any:
+    '''
+    search TSG files with filters
+
+    :param prov: prov
+    :param name: name
+    :param bbox: bbox
+    :param kmlCoords: kmlCoords
+    :param max_features: max_features
+    :return: dataframe
+    '''
+
+    cql_params = get_cql_params('gsmlp:BoreholeView','gsmlp:shape',name, bbox, kmlCoords, max_features,True,prov)
+    url = NVCL_URLS.get(prov)
+    try:
+        df = search_cql(url, cql_params)
+    except Exception as e:
+        raise AuScopeCatException(
+            f'Error querying data: {e}',
+            500
+        )
+    LOGGER.info((f'{prov} search_cql return records0: {df.shape[0]}'))
+    df = add_tsg_urls(prov,df)
+    LOGGER.info((f'{prov} search_cql return records: {df.shape[0]}'))
+    return df
+
 def downloadTSG(prov: str,name: str = None, bbox: str = None, kmlCoords: str = None, max_features = MAX_FEATURES, simulation: bool = False) -> list[str]:
     '''
     Download TSG files with Polygon filter
@@ -125,31 +210,6 @@ def search_TSG(prov: str, name: str = None, bbox: str = None, kmlCoords: str = N
     :param max_features: max_features
     :return: a list of url of TSG files
     '''
-    cql_filter = ''
-    if kmlCoords :
-        #KML coordinates are x,y (longitude, latitude), whereas geoserver uses LatLng (or y,x / latitude, longitude).
-        lonlatList = kmlCoords.split(' ')
-        latlonList = []
-        for lonlat in lonlatList:
-            (lon,lat) = lonlat.split(',')
-            latlonList.append(f'{lat} {lon}')
-        latlonStr = ','.join(latlonList)
-        if cql_filter.strip() != "":
-            cql_filter +=  ' AND '
-        cql_filter += f'INTERSECTS(gsmlp:shape,POLYGON(({latlonStr})))'
-
-    if name :
-        if cql_filter.strip() != "":
-            cql_filter +=  ' AND '
-        cql_filter += f'name like \'%{name}%\''
-
-    if bbox :
-        if cql_filter.strip() != "":
-            cql_filter +=  ' AND '
-        cql_filter += f'BBOX(gsmlp:shape,{bbox})'
-
-    if prov not in ['NT','QLD']:
-        #add nvclCollection filter except NT, QLD.(exception from server)
-        cql_filter += ' AND nvclCollection=\'true\''
+    cql_filter = get_cql_filter('gsmlp:BoreholeView', 'gsmlp:shape', name, bbox, kmlCoords, max_features, True, prov)
     urls = search_cql_TSG(prov, cql_filter, max_features)
     return urls
