@@ -1,12 +1,22 @@
-from requests import Response
 from types import SimpleNamespace
-import pytest
-from auscopecat.api import download, search, search_records, _wfs_get_feature, \
-     _validate_search_inputs
-from auscopecat.auscopecat_types import DownloadType, ServiceType, \
-     SpatialSearchType, AuScopeCatException
-from auscopecat.utils import validate_bbox, validate_polygon
 
+import pytest
+from requests import Response
+
+from auscopecat.api import (
+    _validate_search_inputs,
+    _wfs_get_feature,
+    download,
+    search,
+    search_records,
+)
+from auscopecat.auscopecat_types import (
+    AuScopeCatError,
+    DownloadType,
+    ServiceType,
+    SpatialSearchType,
+)
+from auscopecat.utils import validate_bbox, validate_polygon
 
 VALID_BBOX = {
     "north": -22.19, "east": 123.07,
@@ -26,17 +36,17 @@ def test_validate_bbox():
     # Valid bbox
     try:
         validate_bbox(VALID_BBOX)
-    except AuScopeCatException as e:
+    except AuScopeCatError as e:
         assert False, f"Error validating bbox: {e}"
     # String value for north
     bbox = VALID_BBOX.copy()
     bbox["north"] = "north"
-    with pytest.raises(AuScopeCatException):
+    with pytest.raises(AuScopeCatError):
         validate_bbox(bbox)
     # Out of range value for north (> 90.0)
     bbox = VALID_BBOX.copy()
     bbox["north"] = 91.0
-    with pytest.raises(AuScopeCatException):
+    with pytest.raises(AuScopeCatError):
         validate_bbox(bbox)
     # Out of range value for north, but adjust it
     bbox = validate_bbox(bbox, True)
@@ -46,7 +56,7 @@ def test_validate_bbox():
 def test_validate_polygon():
     try:
         validate_polygon(VALID_POLYGON)
-    except AuScopeCatException as e:
+    except AuScopeCatError as e:
         assert False, f"Error validating polygon: {e}"
 
 # search tests
@@ -57,21 +67,21 @@ def test_validate_search_inputs():
     bbox = {"north": -31.456, "east": 129.653, "south": -32.456, "west": 128.653}
     try:
         _validate_search_inputs(pattern, ogc_types, spatial_search_type, bbox)
-    except AuScopeCatException:
-        pytest.fail("validate_search_inputs() raised AuScopeCatException")
+    except AuScopeCatError:
+        pytest.fail("validate_search_inputs() raised AuScopeCatError")
 
 def test_search_invalid_ogc_type():
-    with pytest.raises(AuScopeCatException):
+    with pytest.raises(AuScopeCatError):
         search("pattern", "WXS")
 
 def test_search_invalid_spatial_type():
-    with pytest.raises(AuScopeCatException):
+    with pytest.raises(AuScopeCatError):
         search("pattern", spatial_search_type="ABOUNDS", bbox=VALID_BBOX)
 
 def test_search_with_invalid_bbox():
     bbox = VALID_BBOX.copy()
     bbox["north"] = "x"
-    with pytest.raises(AuScopeCatException):
+    with pytest.raises(AuScopeCatError):
         search("pattern", spatial_search_type=SpatialSearchType.INTERSECTS, bbox=bbox)
 
 @pytest.mark.xfail(reason="Testing live servers is not reliable as they are sometimes unavailable")
@@ -83,14 +93,14 @@ def test_successful_wfs_search():
             assert hasattr(result, "name")
             assert hasattr(result, "type")
             assert hasattr(result, "url")
-    except AuScopeCatException as e:
+    except AuScopeCatError as e:
         assert False, f"Error searching: {e}"
 
 # wfs_get_festure tests
 def test_wfs_get_feature_invalid_bbox():
     bbox = VALID_BBOX.copy()
     bbox["north"] = "x"
-    with pytest.raises(AuScopeCatException):
+    with pytest.raises(AuScopeCatError):
         _wfs_get_feature(SEARCH_RESULT.url, SEARCH_RESULT.name, bbox)
 
 @pytest.mark.xfail(reason="Testing live servers is not reliable as they are sometimes unavailable")
@@ -103,17 +113,17 @@ def test_wfs_get_feature_success():
 
 # download tests
 def test_download_invalid_download_type():
-    with pytest.raises(AuScopeCatException):
+    with pytest.raises(AuScopeCatError):
         download(SEARCH_RESULT, "XLSX")
 
 def test_download_missing_bbox():
-    with pytest.raises(AuScopeCatException):
+    with pytest.raises(AuScopeCatError):
         download(SEARCH_RESULT, DownloadType.CSV)
 
 def test_download_invalid_bbox():
     bbox = VALID_BBOX.copy()
     bbox["north"] = "x"
-    with pytest.raises(AuScopeCatException):
+    with pytest.raises(AuScopeCatError):
         download(SEARCH_RESULT, DownloadType.CSV, bbox=bbox)
 
 @pytest.mark.xfail(reason="Testing live servers is not reliable as they are sometimes unavailable")
@@ -124,7 +134,7 @@ def test_successful_download(mocker):
         download(SEARCH_RESULT, DownloadType.CSV, VALID_BBOX, "EPSG:4236", 10,
                  file_name="test_download.csv")
         mock_file.assert_called_once_with("test_download.csv", "wb")
-    except AuScopeCatException as e:
+    except AuScopeCatError as e:
         assert False, f"Error downloading: {e}"
 
 @pytest.mark.xfail(reason="Testing live servers is not reliable as they are sometimes unavailable")
@@ -135,7 +145,7 @@ def test_successful_download_string_params(mocker):
         download(SEARCH_RESULT, "csv", VALID_BBOX, "EPSG:4236", 10,
                  file_name="test_download.csv")
         mock_file.assert_called_once_with("test_download.csv", "wb")
-    except AuScopeCatException as e:
+    except AuScopeCatError as e:
         assert False, f"Error downloading: {e}"
 
 # combined tests
@@ -151,7 +161,7 @@ def test_search_and_download(mocker):
             mock_file.assert_called_once_with("test_download.csv", "wb")
         else:
             assert False, "No search results to download"
-    except AuScopeCatException as e:
+    except AuScopeCatError as e:
         assert False, f"Error downloading: {e}"
 
 # search_record tests

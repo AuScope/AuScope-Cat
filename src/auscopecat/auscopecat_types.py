@@ -1,6 +1,7 @@
 from enum import Enum
 from typing import TypedDict
 
+
 class ServiceType(Enum):
     WMS = "wms"
     WFS = "wfs"
@@ -15,7 +16,7 @@ class SpatialSearchType(Enum):
 class DownloadType(Enum):
     CSV = "csv"
 
-class AuScopeCatException(Exception):
+class AuScopeCatError(Exception):
     def __init__(self, message, error_code):
         self.message = message
         self.error_code = error_code

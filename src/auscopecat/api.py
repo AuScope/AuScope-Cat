@@ -3,13 +3,18 @@ Python library for accessing the AuScope Portal's API methods.
 """
 from io import StringIO
 from types import SimpleNamespace
+
 import pandas as pd
 from requests import Response
-from auscopecat.auscopecat_types import AuScopeCatException, DownloadType, \
-        ServiceType, SpatialSearchType
+
+from auscopecat.auscopecat_types import (
+    AuScopeCatError,
+    DownloadType,
+    ServiceType,
+    SpatialSearchType,
+)
 from auscopecat.network import request
 from auscopecat.utils import validate_bbox, validate_polygon
-
 
 API_URL = "https://portal.auscope.org/api/"
 #API_URL = "http://localhost:8080/api/"
@@ -125,7 +130,7 @@ def search_records(pattern: str, ogc_types: list[ServiceType | str] = None,
                         if ogc_types is None or len(ogc_types) == 0 or next(
                             (x for x in ogc_types if (
                                 x.value.lower() if isinstance(x, ServiceType) else x.lower()
-                            ) == resource.get("type").lower()), 
+                            ) == resource.get("type").lower()),
                             None
                         ):
                             online_resources.append(
@@ -158,7 +163,7 @@ def _wfs_get_feature(url: str, type_name: str, bbox: dict, version = "1.1.0",
     :return: the WFS GetFeature Response object
     """
     if bbox is None:
-        raise AuScopeCatException(
+        raise AuScopeCatError(
             "A bounding box (bbox) must be specified",
             500
         )
@@ -201,12 +206,12 @@ def download(obj: SimpleNamespace, download_type: DownloadType | str,
     """
     valid_download_types = {download.value for download in DownloadType}
     if download_type and not isinstance(download_type, DownloadType) and download_type not in valid_download_types:
-        raise AuScopeCatException(
+        raise AuScopeCatError(
             "Unsupported download type",
             500
         )
     if bbox is None:
-        raise AuScopeCatException(
+        raise AuScopeCatError(
             "A bounding box (bbox) must be specified",
             500
         )
@@ -214,7 +219,7 @@ def download(obj: SimpleNamespace, download_type: DownloadType | str,
 
     # TODO: Check to see if zip file specified, or append .zip if no extension
     if file_name and file_name == "":
-        raise AuScopeCatException(
+        raise AuScopeCatError(
             "If file_name is specified it cannot be empty",
             500
         )
@@ -232,7 +237,7 @@ def download(obj: SimpleNamespace, download_type: DownloadType | str,
         with open(f_name, "wb") as f:
             f.write(response.content)
     else:
-        raise AuScopeCatException(
+        raise AuScopeCatError(
             f"Error downloading data: {response.reason}",
             response.status_code
         )
@@ -253,7 +258,7 @@ def _validate_search_inputs(pattern: str, ogc_types: list[ServiceType | str] = N
         e.g. [[-31.0, 125.0], [-32, 128.0], [-31.0, 128.0], [-31.0, 125.0]] (Optional)
     """
     if pattern is None or pattern == "":
-        raise AuScopeCatException(
+        raise AuScopeCatError(
             "Parameter pattern can not be empty",
             500
         )
@@ -264,19 +269,19 @@ def _validate_search_inputs(pattern: str, ogc_types: list[ServiceType | str] = N
             if not isinstance(ogc, ServiceType) and ogc.lower() not in valid_ogc_types:
                 invalid_ogc_types.append(ogc)
         if len(invalid_ogc_types) > 0:
-            raise AuScopeCatException(
+            raise AuScopeCatError(
                     f"Unknown service type(s): {invalid_ogc_types}",
                     500
                 )
     if spatial_search_type and (bbox is None and polygon is None):
-        raise AuScopeCatException(
+        raise AuScopeCatError(
             "Spatial search requires a bbox (bounding box) or polygon (polygon) to be specified",
             500
         )
     if spatial_search_type and (bbox or polygon):
         valid_spatial_types = {spatial.value for spatial in SpatialSearchType}
         if not isinstance(spatial_search_type, SpatialSearchType) and spatial_search_type not in valid_spatial_types:
-            raise AuScopeCatException(
+            raise AuScopeCatError(
                 f"Unknown spatial search type: {spatial_search_type}",
                 500
             )
@@ -311,7 +316,7 @@ def _build_search_query(pattern: str, ogc_types: list[ServiceType | str] = None,
             elif isinstance(ogc, str):
                 search_query += f"&ogcServices={ogc}"
             else:
-                raise AuScopeCatException(f"Invalid service type: {ogc}", 500)
+                raise AuScopeCatError(f"Invalid service type: {ogc}", 500)
 
     # Specify CSW fields only in order to ignore KnownLayer results
     for field in SEARCH_FIELDS:
@@ -324,7 +329,7 @@ def _build_search_query(pattern: str, ogc_types: list[ServiceType | str] = None,
         elif isinstance(spatial_search_type, str):
             search_query += f"&spatialRelation={spatial_search_type}"
         else:
-            raise AuScopeCatException(f"Invalid spatial search type: {spatial_search_type}", 500)
+            raise AuScopeCatError(f"Invalid spatial search type: {spatial_search_type}", 500)
         if bbox:
             search_query += f'&westBoundLongitude={bbox.get("west")}&' \
                             f'eastBoundLongitude={bbox.get("east")}&' \
@@ -348,10 +353,10 @@ def search_cql(url: str, params: dict, max_features = MAX_FEATURES)->any:
     try:
         response = request(url,params,'POST')
     except Exception as e:
-        raise AuScopeCatException(
+        raise AuScopeCatError(
             f'Error querying data: {e}',
             500
         )
-    csvBuffer = StringIO(response.text)
-    df = pd.read_csv(filepath_or_buffer = csvBuffer, low_memory=False)
+    csv_buffer = StringIO(response.text)
+    df = pd.read_csv(filepath_or_buffer = csv_buffer, low_memory=False)
     return df
