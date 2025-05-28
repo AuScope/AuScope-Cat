@@ -35,7 +35,8 @@ will run an environment in a new shell
 **TIP**: Use 'uv pip install "auscopecat@."' to install the local auscopecat package
 
 ### Pre-commit
-This project comes with a pre-commit configuration `pre-commit install` to add it as a git hook.
+This project comes with a pre-commit configuration `pre-commit install` to add it as a git hook.<br>
+If you want to let Ruff fix a lot of the problems for you, you can use `ruff check . --fix`
 
 ### To search for WFS borehole datasets and download from one of them
 
