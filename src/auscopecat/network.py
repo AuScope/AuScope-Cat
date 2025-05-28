@@ -1,10 +1,12 @@
 import logging
-import requests
 import sys
-from auscopecat.auscopecat_types import AuScopeCatException
+
+import requests
 from requests.adapters import HTTPAdapter
 from urllib3.exceptions import HTTPError
 from urllib3.util import Retry
+
+from auscopecat.auscopecat_types import AuScopeCatError
 
 LOG_LVL = logging.INFO
 ''' Initialise debug level, set to 'logging.INFO' or 'logging.DEBUG'
@@ -32,7 +34,7 @@ def request(url: str, params: dict = None, method:str = 'GET'):
     """
     Send a request to AuScope API
 
-    :param url: URL 
+    :param url: URL
     :param params: dictionary of HTTP request parameters
     :param method:  HTTP request method "POST" or "GET"
     :returns: response or [] upon error
@@ -56,7 +58,7 @@ def request(url: str, params: dict = None, method:str = 'GET'):
 
     except (HTTPError, requests.RequestException) as e:
         LOGGER.error(f"{prov} returned error exception: {e}")
-        raise AuScopeCatException(
+        raise AuScopeCatError(
             f"{prov} returned error exception: {e}",
             500
         )

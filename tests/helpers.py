@@ -1,7 +1,9 @@
-from io import IOBase
 import json
-import pandas as pd
+from io import IOBase
+
 import numpy as np
+import pandas as pd
+
 
 def make_mock_session_fn(inp: str, code: int = 200):
     ''' Make a mock requests.Session.get() or post() function

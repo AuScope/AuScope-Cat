@@ -1,6 +1,6 @@
 import os
 import sys
 
-srcPath = f'{os.getcwd()}/src'
-print(srcPath)
-sys.path.insert(0, srcPath) # location of src
+src_path = f'{os.getcwd()}/src'
+print(src_path)
+sys.path.insert(0, src_path) # location of src

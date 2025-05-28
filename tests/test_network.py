@@ -1,11 +1,15 @@
 import logging
+
 import pytest
-from auscopecat.auscopecat_types import AuScopeCatException
 from requests import Session
+
+from auscopecat.auscopecat_types import AuScopeCatError
 
 # Local imports
 from auscopecat.network import request
+
 from .helpers import make_mock_session_fn
+
 
 def set_test_logger():
     """ Sets up a logger that we can use for testing output
@@ -46,7 +50,7 @@ def test_request_return_500(fn, monkeypatch, caplog):
 
 @pytest.mark.parametrize("excp, message, error_code, fn",
         [
-          (AuScopeCatException, "returned error exception: ", 500, "get")
+          (AuScopeCatError, "returned error exception: ", 500, "get")
         ]
     )
 def test_request_exceptions(excp, message, error_code, fn, monkeypatch, caplog):
@@ -58,7 +62,7 @@ def test_request_exceptions(excp, message, error_code, fn, monkeypatch, caplog):
         raise excp(message, error_code)
 
     monkeypatch.setattr(Session, fn, mock_get_http_exc)
-    with pytest.raises(AuScopeCatException):
+    with pytest.raises(AuScopeCatError):
         request("https://blah.com", {}, fn.upper())
 
         assert message in caplog.text
@@ -77,28 +81,28 @@ def test_request_live():
               "FILTER": "<ogc:Filter><ogc:PropertyIsEqualTo matchCase=\"false\"><ogc:PropertyName>gsmlp:nvclCollection</ogc:PropertyName><ogc:Literal>true</ogc:Literal></ogc:PropertyIsEqualTo></ogc:Filter>",
               "maxFeatures": str(10)
              }
-    with pytest.raises(AuScopeCatException):
+    with pytest.raises(AuScopeCatError):
         res = request('https://auscope.portal.org.au/api/getBlah.do')
 
     res = request('https://auportal-dev.geoanalytics.group/api/getKnownLayers.do')
     data = res.json()['data']
-    dataLen = len(data)
-    assert (dataLen > 100)
+    data_len = len(data)
+    assert data_len > 100
 
     res = request('https://geology.data.nt.gov.au/geoserver/wfs',params, 'GET')
     features = res.json()['features']
-    assert (len(features) == 10)
+    assert len(features) == 10
 
     res = request('https://geology.data.nt.gov.au/geoserver/wfs',params, 'POST')
     features = res.json()['features']
-    assert (len(features) == 10)
+    assert len(features) == 10
 
-    res = request('https://geology.data.nt.gov.au/geoserver/wfs') 
-    assert (res.status_code == 400)
+    res = request('https://geology.data.nt.gov.au/geoserver/wfs')
+    assert res.status_code == 400
 
 
 @pytest.mark.xfail(reason="Testing live servers is not reliable as they are sometimes unavailable")
-def test_requestWMS_live():
+def test_request_wms_live():
     params = {
             "service": "WMS",
             "version": "1.1.1",
@@ -114,12 +118,12 @@ def test_requestWMS_live():
             "HEIGHT": "400"
             }
     res = request('https://geossdi.dmp.wa.gov.au/services/ows', params, 'POST')
-    imgLen = len(res.content)
-    assert (imgLen >= 10000)
+    img_len = len(res.content)
+    assert (img_len >= 10000)
 
 
 @pytest.mark.xfail(reason="Testing live servers is not reliable as they are sometimes unavailable")
-def test_requestWFS_live():
+def test_request_wfs_live():
     params = {
             "service": "WFS",
             "version": "1.1.0",
