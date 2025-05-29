@@ -4,7 +4,7 @@ Examples
 This page provides examples of how to use AuScope-Cat for various common tasks.
 
 Basic Search Example
-------------------
+--------------------
 
 .. code-block:: python
 
@@ -20,7 +20,7 @@ Basic Search Example
         print("---")
 
 Filtering by Service Type
------------------------
+-------------------------
 
 .. code-block:: python
 
@@ -28,7 +28,7 @@ Filtering by Service Type
     from auscopecat.auscopecat_types import ServiceType
     
     # Search for WFS services containing "gold"
-    wfs_results = search("gold", ogc_type=ServiceType.WFS)
+    wfs_results = search("gold", ogc_types=[ServiceType.WFS])
     
     # Print the results
     for result in wfs_results:
@@ -38,7 +38,7 @@ Filtering by Service Type
         print("---")
 
 Downloading Data
---------------
+----------------
 
 .. code-block:: python
 

@@ -2,7 +2,7 @@ Usage
 =====
 
 Basic Usage
-----------
+-----------
 
 Here's a simple example of how to use AuScope-Cat to search for datasets:
 
@@ -15,7 +15,7 @@ Here's a simple example of how to use AuScope-Cat to search for datasets:
     results = search("gold")
 
     # Search for WFS services containing "gold"
-    wfs_results = search("gold", ogc_type=ServiceType.WFS)
+    wfs_results = search("gold", ogc_types=[ServiceType.WFS])
 
     # Print the results
     for result in results:
@@ -26,7 +26,7 @@ Here's a simple example of how to use AuScope-Cat to search for datasets:
         print("---")
 
 Downloading Data
----------------
+----------------
 
 You can download data using the download function:
 

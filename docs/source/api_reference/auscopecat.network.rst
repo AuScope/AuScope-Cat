@@ -1,7 +1,7 @@
 auscopecat.network module
-=====================
+=========================
 
-.. automodule:: src.auscopecat.network
+.. automodule:: auscopecat.network
    :members:
    :undoc-members:
    :show-inheritance: 

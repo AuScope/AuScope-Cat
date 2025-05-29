@@ -1,7 +1,7 @@
 auscopecat.api module
 ==================
 
-.. automodule:: src.auscopecat.api
+.. automodule:: auscopecat.api
    :members:
    :undoc-members:
    :show-inheritance:

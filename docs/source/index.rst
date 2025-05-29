@@ -1,5 +1,5 @@
 Welcome to AuScope-Cat's documentation!
-=====================================
+=======================================
 
 AuScope-Cat is a Python package that provides access to AuScope's catalogue of geoscience datasets from sources all over Australia.
 

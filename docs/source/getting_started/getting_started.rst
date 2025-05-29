@@ -1,15 +1,14 @@
 Getting Started
-==============
+===============
 
 Quick Start
-----------
+-----------
 
 AuScope-Cat provides easy access to geoscience datasets from sources all over Australia. Here's how to get started quickly:
 
 .. code-block:: python
 
     from auscopecat.api import search
-    from auscopecat.auscopecat_types import ServiceType
 
     # Search for datasets containing "gold"
     results = search("gold")
@@ -21,7 +20,7 @@ AuScope-Cat provides easy access to geoscience datasets from sources all over Au
         print("---")
 
 Basic Concepts
--------------
+--------------
 
 AuScope-Cat allows you to:
 

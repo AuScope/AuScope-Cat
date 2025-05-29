@@ -1,5 +1,5 @@
 auscopecat package
-=================
+==================
 
 Submodules
 ----------
@@ -10,12 +10,5 @@ Submodules
    auscopecat.api
    auscopecat.auscopecat_types
    auscopecat.network
-   auscopecat.downloadTSG
-
-Module contents
---------------
-
-.. automodule:: src.auscopecat
-   :members:
-   :undoc-members:
-   :show-inheritance: 
+   auscopecat.nvcl
+   auscopecat.utils

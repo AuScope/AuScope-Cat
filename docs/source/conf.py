@@ -1,9 +1,8 @@
+import datetime
 import os
 import sys
-import datetime
 
-
-sys.path.insert(0, os.path.abspath('../../'))
+sys.path.insert(0, os.path.abspath('../src'))
 
 project = 'AuScope-Cat'
 copyright = f'{datetime.datetime.now().year}, AuScope MAINTAIN'
@@ -58,4 +57,4 @@ intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
     'numpy': ('https://numpy.org/doc/stable/', None),
     'pandas': ('https://pandas.pydata.org/pandas-docs/stable/', None),
-} 
+}

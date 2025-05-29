@@ -6,31 +6,39 @@ This section provides detailed API documentation for the AuScope-Cat package.
 api module
 ----------
 
-.. automodule:: src.auscopecat.api
+.. automodule:: auscopecat.api
    :members:
    :undoc-members:
    :show-inheritance:
 
 auscopecat_types module
-----------------------
+-----------------------
 
-.. automodule:: src.auscopecat.auscopecat_types
+.. automodule:: auscopecat.auscopecat_types
    :members:
    :undoc-members:
    :show-inheritance:
 
 network module
--------------
+--------------
 
-.. automodule:: src.auscopecat.network
+.. automodule:: auscopecat.network
    :members:
    :undoc-members:
    :show-inheritance:
 
-downloadTSG module
------------------
+nvcl module
+-----------
 
-.. automodule:: src.auscopecat.downloadTSG
+.. automodule:: auscopecat.nvcl
    :members:
    :undoc-members:
-   :show-inheritance: 
+   :show-inheritance:
+
+utils module
+------------
+
+.. automodule:: auscopecat.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:

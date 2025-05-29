@@ -9,7 +9,7 @@ If you use AuScope-Cat in your research, please cite it as follows:
     of geoscience datasets. [Software]. Available from https://github.com/AuScope/AuScope-Cat
 
 BibTeX Entry
------------
+------------
 
 .. code-block:: bibtex
 
@@ -21,6 +21,6 @@ BibTeX Entry
     }
 
 Citing Specific Datasets
-----------------------
+------------------------
 
 When using specific datasets accessed through AuScope-Cat, please also cite the original data providers. Citation information for specific datasets can be found in the metadata of each dataset. 

@@ -8,7 +8,7 @@ You can install AuScope-Cat using pip:
     pip install auscopecat
 
 Development Installation
------------------------
+------------------------
 
 For development, you can clone the repository and install it in development mode:
 
