@@ -1,0 +1,183 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AuScope-Cat Documentation &mdash; AuScope-Cat 0.1.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=fd825880"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Feature Requests" href="roadmap.html" />
+    <link rel="prev" title="Citation" href="../getting_started/citation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            AuScope-Cat
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">GETTING STARTED</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/tutorials.html">Notebook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/citation.html">Citation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">DEVELOPMENT</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">AuScope-Cat Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#building-the-documentation-locally">Building the Documentation Locally</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#documentation-structure">Documentation Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#updating-the-documentation">Updating the Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html">Feature Requests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="code_of_conduct.html">Code of Conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributors.html">Contributors</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API REFERENCE</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/modules.html">Modules</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AuScope-Cat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">AuScope-Cat Documentation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/development/development.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="auscope-cat-documentation">
+<h1>AuScope-Cat Documentation<a class="headerlink" href="#auscope-cat-documentation" title="Link to this heading"></a></h1>
+<p>This directory contains the documentation for the AuScope-Cat package.</p>
+<section id="building-the-documentation-locally">
+<h2>Building the Documentation Locally<a class="headerlink" href="#building-the-documentation-locally" title="Link to this heading"></a></h2>
+<p>To build the documentation locally, follow these steps:</p>
+<ol class="arabic simple">
+<li><p>Install the documentation dependencies:</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>Build the documentation:</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>docs
+make<span class="w"> </span>html
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p>View the documentation:</p></li>
+</ol>
+<p>The built documentation will be available in the <code class="docutils literal notranslate"><span class="pre">build/html</span></code> directory. You can open <code class="docutils literal notranslate"><span class="pre">build/html/index.html</span></code> in your web browser to view it.</p>
+</section>
+<section id="documentation-structure">
+<h2>Documentation Structure<a class="headerlink" href="#documentation-structure" title="Link to this heading"></a></h2>
+<p>The documentation is organized into the following sections:</p>
+<ul class="simple">
+<li><p><strong>GETTING STARTED</strong>: Basic information for users to get started with AuScope-Cat
+- Installation
+- Getting Started
+- Examples
+- Tutorials
+- Citation</p></li>
+<li><p><strong>DEVELOPMENT</strong>: Information for developers who want to contribute to AuScope-Cat
+- Development
+- Roadmap
+- Code of Conduct
+- Contributors</p></li>
+<li><p><strong>API REFERENCE</strong>: Detailed API documentation
+- API
+- Modules</p></li>
+</ul>
+</section>
+<section id="updating-the-documentation">
+<h2>Updating the Documentation<a class="headerlink" href="#updating-the-documentation" title="Link to this heading"></a></h2>
+<p>To update the documentation:</p>
+<ol class="arabic simple">
+<li><p>Edit the relevant <code class="docutils literal notranslate"><span class="pre">.rst</span></code> files in the <code class="docutils literal notranslate"><span class="pre">source</span></code> directory</p></li>
+<li><p>Build the documentation to preview your changes</p></li>
+<li><p>Commit your changes and push them to GitHub</p></li>
+<li><p>The GitHub Action will automatically build and deploy the documentation to GitHub Pages</p></li>
+</ol>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../getting_started/citation.html" class="btn btn-neutral float-left" title="Citation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="roadmap.html" class="btn btn-neutral float-right" title="Feature Requests" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, AuScope MAINTAIN.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

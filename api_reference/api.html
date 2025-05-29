@@ -1,0 +1,584 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Reference &mdash; AuScope-Cat 0.1.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=fd825880"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Modules" href="modules.html" />
+    <link rel="prev" title="Contributors" href="../development/contributors.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            AuScope-Cat
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">GETTING STARTED</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/tutorials.html">Notebook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/citation.html">Citation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">DEVELOPMENT</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../development/development.html">AuScope-Cat Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/roadmap.html">Feature Requests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/code_of_conduct.html">Code of Conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/contributors.html">Contributors</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API REFERENCE</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-auscopecat.api">api module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#auscopecat.api.search"><code class="docutils literal notranslate"><span class="pre">search()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#auscopecat.api.search_records"><code class="docutils literal notranslate"><span class="pre">search_records()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#auscopecat.api.download"><code class="docutils literal notranslate"><span class="pre">download()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#auscopecat.api.search_cql"><code class="docutils literal notranslate"><span class="pre">search_cql()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-auscopecat.auscopecat_types">auscopecat_types module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#auscopecat.auscopecat_types.ServiceType"><code class="docutils literal notranslate"><span class="pre">ServiceType</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#auscopecat.auscopecat_types.ServiceType.WMS"><code class="docutils literal notranslate"><span class="pre">ServiceType.WMS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#auscopecat.auscopecat_types.ServiceType.WFS"><code class="docutils literal notranslate"><span class="pre">ServiceType.WFS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#auscopecat.auscopecat_types.ServiceType.WCS"><code class="docutils literal notranslate"><span class="pre">ServiceType.WCS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#auscopecat.auscopecat_types.ServiceType.KML"><code class="docutils literal notranslate"><span class="pre">ServiceType.KML</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#auscopecat.auscopecat_types.SpatialSearchType"><code class="docutils literal notranslate"><span class="pre">SpatialSearchType</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#auscopecat.auscopecat_types.SpatialSearchType.INTERSECTS"><code class="docutils literal notranslate"><span class="pre">SpatialSearchType.INTERSECTS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#auscopecat.auscopecat_types.SpatialSearchType.CONTAINS"><code class="docutils literal notranslate"><span class="pre">SpatialSearchType.CONTAINS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#auscopecat.auscopecat_types.SpatialSearchType.WITHIN"><code class="docutils literal notranslate"><span class="pre">SpatialSearchType.WITHIN</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#auscopecat.auscopecat_types.DownloadType"><code class="docutils literal notranslate"><span class="pre">DownloadType</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#auscopecat.auscopecat_types.DownloadType.CSV"><code class="docutils literal notranslate"><span class="pre">DownloadType.CSV</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#auscopecat.auscopecat_types.AuScopeCatError"><code class="docutils literal notranslate"><span class="pre">AuScopeCatError</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#auscopecat.auscopecat_types.AuScopeCatError.__init__"><code class="docutils literal notranslate"><span class="pre">AuScopeCatError.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#auscopecat.auscopecat_types.BoundingBox"><code class="docutils literal notranslate"><span class="pre">BoundingBox</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#auscopecat.auscopecat_types.BoundingBox.north"><code class="docutils literal notranslate"><span class="pre">BoundingBox.north</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#auscopecat.auscopecat_types.BoundingBox.east"><code class="docutils literal notranslate"><span class="pre">BoundingBox.east</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#auscopecat.auscopecat_types.BoundingBox.south"><code class="docutils literal notranslate"><span class="pre">BoundingBox.south</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#auscopecat.auscopecat_types.BoundingBox.west"><code class="docutils literal notranslate"><span class="pre">BoundingBox.west</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-auscopecat.network">network module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#auscopecat.network.LOG_LVL"><code class="docutils literal notranslate"><span class="pre">LOG_LVL</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#auscopecat.network.request"><code class="docutils literal notranslate"><span class="pre">request()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-auscopecat.nvcl">nvcl module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#auscopecat.nvcl.LOG_LVL"><code class="docutils literal notranslate"><span class="pre">LOG_LVL</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#auscopecat.nvcl.search_cql_tsg"><code class="docutils literal notranslate"><span class="pre">search_cql_tsg()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#auscopecat.nvcl.get_cql_filter"><code class="docutils literal notranslate"><span class="pre">get_cql_filter()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#auscopecat.nvcl.get_cql_params"><code class="docutils literal notranslate"><span class="pre">get_cql_params()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#auscopecat.nvcl.add_tsg_urls"><code class="docutils literal notranslate"><span class="pre">add_tsg_urls()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#auscopecat.nvcl.search_cql_tsg_df"><code class="docutils literal notranslate"><span class="pre">search_cql_tsg_df()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#auscopecat.nvcl.download_tsg"><code class="docutils literal notranslate"><span class="pre">download_tsg()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#auscopecat.nvcl.search_tsg"><code class="docutils literal notranslate"><span class="pre">search_tsg()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-auscopecat.utils">utils module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#auscopecat.utils.validate_bbox"><code class="docutils literal notranslate"><span class="pre">validate_bbox()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#auscopecat.utils.validate_polygon"><code class="docutils literal notranslate"><span class="pre">validate_polygon()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#auscopecat.utils.download_url"><code class="docutils literal notranslate"><span class="pre">download_url()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Modules</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AuScope-Cat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">API Reference</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api_reference/api.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="api-reference">
+<h1>API Reference<a class="headerlink" href="#api-reference" title="Link to this heading"></a></h1>
+<p>This section provides detailed API documentation for the AuScope-Cat package.</p>
+<section id="module-auscopecat.api">
+<span id="api-module"></span><h2>api module<a class="headerlink" href="#module-auscopecat.api" title="Link to this heading"></a></h2>
+<p>Python library for accessing the AuScope Portal’s API methods.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="auscopecat.api.search">
+<span class="sig-prename descclassname"><span class="pre">auscopecat.api.</span></span><span class="sig-name descname"><span class="pre">search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ogc_types</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="auscopecat.auscopecat_types.html#auscopecat.auscopecat_types.ServiceType" title="auscopecat.auscopecat_types.ServiceType"><span class="pre">ServiceType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spatial_search_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="auscopecat.auscopecat_types.html#auscopecat.auscopecat_types.SpatialSearchType" title="auscopecat.auscopecat_types.SpatialSearchType"><span class="pre">SpatialSearchType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bbox</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polygon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/types.html#types.SimpleNamespace" title="(in Python v3.13)"><span class="pre">SimpleNamespace</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/auscopecat/api.html#search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#auscopecat.api.search" title="Link to this definition"></a></dt>
+<dd><p>Searches catalogue for service online resource results</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pattern</strong> – search string. If there are multiple words, any result
+that contains any one of the words will be considered a match. To
+match an exact series of words, use quotation marks, e.g.
+“Broken Hill”.</p></li>
+<li><p><strong>ogc_types</strong> – limit results to those containing one or more of the specified OGC service
+types. This can be a list of ServiceTypes or strings. (Optional)</p></li>
+<li><p><strong>spatial_search_type</strong> – the type of spatial search (intersects, coontains within).
+Used with bbox and polygon. This can be a SpatialSearchType or string. (Optional)</p></li>
+<li><p><strong>bbox</strong> – the bounding box for the search data e.g. {“north”:-31.456, “east”:129.653…}</p></li>
+<li><p><strong>polygon</strong> – a list of points defined as a 2 element list of [latitude, longitude],
+e.g. [[-31.0, 125.0], [-32, 128.0], [-31.0, 128.0], [-31.0, 125.0]] (Optional)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a list of SimpleNamespace objects of the form: namespace(url, type, name)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="auscopecat.api.search_records">
+<span class="sig-prename descclassname"><span class="pre">auscopecat.api.</span></span><span class="sig-name descname"><span class="pre">search_records</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ogc_types</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="auscopecat.auscopecat_types.html#auscopecat.auscopecat_types.ServiceType" title="auscopecat.auscopecat_types.ServiceType"><span class="pre">ServiceType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spatial_search_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="auscopecat.auscopecat_types.html#auscopecat.auscopecat_types.SpatialSearchType" title="auscopecat.auscopecat_types.SpatialSearchType"><span class="pre">SpatialSearchType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bbox</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polygon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/types.html#types.SimpleNamespace" title="(in Python v3.13)"><span class="pre">SimpleNamespace</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/auscopecat/api.html#search_records"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#auscopecat.api.search_records" title="Link to this definition"></a></dt>
+<dd><p>Searches catalogue for records</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pattern</strong> – search string. If there are multiple words, any result
+that contains any one of the words will be considered a match. To
+match an exact series of words, use quotation marks, e.g.
+“Broken Hill”.</p></li>
+<li><p><strong>ogc_type</strong> – search for a certain kind of OGC service. This can be a list of ServiceTypes
+or strings. (Optional)</p></li>
+<li><p><strong>spatial_search_type</strong> – the type of spatial search (intersects, coontains within).
+Used with bbox and polygon. This can be a SpatialSearchType or string. (Optional)</p></li>
+<li><p><strong>bbox</strong> – the bounding box for the search data e.g. {“north”:-31.456, “east”:129.653…}</p></li>
+<li><p><strong>polygon</strong> – a list of points defined as a 2 element list of [latitude, longitude],
+e.g. [[-31.0, 125.0], [-32, 128.0], [-31.0, 128.0], [-31.0, 125.0]] (Optional)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl>
+<dt>A simpleNamespace of the form:</dt><dd><dl>
+<dt>namespace(</dt><dd><p>id, name, description, record_info_url,
+constraints[], use_limit_constraints[], access_constraints[], date,
+geographic_elements[</p>
+<blockquote>
+<div><p>namespace(type, east, west, north, south)</p>
+</div></blockquote>
+<p>],
+online_resources[</p>
+<blockquote>
+<div><p>namespace(url, type, name, description, version)</p>
+</div></blockquote>
+<p>]</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p>)</p>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="auscopecat.api.download">
+<span class="sig-prename descclassname"><span class="pre">auscopecat.api.</span></span><span class="sig-name descname"><span class="pre">download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/types.html#types.SimpleNamespace" title="(in Python v3.13)"><span class="pre">SimpleNamespace</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">download_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="auscopecat.auscopecat_types.html#auscopecat.auscopecat_types.DownloadType" title="auscopecat.auscopecat_types.DownloadType"><span class="pre">DownloadType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">bbox</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">srs_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'EPSG:4326'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'1.1.0'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">any</span></span></span><a class="reference internal" href="../_modules/auscopecat/api.html#download"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#auscopecat.api.download" title="Link to this definition"></a></dt>
+<dd><p>Downloads data from object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obj</strong> – SimpleNamespace objects with “url”, “type” and “name” attributes</p></li>
+<li><p><strong>download_type</strong> – type of download. This can be a DownloadType or string.</p></li>
+<li><p><strong>bbox</strong> – the bounding box for the download data e.g. {“north”:-31.456, “east”:129.653…}</p></li>
+<li><p><strong>srs_name</strong> – the SRS name, e.g. “EPGS:4326” (Optional)</p></li>
+<li><p><strong>max_features</strong> – maximum number of features to return (Optional)</p></li>
+<li><p><strong>version</strong> – WFS version, e.g. “1.1.0” (Optional)</p></li>
+<li><p><strong>file_name</strong> – the file name for the download (Optional)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>CSV data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="auscopecat.api.search_cql">
+<span class="sig-prename descclassname"><span class="pre">auscopecat.api.</span></span><span class="sig-name descname"><span class="pre">search_cql</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_features</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000000</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">any</span></span></span><a class="reference internal" href="../_modules/auscopecat/api.html#search_cql"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#auscopecat.api.search_cql" title="Link to this definition"></a></dt>
+<dd><p>search_cql from url</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> – url</p></li>
+<li><p><strong>params</strong> – params</p></li>
+<li><p><strong>max_features</strong> – max_features</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-auscopecat.auscopecat_types">
+<span id="auscopecat-types-module"></span><h2>auscopecat_types module<a class="headerlink" href="#module-auscopecat.auscopecat_types" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="auscopecat.auscopecat_types.ServiceType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">auscopecat.auscopecat_types.</span></span><span class="sig-name descname"><span class="pre">ServiceType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/auscopecat/auscopecat_types.html#ServiceType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#auscopecat.auscopecat_types.ServiceType" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="auscopecat.auscopecat_types.ServiceType.WMS">
+<span class="sig-name descname"><span class="pre">WMS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'wms'</span></em><a class="headerlink" href="#auscopecat.auscopecat_types.ServiceType.WMS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="auscopecat.auscopecat_types.ServiceType.WFS">
+<span class="sig-name descname"><span class="pre">WFS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'wfs'</span></em><a class="headerlink" href="#auscopecat.auscopecat_types.ServiceType.WFS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="auscopecat.auscopecat_types.ServiceType.WCS">
+<span class="sig-name descname"><span class="pre">WCS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'wcs'</span></em><a class="headerlink" href="#auscopecat.auscopecat_types.ServiceType.WCS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="auscopecat.auscopecat_types.ServiceType.KML">
+<span class="sig-name descname"><span class="pre">KML</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'kml'</span></em><a class="headerlink" href="#auscopecat.auscopecat_types.ServiceType.KML" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="auscopecat.auscopecat_types.SpatialSearchType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">auscopecat.auscopecat_types.</span></span><span class="sig-name descname"><span class="pre">SpatialSearchType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/auscopecat/auscopecat_types.html#SpatialSearchType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#auscopecat.auscopecat_types.SpatialSearchType" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="auscopecat.auscopecat_types.SpatialSearchType.INTERSECTS">
+<span class="sig-name descname"><span class="pre">INTERSECTS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'intersects'</span></em><a class="headerlink" href="#auscopecat.auscopecat_types.SpatialSearchType.INTERSECTS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="auscopecat.auscopecat_types.SpatialSearchType.CONTAINS">
+<span class="sig-name descname"><span class="pre">CONTAINS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'contains'</span></em><a class="headerlink" href="#auscopecat.auscopecat_types.SpatialSearchType.CONTAINS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="auscopecat.auscopecat_types.SpatialSearchType.WITHIN">
+<span class="sig-name descname"><span class="pre">WITHIN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'within'</span></em><a class="headerlink" href="#auscopecat.auscopecat_types.SpatialSearchType.WITHIN" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="auscopecat.auscopecat_types.DownloadType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">auscopecat.auscopecat_types.</span></span><span class="sig-name descname"><span class="pre">DownloadType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/auscopecat/auscopecat_types.html#DownloadType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#auscopecat.auscopecat_types.DownloadType" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="auscopecat.auscopecat_types.DownloadType.CSV">
+<span class="sig-name descname"><span class="pre">CSV</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'csv'</span></em><a class="headerlink" href="#auscopecat.auscopecat_types.DownloadType.CSV" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="auscopecat.auscopecat_types.AuScopeCatError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">auscopecat.auscopecat_types.</span></span><span class="sig-name descname"><span class="pre">AuScopeCatError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_code</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/auscopecat/auscopecat_types.html#AuScopeCatError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#auscopecat.auscopecat_types.AuScopeCatError" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="auscopecat.auscopecat_types.AuScopeCatError.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_code</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/auscopecat/auscopecat_types.html#AuScopeCatError.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#auscopecat.auscopecat_types.AuScopeCatError.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="auscopecat.auscopecat_types.BoundingBox">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">auscopecat.auscopecat_types.</span></span><span class="sig-name descname"><span class="pre">BoundingBox</span></span><a class="reference internal" href="../_modules/auscopecat/auscopecat_types.html#BoundingBox"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#auscopecat.auscopecat_types.BoundingBox" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.TypedDict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="auscopecat.auscopecat_types.BoundingBox.north">
+<span class="sig-name descname"><span class="pre">north</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a></em><a class="headerlink" href="#auscopecat.auscopecat_types.BoundingBox.north" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="auscopecat.auscopecat_types.BoundingBox.east">
+<span class="sig-name descname"><span class="pre">east</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a></em><a class="headerlink" href="#auscopecat.auscopecat_types.BoundingBox.east" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="auscopecat.auscopecat_types.BoundingBox.south">
+<span class="sig-name descname"><span class="pre">south</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a></em><a class="headerlink" href="#auscopecat.auscopecat_types.BoundingBox.south" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="auscopecat.auscopecat_types.BoundingBox.west">
+<span class="sig-name descname"><span class="pre">west</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a></em><a class="headerlink" href="#auscopecat.auscopecat_types.BoundingBox.west" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-auscopecat.network">
+<span id="network-module"></span><h2>network module<a class="headerlink" href="#module-auscopecat.network" title="Link to this heading"></a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="auscopecat.network.LOG_LVL">
+<span class="sig-prename descclassname"><span class="pre">auscopecat.network.</span></span><span class="sig-name descname"><span class="pre">LOG_LVL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">20</span></em><a class="headerlink" href="#auscopecat.network.LOG_LVL" title="Link to this definition"></a></dt>
+<dd><p>Initialise debug level, set to ‘logging.INFO’ or ‘logging.DEBUG’</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="auscopecat.network.request">
+<span class="sig-prename descclassname"><span class="pre">auscopecat.network.</span></span><span class="sig-name descname"><span class="pre">request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'GET'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/auscopecat/network.html#request"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#auscopecat.network.request" title="Link to this definition"></a></dt>
+<dd><p>Send a request to AuScope API</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> – URL</p></li>
+<li><p><strong>params</strong> – dictionary of HTTP request parameters</p></li>
+<li><p><strong>method</strong> – HTTP request method “POST” or “GET”</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>response or [] upon error</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-auscopecat.nvcl">
+<span id="nvcl-module"></span><h2>nvcl module<a class="headerlink" href="#module-auscopecat.nvcl" title="Link to this heading"></a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="auscopecat.nvcl.LOG_LVL">
+<span class="sig-prename descclassname"><span class="pre">auscopecat.nvcl.</span></span><span class="sig-name descname"><span class="pre">LOG_LVL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">20</span></em><a class="headerlink" href="#auscopecat.nvcl.LOG_LVL" title="Link to this definition"></a></dt>
+<dd><p>Initialise debug level, set to ‘logging.INFO’ or ‘logging.DEBUG’</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="auscopecat.nvcl.search_cql_tsg">
+<span class="sig-prename descclassname"><span class="pre">auscopecat.nvcl.</span></span><span class="sig-name descname"><span class="pre">search_cql_tsg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prov</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">cql_filter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_features</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000000</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/auscopecat/nvcl.html#search_cql_tsg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#auscopecat.nvcl.search_cql_tsg" title="Link to this definition"></a></dt>
+<dd><p>Search TSG files by CQL</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prov</strong> – prov</p></li>
+<li><p><strong>cql_filter</strong> – cql_filter</p></li>
+<li><p><strong>max_features</strong> – max_features</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of urls for TSG file to download</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="auscopecat.nvcl.get_cql_filter">
+<span class="sig-prename descclassname"><span class="pre">auscopecat.nvcl.</span></span><span class="sig-name descname"><span class="pre">get_cql_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bbox</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kml_coords</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_features</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_nvcl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prov</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/auscopecat/nvcl.html#get_cql_filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#auscopecat.nvcl.get_cql_filter" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="auscopecat.nvcl.get_cql_params">
+<span class="sig-prename descclassname"><span class="pre">auscopecat.nvcl.</span></span><span class="sig-name descname"><span class="pre">get_cql_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bbox</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kml_coords</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_features</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_nvcl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prov</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></span><a class="reference internal" href="../_modules/auscopecat/nvcl.html#get_cql_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#auscopecat.nvcl.get_cql_params" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="auscopecat.nvcl.add_tsg_urls">
+<span class="sig-prename descclassname"><span class="pre">auscopecat.nvcl.</span></span><span class="sig-name descname"><span class="pre">add_tsg_urls</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prov</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><span class="pre">DataFrame</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">any</span></span></span><a class="reference internal" href="../_modules/auscopecat/nvcl.html#add_tsg_urls"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#auscopecat.nvcl.add_tsg_urls" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="auscopecat.nvcl.search_cql_tsg_df">
+<span class="sig-prename descclassname"><span class="pre">auscopecat.nvcl.</span></span><span class="sig-name descname"><span class="pre">search_cql_tsg_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prov</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bbox</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kml_coords</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_features</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000000</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">any</span></span></span><a class="reference internal" href="../_modules/auscopecat/nvcl.html#search_cql_tsg_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#auscopecat.nvcl.search_cql_tsg_df" title="Link to this definition"></a></dt>
+<dd><p>search TSG files with filters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prov</strong> – prov</p></li>
+<li><p><strong>name</strong> – name</p></li>
+<li><p><strong>bbox</strong> – bbox</p></li>
+<li><p><strong>kml_coords</strong> – kmlCoords</p></li>
+<li><p><strong>max_features</strong> – max_features</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>dataframe</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="auscopecat.nvcl.download_tsg">
+<span class="sig-prename descclassname"><span class="pre">auscopecat.nvcl.</span></span><span class="sig-name descname"><span class="pre">download_tsg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prov</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bbox</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kml_coords</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_features</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">simulation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/auscopecat/nvcl.html#download_tsg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#auscopecat.nvcl.download_tsg" title="Link to this definition"></a></dt>
+<dd><p>Download TSG files with Polygon filter</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prov</strong> – prov</p></li>
+<li><p><strong>name</strong> – name</p></li>
+<li><p><strong>bbox</strong> – bbox</p></li>
+<li><p><strong>kml_coords</strong> – kmlCoords</p></li>
+<li><p><strong>max_features</strong> – max_features</p></li>
+<li><p><strong>simulation</strong> – simulation</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a list of url of downloaded TSG files</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="auscopecat.nvcl.search_tsg">
+<span class="sig-prename descclassname"><span class="pre">auscopecat.nvcl.</span></span><span class="sig-name descname"><span class="pre">search_tsg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prov</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bbox</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kml_coords</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_features</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000000</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/auscopecat/nvcl.html#search_tsg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#auscopecat.nvcl.search_tsg" title="Link to this definition"></a></dt>
+<dd><p>search TSG files with filter</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prov</strong> – prov</p></li>
+<li><p><strong>name</strong> – name</p></li>
+<li><p><strong>bbox</strong> – bbox</p></li>
+<li><p><strong>kml_coords</strong> – kmlCoords</p></li>
+<li><p><strong>max_features</strong> – max_features</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a list of url of TSG files</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-auscopecat.utils">
+<span id="utils-module"></span><h2>utils module<a class="headerlink" href="#module-auscopecat.utils" title="Link to this heading"></a></h2>
+<p>Util functions for the AuScopeCat library</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="auscopecat.utils.validate_bbox">
+<span class="sig-prename descclassname"><span class="pre">auscopecat.utils.</span></span><span class="sig-name descname"><span class="pre">validate_bbox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bbox</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">adjust_bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="auscopecat.auscopecat_types.html#auscopecat.auscopecat_types.BoundingBox" title="auscopecat.auscopecat_types.BoundingBox"><span class="pre">BoundingBox</span></a></span></span><a class="reference internal" href="../_modules/auscopecat/utils.html#validate_bbox"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#auscopecat.utils.validate_bbox" title="Link to this definition"></a></dt>
+<dd><p>Validate a bounding box
+:param bbox: the bounding box, a dict with “north”, “south”, “east” and</p>
+<blockquote>
+<div><p>“west” keys</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>adjust_bounds</strong> – if True, and the bounds are outside of the allowable
+range (i.e. north &gt; 90.0, south &lt; -90.0, east &gt; 180.0 and west &lt;
+-180.0) then an Exception will not be thrown but instead the values
+will be corrected to the closest lowest/highest value for that
+coordinate</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>:return the validated bounding box provided no AuScopeCatError is</dt><dd><p>thrown</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="auscopecat.utils.validate_polygon">
+<span class="sig-prename descclassname"><span class="pre">auscopecat.utils.</span></span><span class="sig-name descname"><span class="pre">validate_polygon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">polygon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/auscopecat/utils.html#validate_polygon"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#auscopecat.utils.validate_polygon" title="Link to this definition"></a></dt>
+<dd><p>Validate a polygon
+:param the polygon as a list of points, where each point  is a 2 element list (lat, lon)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="auscopecat.utils.download_url">
+<span class="sig-prename descclassname"><span class="pre">auscopecat.utils.</span></span><span class="sig-name descname"><span class="pre">download_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">65536</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/auscopecat/utils.html#download_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#auscopecat.utils.download_url" title="Link to this definition"></a></dt>
+<dd><p>Download a file from url</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> – url</p></li>
+<li><p><strong>save_path</strong> – save_path</p></li>
+<li><p><strong>chunk_size</strong> – chunk_size (Optional)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../development/contributors.html" class="btn btn-neutral float-left" title="Contributors" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="modules.html" class="btn btn-neutral float-right" title="Modules" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, AuScope MAINTAIN.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

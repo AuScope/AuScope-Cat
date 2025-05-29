@@ -1,0 +1,219 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>auscopecat.utils &mdash; AuScope-Cat 0.1.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=fd825880"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            AuScope-Cat
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">GETTING STARTED</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started/getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started/usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started/examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started/tutorials.html">Notebook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started/citation.html">Citation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">DEVELOPMENT</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../development/development.html">AuScope-Cat Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/roadmap.html">Feature Requests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/code_of_conduct.html">Code of Conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/contributors.html">Contributors</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API REFERENCE</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/modules.html">Modules</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">AuScope-Cat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">auscopecat.utils</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for auscopecat.utils</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Util functions for the AuScopeCat library</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numbers</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">auscopecat.auscopecat_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">AuScopeCatError</span><span class="p">,</span> <span class="n">BoundingBox</span>
+
+
+<div class="viewcode-block" id="validate_bbox">
+<a class="viewcode-back" href="../../api_reference/auscopecat.utils.html#auscopecat.utils.validate_bbox">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_bbox</span><span class="p">(</span><span class="n">bbox</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">adjust_bounds</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BoundingBox</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Validate a bounding box</span>
+<span class="sd">    :param bbox: the bounding box, a dict with &quot;north&quot;, &quot;south&quot;, &quot;east&quot; and</span>
+<span class="sd">        &quot;west&quot; keys</span>
+<span class="sd">    :param adjust_bounds: if True, and the bounds are outside of the allowable</span>
+<span class="sd">        range (i.e. north &gt; 90.0, south &lt; -90.0, east &gt; 180.0 and west &lt;</span>
+<span class="sd">        -180.0) then an Exception will not be thrown but instead the values</span>
+<span class="sd">        will be corrected to the closest lowest/highest value for that</span>
+<span class="sd">        coordinate</span>
+<span class="sd">    :return the validated bounding box provided no AuScopeCatError is</span>
+<span class="sd">        thrown</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">bbox</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> \
+               <span class="nb">isinstance</span><span class="p">(</span><span class="n">bbox</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">numbers</span><span class="o">.</span><span class="n">Number</span><span class="p">)</span> \
+                <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;north&quot;</span><span class="p">,</span> <span class="s2">&quot;south&quot;</span><span class="p">,</span> <span class="s2">&quot;east&quot;</span><span class="p">,</span> <span class="s2">&quot;west&quot;</span><span class="p">]):</span>
+        <span class="k">raise</span> <span class="n">AuScopeCatError</span><span class="p">(</span>
+            <span class="s2">&quot;Please check bbox values&quot;</span><span class="p">,</span>
+            <span class="mi">500</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">bbox</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;north&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">90.0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">adjust_bounds</span><span class="p">:</span>
+            <span class="n">bbox</span><span class="p">[</span><span class="s2">&quot;north&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">90.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">AuScopeCatError</span><span class="p">(</span>
+                <span class="s2">&quot;bbox[&#39;north&#39;] cannot exceed 90.0&quot;</span><span class="p">,</span>
+                <span class="mi">500</span>
+            <span class="p">)</span>
+    <span class="k">if</span> <span class="n">bbox</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;south&quot;</span><span class="p">)</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mf">90.0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">adjust_bounds</span><span class="p">:</span>
+            <span class="n">bbox</span><span class="p">[</span><span class="s2">&quot;south&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">90.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">AuScopeCatError</span><span class="p">(</span>
+                <span class="s2">&quot;bbox[&#39;south&#39;] cannot be less than -90.0&quot;</span><span class="p">,</span>
+                <span class="mi">500</span>
+            <span class="p">)</span>
+    <span class="k">if</span> <span class="n">bbox</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;west&quot;</span><span class="p">)</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mf">180.0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">adjust_bounds</span><span class="p">:</span>
+            <span class="n">bbox</span><span class="p">[</span><span class="s2">&quot;west&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">180.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">AuScopeCatError</span><span class="p">(</span>
+                <span class="s2">&quot;bbox[&#39;west&#39;] cannot be less than -180.0&quot;</span><span class="p">,</span>
+                <span class="mi">500</span>
+            <span class="p">)</span>
+    <span class="k">if</span> <span class="n">bbox</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;east&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">180.0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">adjust_bounds</span><span class="p">:</span>
+            <span class="n">bbox</span><span class="p">[</span><span class="s2">&quot;east&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">180.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">AuScopeCatError</span><span class="p">(</span>
+                <span class="s2">&quot;bbox[&#39;east&#39;] cannot exceed 180.0&quot;</span><span class="p">,</span>
+                <span class="mi">500</span>
+            <span class="p">)</span>
+    <span class="k">return</span> <span class="n">bbox</span></div>
+
+
+
+<div class="viewcode-block" id="validate_polygon">
+<a class="viewcode-back" href="../../api_reference/auscopecat.utils.html#auscopecat.utils.validate_polygon">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_polygon</span><span class="p">(</span><span class="n">polygon</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Validate a polygon</span>
+<span class="sd">    :param the polygon as a list of points, where each point  is a 2 element list (lat, lon)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">point_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">polygon</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">point_count</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">AuScopeCatError</span><span class="p">(</span>
+            <span class="s2">&quot;A polygon must contain at least 3 points&quot;</span><span class="p">,</span>
+            <span class="mi">500</span>
+        <span class="p">)</span>
+    <span class="c1"># If the first/last points don&#39;t match, add the first point to the end</span>
+    <span class="k">if</span> <span class="n">polygon</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">polygon</span><span class="p">[</span><span class="n">point_count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span> <span class="n">polygon</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">polygon</span><span class="p">[</span><span class="n">point_count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="n">polygon</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">polygon</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">polygon</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]])</span></div>
+
+
+<div class="viewcode-block" id="download_url">
+<a class="viewcode-back" href="../../api_reference/auscopecat.utils.html#auscopecat.utils.download_url">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">download_url</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">save_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">chunk_size</span><span class="o">=</span><span class="mi">1024</span><span class="o">*</span><span class="mi">64</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Download a file from url</span>
+
+<span class="sd">    :param url: url</span>
+<span class="sd">    :param save_path: save_path</span>
+<span class="sd">    :param chunk_size: chunk_size (Optional)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fd</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">iter_content</span><span class="p">(</span><span class="n">chunk_size</span><span class="o">=</span><span class="n">chunk_size</span><span class="p">):</span>
+            <span class="n">fd</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, AuScope MAINTAIN.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

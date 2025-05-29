@@ -1,0 +1,492 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>auscopecat.api &mdash; AuScope-Cat 0.1.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=fd825880"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            AuScope-Cat
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">GETTING STARTED</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started/getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started/usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started/examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started/tutorials.html">Notebook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started/citation.html">Citation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">DEVELOPMENT</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../development/development.html">AuScope-Cat Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/roadmap.html">Feature Requests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/code_of_conduct.html">Code of Conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/contributors.html">Contributors</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API REFERENCE</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/modules.html">Modules</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">AuScope-Cat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">auscopecat.api</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for auscopecat.api</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Python library for accessing the AuScope Portal&#39;s API methods.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <span class="n">StringIO</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleNamespace</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">requests</span><span class="w"> </span><span class="kn">import</span> <span class="n">Response</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">auscopecat.auscopecat_types</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">AuScopeCatError</span><span class="p">,</span>
+    <span class="n">DownloadType</span><span class="p">,</span>
+    <span class="n">ServiceType</span><span class="p">,</span>
+    <span class="n">SpatialSearchType</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">auscopecat.network</span><span class="w"> </span><span class="kn">import</span> <span class="n">request</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">auscopecat.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_bbox</span><span class="p">,</span> <span class="n">validate_polygon</span>
+
+<span class="n">API_URL</span> <span class="o">=</span> <span class="s2">&quot;https://portal.auscope.org/api/&quot;</span>
+<span class="c1">#API_URL = &quot;http://localhost:8080/api/&quot;</span>
+<span class="n">SEARCH_URL</span> <span class="o">=</span> <span class="s2">&quot;searchCSWRecords.do&quot;</span>
+<span class="n">SEARCH_FIELDS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;fileIdentifier&quot;</span><span class="p">,</span> <span class="s2">&quot;serviceName&quot;</span><span class="p">,</span> <span class="s2">&quot;descriptiveKeywords&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;dataIdentificationAbstract&quot;</span><span class="p">,</span> <span class="s2">&quot;onlineResources.name&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;onlineResources.description&quot;</span>
+<span class="p">]</span>
+<span class="n">MAX_FEATURES</span> <span class="o">=</span> <span class="mi">1000000</span>
+
+<div class="viewcode-block" id="search">
+<a class="viewcode-back" href="../../api_reference/auscopecat.api.html#auscopecat.api.search">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">search</span><span class="p">(</span><span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ogc_types</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ServiceType</span> <span class="o">|</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+           <span class="n">spatial_search_type</span><span class="p">:</span> <span class="n">SpatialSearchType</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+           <span class="n">bbox</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">polygon</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SimpleNamespace</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Searches catalogue for service online resource results</span>
+
+<span class="sd">    :param pattern: search string. If there are multiple words, any result</span>
+<span class="sd">        that contains any one of the words will be considered a match. To</span>
+<span class="sd">        match an exact series of words, use quotation marks, e.g.</span>
+<span class="sd">        &quot;Broken Hill&quot;.</span>
+<span class="sd">    :param ogc_types: limit results to those containing one or more of the specified OGC service</span>
+<span class="sd">        types. This can be a list of ServiceTypes or strings. (Optional)</span>
+<span class="sd">    :param spatial_search_type: the type of spatial search (intersects, coontains within).</span>
+<span class="sd">        Used with bbox and polygon. This can be a SpatialSearchType or string. (Optional)</span>
+<span class="sd">    :param bbox: the bounding box for the search data e.g. {&quot;north&quot;:-31.456, &quot;east&quot;:129.653...}</span>
+<span class="sd">    :param polygon: a list of points defined as a 2 element list of [latitude, longitude],</span>
+<span class="sd">        e.g. [[-31.0, 125.0], [-32, 128.0], [-31.0, 128.0], [-31.0, 125.0]] (Optional)</span>
+<span class="sd">    :return: a list of SimpleNamespace objects of the form: namespace(url, type, name)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_validate_search_inputs</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">ogc_types</span><span class="p">,</span> <span class="n">spatial_search_type</span><span class="p">,</span> <span class="n">bbox</span><span class="p">,</span> <span class="n">polygon</span><span class="p">)</span>
+    <span class="n">search_query</span> <span class="o">=</span> <span class="n">_build_search_query</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">ogc_types</span><span class="p">,</span> <span class="n">spatial_search_type</span><span class="p">,</span> <span class="n">bbox</span><span class="p">,</span> <span class="n">polygon</span><span class="p">)</span>
+    <span class="n">search_request</span> <span class="o">=</span> <span class="n">request</span><span class="p">(</span><span class="n">search_query</span><span class="p">)</span>
+    <span class="n">search_results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">search_request</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+        <span class="n">results_json</span> <span class="o">=</span> <span class="n">search_request</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">results_json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">results_json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;totalCSWRecordHits&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results_json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cswRecords&quot;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;onlineResources&quot;</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">online_resource</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;onlineResources&quot;</span><span class="p">):</span>
+                        <span class="c1"># Compare onlineResource type with specified OGC type(s)</span>
+                        <span class="k">if</span> <span class="n">ogc_types</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">ogc_types</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">next</span><span class="p">((</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ogc_types</span> <span class="k">if</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">ServiceType</span><span class="p">)</span> <span class="k">else</span> <span class="n">x</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span> <span class="o">==</span> <span class="n">online_resource</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()),</span> <span class="kc">None</span><span class="p">):</span>
+                            <span class="n">search_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SimpleNamespace</span><span class="p">(</span>
+                                   <span class="n">url</span> <span class="o">=</span> <span class="n">online_resource</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;url&quot;</span><span class="p">),</span>
+                                   <span class="nb">type</span> <span class="o">=</span> <span class="n">online_resource</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">),</span>
+                                   <span class="n">name</span> <span class="o">=</span> <span class="n">online_resource</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
+                            <span class="p">))</span>
+    <span class="k">return</span> <span class="n">search_results</span></div>
+
+
+
+<div class="viewcode-block" id="search_records">
+<a class="viewcode-back" href="../../api_reference/auscopecat.api.html#auscopecat.api.search_records">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">search_records</span><span class="p">(</span><span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ogc_types</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ServiceType</span> <span class="o">|</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                   <span class="n">spatial_search_type</span><span class="p">:</span> <span class="n">SpatialSearchType</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                   <span class="n">bbox</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">polygon</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SimpleNamespace</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Searches catalogue for records</span>
+
+<span class="sd">    :param pattern: search string. If there are multiple words, any result</span>
+<span class="sd">        that contains any one of the words will be considered a match. To</span>
+<span class="sd">        match an exact series of words, use quotation marks, e.g.</span>
+<span class="sd">        &quot;Broken Hill&quot;.</span>
+<span class="sd">    :param ogc_type: search for a certain kind of OGC service. This can be a list of ServiceTypes</span>
+<span class="sd">        or strings. (Optional)</span>
+<span class="sd">    :param spatial_search_type: the type of spatial search (intersects, coontains within).</span>
+<span class="sd">        Used with bbox and polygon. This can be a SpatialSearchType or string. (Optional)</span>
+<span class="sd">    :param bbox: the bounding box for the search data e.g. {&quot;north&quot;:-31.456, &quot;east&quot;:129.653...}</span>
+<span class="sd">    :param polygon: a list of points defined as a 2 element list of [latitude, longitude],</span>
+<span class="sd">        e.g. [[-31.0, 125.0], [-32, 128.0], [-31.0, 128.0], [-31.0, 125.0]] (Optional)</span>
+<span class="sd">    :return: A simpleNamespace of the form:</span>
+<span class="sd">             namespace(</span>
+<span class="sd">                id, name, description, record_info_url,</span>
+<span class="sd">                constraints[], use_limit_constraints[], access_constraints[], date,</span>
+<span class="sd">                geographic_elements[</span>
+<span class="sd">                    namespace(type, east, west, north, south)</span>
+<span class="sd">                ],</span>
+<span class="sd">                online_resources[</span>
+<span class="sd">                    namespace(url, type, name, description, version)</span>
+<span class="sd">                ]</span>
+<span class="sd">            )</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_validate_search_inputs</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">ogc_types</span><span class="p">,</span> <span class="n">spatial_search_type</span><span class="p">,</span> <span class="n">bbox</span><span class="p">,</span> <span class="n">polygon</span><span class="p">)</span>
+    <span class="n">search_query</span> <span class="o">=</span> <span class="n">_build_search_query</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">ogc_types</span><span class="p">,</span> <span class="n">spatial_search_type</span><span class="p">,</span> <span class="n">bbox</span><span class="p">,</span> <span class="n">polygon</span><span class="p">)</span>
+    <span class="n">search_request</span> <span class="o">=</span> <span class="n">request</span><span class="p">(</span><span class="n">search_query</span><span class="p">)</span>
+    <span class="n">search_results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">search_request</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+        <span class="n">results_json</span> <span class="o">=</span> <span class="n">search_request</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">results_json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">results_json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;totalCSWRecordHits&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results_json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cswRecords&quot;</span><span class="p">):</span>
+                <span class="n">record</span> <span class="o">=</span> <span class="n">SimpleNamespace</span><span class="p">(</span>
+                    <span class="nb">id</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                    <span class="n">name</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;serviceName&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                    <span class="n">description</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;description&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                    <span class="n">record_info_url</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;recordInfoUrl&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                    <span class="n">constraints</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;constraints&quot;</span><span class="p">,</span> <span class="p">[]),</span>
+                    <span class="n">use_limit_constraints</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;useLimitConstraints&quot;</span><span class="p">,</span> <span class="p">[]),</span>
+                    <span class="n">access_constraints</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;accessConstraints&quot;</span><span class="p">,</span> <span class="p">[]),</span>
+                    <span class="n">date</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;date&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">geographic_elements</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;geographicElements&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;geographicElements&quot;</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">geog</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;geographicElements&quot;</span><span class="p">):</span>
+                        <span class="n">geographic_elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SimpleNamespace</span><span class="p">(</span>
+                            <span class="nb">type</span> <span class="o">=</span> <span class="n">geog</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                            <span class="n">east</span> <span class="o">=</span> <span class="n">geog</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;eastBoundLongitude&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+                            <span class="n">west</span> <span class="o">=</span> <span class="n">geog</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;westBoundLongitude&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+                            <span class="n">north</span> <span class="o">=</span> <span class="n">geog</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;northBoundLatitude&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+                            <span class="n">south</span> <span class="o">=</span> <span class="n">geog</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;southBoundLatitude&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+                        <span class="p">))</span>
+                <span class="n">record</span><span class="o">.</span><span class="n">geographic_elements</span> <span class="o">=</span> <span class="n">geographic_elements</span>
+                <span class="n">online_resources</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;onlineResources&quot;</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">resource</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;onlineResources&quot;</span><span class="p">):</span>
+                        <span class="c1"># Compare onlineResource type with specified OGC type(s)</span>
+                        <span class="k">if</span> <span class="n">ogc_types</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">ogc_types</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">next</span><span class="p">(</span>
+                            <span class="p">(</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ogc_types</span> <span class="k">if</span> <span class="p">(</span>
+                                <span class="n">x</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">ServiceType</span><span class="p">)</span> <span class="k">else</span> <span class="n">x</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                            <span class="p">)</span> <span class="o">==</span> <span class="n">resource</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()),</span>
+                            <span class="kc">None</span>
+                        <span class="p">):</span>
+                            <span class="n">online_resources</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                                <span class="n">SimpleNamespace</span><span class="p">(</span>
+                                    <span class="n">url</span><span class="o">=</span><span class="n">resource</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;url&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                                    <span class="nb">type</span><span class="o">=</span><span class="n">resource</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                                    <span class="n">name</span><span class="o">=</span><span class="n">resource</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                                    <span class="n">description</span><span class="o">=</span><span class="n">resource</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;description&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                                    <span class="n">version</span><span class="o">=</span><span class="n">resource</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;version&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                                <span class="p">)</span>
+                            <span class="p">)</span>
+                <span class="n">record</span><span class="o">.</span><span class="n">online_resources</span> <span class="o">=</span> <span class="n">online_resources</span>
+                <span class="n">search_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">search_results</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_wfs_get_feature</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">bbox</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;1.1.0&quot;</span><span class="p">,</span>
+                    <span class="n">srs_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;EPSG:4326&quot;</span><span class="p">,</span> <span class="n">output_format</span> <span class="o">=</span> <span class="s2">&quot;csv&quot;</span><span class="p">,</span>
+                    <span class="n">max_features</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Make a WFS GetFeature request and return the Response object</span>
+
+<span class="sd">    :param url: the WFS service URL</span>
+<span class="sd">    :param type_name the typeName parameter of the GetFeature request</span>
+<span class="sd">    :param bbox: the bounding box for the search data e.g. {&quot;north&quot;:-31.456, &quot;east&quot;:129.653...}</span>
+<span class="sd">    :param version: version number (Optional)</span>
+<span class="sd">    :param srs_name the SRS, e.g. &quot;EPSG:4326&quot; (Optional)</span>
+<span class="sd">    :output_format: the output format (Optional)</span>
+<span class="sd">    :max_features: maximum number of features to return (Optional)</span>
+<span class="sd">    :return: the WFS GetFeature Response object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">bbox</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">AuScopeCatError</span><span class="p">(</span>
+            <span class="s2">&quot;A bounding box (bbox) must be specified&quot;</span><span class="p">,</span>
+            <span class="mi">500</span>
+        <span class="p">)</span>
+    <span class="n">validate_bbox</span><span class="p">(</span><span class="n">bbox</span><span class="p">)</span>
+
+    <span class="n">bbox_param</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">bbox</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;south&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">bbox</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;west&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">bbox</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;north&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">bbox</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;east&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+
+    <span class="n">request_params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">service</span><span class="o">=</span><span class="s2">&quot;wfs&quot;</span><span class="p">,</span>
+        <span class="n">version</span><span class="o">=</span><span class="n">version</span><span class="p">,</span>
+        <span class="n">request</span><span class="o">=</span><span class="s2">&quot;GetFeature&quot;</span><span class="p">,</span>
+        <span class="n">typeNames</span><span class="o">=</span><span class="n">type_name</span><span class="p">,</span>
+        <span class="n">srsName</span><span class="o">=</span><span class="n">srs_name</span><span class="p">,</span>
+        <span class="n">bbox</span><span class="o">=</span><span class="n">bbox_param</span><span class="p">,</span>
+        <span class="n">outputFormat</span><span class="o">=</span><span class="n">output_format</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">max_features</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">request_params</span><span class="p">[</span><span class="s2">&quot;maxFeatures&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_features</span>
+
+    <span class="n">response</span> <span class="o">=</span> <span class="n">request</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">request_params</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">response</span>
+
+
+<div class="viewcode-block" id="download">
+<a class="viewcode-back" href="../../api_reference/auscopecat.api.html#auscopecat.api.download">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">SimpleNamespace</span><span class="p">,</span> <span class="n">download_type</span><span class="p">:</span> <span class="n">DownloadType</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
+             <span class="n">bbox</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">srs_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;EPSG:4326&quot;</span><span class="p">,</span>
+             <span class="n">max_features</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;1.1.0&quot;</span><span class="p">,</span>
+             <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Downloads data from object</span>
+
+<span class="sd">    :param obj: SimpleNamespace objects with &quot;url&quot;, &quot;type&quot; and &quot;name&quot; attributes</span>
+<span class="sd">    :param download_type: type of download. This can be a DownloadType or string.</span>
+<span class="sd">    :param bbox: the bounding box for the download data e.g. {&quot;north&quot;:-31.456, &quot;east&quot;:129.653...}</span>
+<span class="sd">    :param srs_name: the SRS name, e.g. &quot;EPGS:4326&quot; (Optional)</span>
+<span class="sd">    :param max_features: maximum number of features to return (Optional)</span>
+<span class="sd">    :param version: WFS version, e.g. &quot;1.1.0&quot; (Optional)</span>
+<span class="sd">    :param file_name: the file name for the download (Optional)</span>
+<span class="sd">    :return: CSV data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">valid_download_types</span> <span class="o">=</span> <span class="p">{</span><span class="n">download</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">download</span> <span class="ow">in</span> <span class="n">DownloadType</span><span class="p">}</span>
+    <span class="k">if</span> <span class="n">download_type</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">download_type</span><span class="p">,</span> <span class="n">DownloadType</span><span class="p">)</span> <span class="ow">and</span> <span class="n">download_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_download_types</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">AuScopeCatError</span><span class="p">(</span>
+            <span class="s2">&quot;Unsupported download type&quot;</span><span class="p">,</span>
+            <span class="mi">500</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">bbox</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">AuScopeCatError</span><span class="p">(</span>
+            <span class="s2">&quot;A bounding box (bbox) must be specified&quot;</span><span class="p">,</span>
+            <span class="mi">500</span>
+        <span class="p">)</span>
+    <span class="n">validate_bbox</span><span class="p">(</span><span class="n">bbox</span><span class="p">)</span>
+
+    <span class="c1"># TODO: Check to see if zip file specified, or append .zip if no extension</span>
+    <span class="k">if</span> <span class="n">file_name</span> <span class="ow">and</span> <span class="n">file_name</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">AuScopeCatError</span><span class="p">(</span>
+            <span class="s2">&quot;If file_name is specified it cannot be empty&quot;</span><span class="p">,</span>
+            <span class="mi">500</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">download_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">download_type</span> <span class="o">=</span> <span class="n">DownloadType</span><span class="o">.</span><span class="n">CSV</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">download_type</span><span class="p">,</span> <span class="n">DownloadType</span><span class="p">):</span>
+        <span class="n">download_type</span> <span class="o">=</span> <span class="n">download_type</span><span class="o">.</span><span class="n">value</span>
+
+    <span class="n">response</span> <span class="o">=</span> <span class="n">_wfs_get_feature</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">obj</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">bbox</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="n">version</span><span class="p">,</span> <span class="n">srs_name</span> <span class="o">=</span> <span class="n">srs_name</span><span class="p">,</span>
+                        <span class="n">output_format</span> <span class="o">=</span> <span class="n">download_type</span><span class="p">,</span> <span class="n">max_features</span> <span class="o">=</span> <span class="n">max_features</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">response</span> <span class="ow">and</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="ow">and</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+        <span class="n">f_name</span> <span class="o">=</span> <span class="s2">&quot;download.csv&quot;</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">file_name</span> <span class="k">else</span> <span class="n">file_name</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">f_name</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">AuScopeCatError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Error downloading data: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">reason</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
+        <span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_validate_search_inputs</span><span class="p">(</span><span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ogc_types</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ServiceType</span> <span class="o">|</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+           <span class="n">spatial_search_type</span><span class="p">:</span> <span class="n">SpatialSearchType</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+           <span class="n">bbox</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">polygon</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Validate search inputs. Raises AuScopeCatExceptin if validation fails.</span>
+<span class="sd">    :param pattern: search for this string</span>
+<span class="sd">    :param ogc_types: limit results to those containing one or more of the specified OGC service</span>
+<span class="sd">                      types. This can be a list of ServiceTypes or strings. (Optional)</span>
+<span class="sd">    :param spatial_search_type: the type of spatial search (intersects, coontains within).</span>
+<span class="sd">        Used with bbox and polygon. This can be a SpatialSearchType or string. (Optional)</span>
+<span class="sd">    :param bbox: the bounding box for the search data e.g. {&quot;north&quot;:-31.456, &quot;east&quot;:129.653...}</span>
+<span class="sd">    :param polygon: a list of points defined as a 2 element list of [latitude, longitude],</span>
+<span class="sd">        e.g. [[-31.0, 125.0], [-32, 128.0], [-31.0, 128.0], [-31.0, 125.0]] (Optional)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">pattern</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">pattern</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">AuScopeCatError</span><span class="p">(</span>
+            <span class="s2">&quot;Parameter pattern can not be empty&quot;</span><span class="p">,</span>
+            <span class="mi">500</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">ogc_types</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">ogc_types</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">valid_ogc_types</span> <span class="o">=</span> <span class="p">{</span><span class="n">service</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">service</span> <span class="ow">in</span> <span class="n">ServiceType</span><span class="p">}</span>
+        <span class="n">invalid_ogc_types</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">ogc</span> <span class="ow">in</span> <span class="n">ogc_types</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ogc</span><span class="p">,</span> <span class="n">ServiceType</span><span class="p">)</span> <span class="ow">and</span> <span class="n">ogc</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_ogc_types</span><span class="p">:</span>
+                <span class="n">invalid_ogc_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ogc</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">invalid_ogc_types</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">AuScopeCatError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Unknown service type(s): </span><span class="si">{</span><span class="n">invalid_ogc_types</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="mi">500</span>
+                <span class="p">)</span>
+    <span class="k">if</span> <span class="n">spatial_search_type</span> <span class="ow">and</span> <span class="p">(</span><span class="n">bbox</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">polygon</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">AuScopeCatError</span><span class="p">(</span>
+            <span class="s2">&quot;Spatial search requires a bbox (bounding box) or polygon (polygon) to be specified&quot;</span><span class="p">,</span>
+            <span class="mi">500</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">spatial_search_type</span> <span class="ow">and</span> <span class="p">(</span><span class="n">bbox</span> <span class="ow">or</span> <span class="n">polygon</span><span class="p">):</span>
+        <span class="n">valid_spatial_types</span> <span class="o">=</span> <span class="p">{</span><span class="n">spatial</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">spatial</span> <span class="ow">in</span> <span class="n">SpatialSearchType</span><span class="p">}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spatial_search_type</span><span class="p">,</span> <span class="n">SpatialSearchType</span><span class="p">)</span> <span class="ow">and</span> <span class="n">spatial_search_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_spatial_types</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">AuScopeCatError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Unknown spatial search type: </span><span class="si">{</span><span class="n">spatial_search_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="mi">500</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">bbox</span><span class="p">:</span>
+            <span class="n">validate_bbox</span><span class="p">(</span><span class="n">bbox</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">polygon</span><span class="p">:</span>
+            <span class="n">validate_polygon</span><span class="p">(</span><span class="n">polygon</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_search_query</span><span class="p">(</span><span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ogc_types</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ServiceType</span> <span class="o">|</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+           <span class="n">spatial_search_type</span><span class="p">:</span> <span class="n">SpatialSearchType</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+           <span class="n">bbox</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">polygon</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :param pattern: search for this string</span>
+<span class="sd">    :param ogc_types: limit results to those containing one or more of the specified OGC service</span>
+<span class="sd">                      types. This can be a list of ServiceTypes or strings. (Optional)</span>
+<span class="sd">    :param spatial_search_type: the type of spatial search (intersects, coontains within).</span>
+<span class="sd">        Used with either bbox or polygon. This can be a SpatialSearchType or string. (Optional)</span>
+<span class="sd">    :param bbox: the bounding box for the search data e.g. {&quot;north&quot;:-31.456, &quot;east&quot;:129.653...}</span>
+<span class="sd">    :param polygon: a list of points defined as a 2 element list of [latitude, longitude],</span>
+<span class="sd">        e.g. [[-31.0, 125.0], [-32, 128.0], [-31.0, 128.0], [-31.0, 125.0]] (Optional)</span>
+<span class="sd">    :return the search query as a string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Build search query</span>
+    <span class="n">search_query</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">API_URL</span><span class="si">}{</span><span class="n">SEARCH_URL</span><span class="si">}</span><span class="s2">?query=</span><span class="si">{</span><span class="n">pattern</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="c1"># OGC services (WFS, WMS etc)</span>
+    <span class="k">if</span> <span class="n">ogc_types</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">ogc_types</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">ogc</span> <span class="ow">in</span> <span class="n">ogc_types</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ogc</span><span class="p">,</span> <span class="n">ServiceType</span><span class="p">):</span>
+                <span class="n">search_query</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&amp;ogcServices=</span><span class="si">{</span><span class="n">ogc</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ogc</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">search_query</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&amp;ogcServices=</span><span class="si">{</span><span class="n">ogc</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">AuScopeCatError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid service type: </span><span class="si">{</span><span class="n">ogc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
+
+    <span class="c1"># Specify CSW fields only in order to ignore KnownLayer results</span>
+    <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">SEARCH_FIELDS</span><span class="p">:</span>
+        <span class="n">search_query</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&amp;fields=</span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="c1"># Spatial search if requested</span>
+    <span class="k">if</span> <span class="n">spatial_search_type</span> <span class="ow">and</span> <span class="p">(</span><span class="n">bbox</span> <span class="ow">or</span> <span class="n">polygon</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spatial_search_type</span><span class="p">,</span> <span class="n">SpatialSearchType</span><span class="p">):</span>
+            <span class="n">search_query</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&amp;spatialRelation=</span><span class="si">{</span><span class="n">spatial_search_type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spatial_search_type</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">search_query</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&amp;spatialRelation=</span><span class="si">{</span><span class="n">spatial_search_type</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">AuScopeCatError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid spatial search type: </span><span class="si">{</span><span class="n">spatial_search_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">bbox</span><span class="p">:</span>
+            <span class="n">search_query</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;&amp;westBoundLongitude=</span><span class="si">{</span><span class="n">bbox</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;west&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">&amp;&#39;</span> \
+                            <span class="sa">f</span><span class="s1">&#39;eastBoundLongitude=</span><span class="si">{</span><span class="n">bbox</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;east&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">&amp;&#39;</span> \
+                            <span class="sa">f</span><span class="s1">&#39;southBoundLatitude=</span><span class="si">{</span><span class="n">bbox</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;south&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">&amp;&#39;</span> \
+                            <span class="sa">f</span><span class="s1">&#39;northBoundLatitude=</span><span class="si">{</span><span class="n">bbox</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;north&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">polygon</span><span class="p">:</span>
+                <span class="n">search_query</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&amp;points=</span><span class="si">{</span><span class="n">point</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">point</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">return</span> <span class="n">search_query</span>
+
+<div class="viewcode-block" id="search_cql">
+<a class="viewcode-back" href="../../api_reference/auscopecat.api.html#auscopecat.api.search_cql">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">search_cql</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">max_features</span> <span class="o">=</span> <span class="n">MAX_FEATURES</span><span class="p">)</span><span class="o">-&gt;</span><span class="nb">any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    search_cql from url</span>
+
+<span class="sd">    :param url: url</span>
+<span class="sd">    :param params: params</span>
+<span class="sd">    :param max_features: max_features</span>
+<span class="sd">    :return: DataFrame</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">request</span><span class="p">(</span><span class="n">url</span><span class="p">,</span><span class="n">params</span><span class="p">,</span><span class="s1">&#39;POST&#39;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">AuScopeCatError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Error querying data: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="mi">500</span>
+        <span class="p">)</span>
+    <span class="n">csv_buffer</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">filepath_or_buffer</span> <span class="o">=</span> <span class="n">csv_buffer</span><span class="p">,</span> <span class="n">low_memory</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, AuScope MAINTAIN.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
