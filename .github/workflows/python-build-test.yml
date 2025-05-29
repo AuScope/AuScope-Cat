@@ -54,10 +54,14 @@ jobs:
         git add .github/badges/coverage.svg
         git diff --staged --quiet || ( git commit -m '[skip ci] Updated coverage badge' && git push)
     
-    - name: Build documentation
-      run: |
-        cd docs
-        make html
+    # - name: Build documentation
+    #   run: |
+    #     cd docs
+    #     make html
+    
+    - uses: ammaraskar/sphinx-action@7.1.2
+      with:
+        docs-folder: "docs/"
     
     - name: Deploy Dev Docs
       uses: peaceiris/actions-gh-pages@v4
