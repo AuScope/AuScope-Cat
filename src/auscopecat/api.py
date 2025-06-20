@@ -16,7 +16,7 @@ from auscopecat.auscopecat_types import (
 from auscopecat.network import request
 from auscopecat.utils import validate_bbox, validate_polygon
 
-API_URL = "https://portal.auscope.org/api/"
+API_URL = "https://portal.auscope.org.au/api/"
 #API_URL = "http://localhost:8080/api/"
 SEARCH_URL = "searchCSWRecords.do"
 SEARCH_FIELDS = [
