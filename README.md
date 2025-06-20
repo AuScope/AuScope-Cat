@@ -62,4 +62,6 @@ uv run pytest
 ```
 in the 'AuScope-Cat'root directory
 
+## Cite us
 
+Fazio, Vincent; Warren, Peter; Woodman, Stuart; Jiang, Lingbo; & Li, Yunlong (2025): AuScope-Cat: a python package for accessing AuScope's catalogue of geoscience datasets. v1. CSIRO. Service Collection. https://data.csiro.au/collection/csiro:65861
