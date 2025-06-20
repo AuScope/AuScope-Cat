@@ -75,3 +75,14 @@ jobs:
       run: |
         uv build
         uv publish --trusted-publishing always
+
+    - uses: ammaraskar/sphinx-action@7.1.2
+      with:
+        docs-folder: "docs/"
+    
+    - name: Deploy Release Docs
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./docs/build/html
+        keep_files: true
