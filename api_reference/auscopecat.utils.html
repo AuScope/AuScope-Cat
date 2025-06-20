@@ -104,52 +104,6 @@
              
   <section id="auscopecat-utils-module">
 <h1>auscopecat.utils module<a class="headerlink" href="#auscopecat-utils-module" title="Link to this heading"></a></h1>
-<p id="module-auscopecat.utils">Util functions for the AuScopeCat library</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="auscopecat.utils.validate_bbox">
-<span class="sig-prename descclassname"><span class="pre">auscopecat.utils.</span></span><span class="sig-name descname"><span class="pre">validate_bbox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bbox</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">adjust_bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="auscopecat.auscopecat_types.html#auscopecat.auscopecat_types.BoundingBox" title="auscopecat.auscopecat_types.BoundingBox"><span class="pre">BoundingBox</span></a></span></span><a class="reference internal" href="../_modules/auscopecat/utils.html#validate_bbox"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#auscopecat.utils.validate_bbox" title="Link to this definition"></a></dt>
-<dd><p>Validate a bounding box
-:param bbox: the bounding box, a dict with “north”, “south”, “east” and</p>
-<blockquote>
-<div><p>“west” keys</p>
-</div></blockquote>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>adjust_bounds</strong> – if True, and the bounds are outside of the allowable
-range (i.e. north &gt; 90.0, south &lt; -90.0, east &gt; 180.0 and west &lt;
--180.0) then an Exception will not be thrown but instead the values
-will be corrected to the closest lowest/highest value for that
-coordinate</p>
-</dd>
-</dl>
-<dl class="simple">
-<dt>:return the validated bounding box provided no AuScopeCatError is</dt><dd><p>thrown</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="auscopecat.utils.validate_polygon">
-<span class="sig-prename descclassname"><span class="pre">auscopecat.utils.</span></span><span class="sig-name descname"><span class="pre">validate_polygon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">polygon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/auscopecat/utils.html#validate_polygon"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#auscopecat.utils.validate_polygon" title="Link to this definition"></a></dt>
-<dd><p>Validate a polygon
-:param the polygon as a list of points, where each point  is a 2 element list (lat, lon)</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="auscopecat.utils.download_url">
-<span class="sig-prename descclassname"><span class="pre">auscopecat.utils.</span></span><span class="sig-name descname"><span class="pre">download_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">65536</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/auscopecat/utils.html#download_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#auscopecat.utils.download_url" title="Link to this definition"></a></dt>
-<dd><p>Download a file from url</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>url</strong> – url</p></li>
-<li><p><strong>save_path</strong> – save_path</p></li>
-<li><p><strong>chunk_size</strong> – chunk_size (Optional)</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
 </section>
 
 
