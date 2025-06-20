@@ -16,9 +16,9 @@ jobs:
       actions: write
 
     environment:
-      name: pypitest
+      name: pypi
 
-      url: https://test.pypi.org/project/auscopecat/${{ github.event.release.tag_name }}
+      url: https://pypi.org/project/auscopecat/${{ github.event.release.tag_name }}
 
     steps:
     - name: Checkout repository
@@ -74,4 +74,4 @@ jobs:
     - name: Publish package distributions to PyPI
       run: |
         uv build
-        uv publish --publish-url https://test.pypi.org/legacy/ --trusted-publishing always
+        uv publish --trusted-publishing always
