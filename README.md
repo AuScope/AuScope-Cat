@@ -62,6 +62,8 @@ uv run pytest
 ```
 in the 'AuScope-Cat'root directory
 
-## Cite us
+## Reference used to cite 'auscopecat'
 
-Fazio, Vincent; Warren, Peter; Woodman, Stuart; Jiang, Lingbo; & Li, Yunlong (2025): AuScope-Cat: a python package for accessing AuScope's catalogue of geoscience datasets. v1. CSIRO. Service Collection. https://data.csiro.au/collection/csiro:65861
+Please cite 'auscopecat' in your publications if you use it in your research  
+
+*Fazio, Vincent; Warren, Peter; Woodman, Stuart; Jiang, Lingbo; & Li, Yunlong (2025): AuScope-Cat: a python package for accessing AuScope's catalogue of geoscience datasets. v1. CSIRO. Service Collection. http://hdl.handle.net/102.100.100/706652?index=1*
