@@ -66,4 +66,4 @@ in the 'AuScope-Cat'root directory
 
 Please cite 'auscopecat' in your publications if you use it in your research  
 
-*Fazio, Vincent; Warren, Peter; Woodman, Stuart; Jiang, Lingbo; & Li, Yunlong (2025): AuScope-Cat: a python package for accessing AuScope's catalogue of geoscience datasets. v1. CSIRO. Service Collection. http://hdl.handle.net/102.100.100/706652?index=1*
+*Fazio, Vincent; Woodman, Stuart; Jiang, Lingbo; Li, Yunlong; Warren, Peter. AuScope AVRE Technical Workshop 2025: auscopecat - A python package to access AuScope's resources and beyond. In: AuScope AVRE Technical Workshop 2025; 13 to end of 13 Jun 2025; Virtual. AuScope Pty Ltd; 2025. 18pp. csiro:EP2025-2482. https://doi.org/10.5281/zenodo.15654067*
