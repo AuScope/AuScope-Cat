@@ -7,6 +7,7 @@ from pandas import DataFrame
 from auscopecat.api import MAX_FEATURES, search_cql
 from auscopecat.auscopecat_types import AuScopeCatError
 from auscopecat.utils import download_url
+from auscopecat.analytics import track_api_nvcl_query
 
 NVCL_URLS = {
     'VIC': 'https://geology.data.vic.gov.au/nvcl/wfs',
@@ -85,6 +86,10 @@ def search_cql_tsg(prov: str, cql_filter: str, max_features = MAX_FEATURES)->lis
             urls.append(url)
 
     LOGGER.info((f'{prov} search_cql return urls: {len(urls)}'))
+    
+    # Track NVCL search usage
+    track_api_nvcl_query("search_tsg")
+    
     return urls
 
 def get_cql_filter(layer_name: str, geometry_name: str, name: str = None, bbox: str = None, kml_coords: str = None, max_features = MAX_FEATURES, is_nvcl = False, prov: str = None)->str:
@@ -215,4 +220,8 @@ def search_tsg(prov: str, name: str = None, bbox: str = None, kml_coords: str = 
     '''
     cql_filter = get_cql_filter('gsmlp:BoreholeView', 'gsmlp:shape', name, bbox, kml_coords, max_features, True, prov)
     urls = search_cql_tsg(prov, cql_filter, max_features)
+    
+    # Track NVCL download usage
+    track_api_nvcl_query("download_tsg")
+    
     return urls

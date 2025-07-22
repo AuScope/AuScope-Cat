@@ -15,6 +15,7 @@ from auscopecat.auscopecat_types import (
 )
 from auscopecat.network import request
 from auscopecat.utils import validate_bbox, validate_polygon
+from auscopecat.analytics import track_api_search, track_api_download
 
 API_URL = "https://portal.auscope.org.au/api/"
 #API_URL = "http://localhost:8080/api/"
@@ -144,6 +145,11 @@ def search_records(pattern: str, ogc_types: list[ServiceType | str] = None,
                             )
                 record.online_resources = online_resources
                 search_results.append(record)
+    
+    # Track search usage
+    spatial_search = bool(bbox or polygon)
+    track_api_search(pattern, ogc_types, spatial_search)
+    
     return search_results
 
 
@@ -236,6 +242,9 @@ def download(obj: SimpleNamespace, download_type: DownloadType | str,
         f_name = "download.csv" if not file_name else file_name
         with open(f_name, "wb") as f:
             f.write(response.content)
+        
+        # Track download usage
+        track_api_download(download_type, obj.url)
     else:
         raise AuScopeCatError(
             f"Error downloading data: {response.reason}",
