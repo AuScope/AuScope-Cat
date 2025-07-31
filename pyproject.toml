@@ -1,6 +1,6 @@
 [project]
 name = "auscopecat"
-version = "1.0.1"
+version = "1.0.2"
 description = "Access to AuScope's catalogue of geoscience datasets from sources all over Australia"
 authors = [
     {name = "AuScope MAINTAIN", email = "cg-admin@csiro.au"},
