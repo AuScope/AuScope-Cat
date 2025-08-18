@@ -158,7 +158,7 @@ def search_cql_tsg_df(prov: str, name: str = None, bbox: str = None, kml_coords:
     :param prov: prov
     :param name: name
     :param bbox: bbox
-    :param kml_coords: kmlCoords
+    :param kml_coords: kml_coords
     :param max_features: max_features
     :return: dataframe
     '''
@@ -184,7 +184,7 @@ def download_tsg(prov: str, name: str = None, bbox: str = None, kml_coords: str 
     :param prov: prov
     :param name: name
     :param bbox: bbox
-    :param kml_coords: kmlCoords
+    :param kml_coords: kml_coords
     :param max_features: max_features
     :param simulation: simulation
     :return: a list of url of downloaded TSG files
@@ -214,7 +214,7 @@ def search_tsg(prov: str, name: str = None, bbox: str = None, kml_coords: str = 
     :param prov: prov
     :param name: name
     :param bbox: bbox
-    :param kml_coords: kmlCoords
+    :param kml_coords: kml_coords
     :param max_features: max_features
     :return: a list of url of TSG files
     '''
