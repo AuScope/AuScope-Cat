@@ -2,7 +2,8 @@
 [![Coverage Status](https://raw.githubusercontent.com/AuScope/AuScope-Cat/main/.github/badges/coverage.svg)](https://github.com/AuScope/AuScope-Cat/actions/workflows/python-build-test.yml)
 
 # AuScope Catalogue
-Home of 'auscopecat', a Python package that allows access to AuScope's catalogue of geoscience datasets from sources all over Australia
+Home of 'auscopecat', a Python package that allows access to AuScope's catalogue of geoscience datasets from sources all over Australia.<br>
+Full documentation: https://auscope.github.io/AuScope-Cat/
 
 ## Install
 
