@@ -245,11 +245,13 @@ def download(obj: SimpleNamespace, download_type: DownloadType | str,
         
         # Track download usage
         track_api_download(download_type, obj.url)
+        return response.content
     else:
         raise AuScopeCatError(
             f"Error downloading data: {response.reason}",
             response.status_code
         )
+    
 
 
 def _validate_search_inputs(pattern: str, ogc_types: list[ServiceType | str] = None,
