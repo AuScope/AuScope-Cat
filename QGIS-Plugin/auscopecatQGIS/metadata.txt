@@ -1,0 +1,8 @@
+[general]
+name=AuscopecatQGIS
+description=Use auscopecat to search then display the result to QGIS.
+version=1.0
+qgisMinimumVersion=3.0
+author=Lingbo Jiang
+email=Lingbo.Jiang@csiro.au
+icon=logo.png
