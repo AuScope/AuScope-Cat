@@ -4,7 +4,6 @@ from PyQt6 import uic
 from .auscopecatDialog import AuscopecatDialog
 
 plugin_dir = os.path.dirname(__file__)
-FORM_CLASS, _ = uic.loadUiType(os.path.join(plugin_dir,'auscopecat.ui')) #
 class AuscopecatPlugin:
     def __init__(self, iface):
         self.iface = iface
@@ -17,7 +16,7 @@ class AuscopecatPlugin:
         self.iface.addToolBarIcon(self.action)
         # Connect the run() method to the action
         self.action.triggered.connect(self.run)
-      
+
     def unload(self):
         self.iface.removeToolBarIcon(self.action)
         del self.action
@@ -25,4 +24,3 @@ class AuscopecatPlugin:
     def run(self):
         self.dlg = AuscopecatDialog()
         self.dlg.show()
-        result = self.dlg.exec_()

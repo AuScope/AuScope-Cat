@@ -9,7 +9,7 @@ from qgis.core import QgsRasterLayer, QgsVectorLayer, QgsProject
 import requests
 # Define the base and the form class from your UI file
 # Ensure the path is correct relative to the Python file
-FORM_CLASS, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__), 'auscopecatsearch.ui')) #
+FORM_CLASS, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__), 'auscopecat.ui')) #
 
 class AuscopecatDialog(QtWidgets.QDialog, FORM_CLASS):
     def __init__(self, parent=None):
@@ -33,14 +33,12 @@ class AuscopecatDialog(QtWidgets.QDialog, FORM_CLASS):
 
         qgsInstance =QgsProject.instance()
         activeLayers = list(qgsInstance.mapLayers().keys())
-    
-    # Convert the dictionary keys view to a list of strings, 
-    # which is the format removeMapLayers expects
+
         if len(activeLayers):
             qgsInstance.removeMapLayers(activeLayers)
         if baselayer.isValid():
             qgsInstance.addMapLayer(baselayer)
-            
+
         bhLayer = QgsVectorLayer(geojson_string, "NVCL", "ogr")
         if bhLayer.isValid():
             qgsInstance.addMapLayer(bhLayer)
