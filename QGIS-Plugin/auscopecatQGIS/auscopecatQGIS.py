@@ -1,6 +1,7 @@
 import os
+
 from PyQt6.QtGui import QAction, QIcon
-from PyQt6 import uic
+
 from .auscopecatDialog import AuscopecatDialog
 
 plugin_dir = os.path.dirname(__file__)
