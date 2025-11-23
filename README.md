@@ -2,8 +2,32 @@
 [![Coverage Status](https://raw.githubusercontent.com/AuScope/AuScope-Cat/main/.github/badges/coverage.svg)](https://github.com/AuScope/AuScope-Cat/actions/workflows/python-build-test.yml)
 
 # AuScope Catalogue
-Home of 'auscopecat', a Python package that allows access to AuScope's catalogue of geoscience datasets from sources all over Australia.<br>
-Full documentation: https://auscope.github.io/AuScope-Cat/
+Home of 'auscopecat', a Python package that allows access to AuScope's catalogue of geoscience datasets from sources all over Australia. These sources include:
+
+* AuScope
+* National Virtual Core Library
+* Geoscience Australia
+* National Computational Infrastructure (NCI)
+* CSIRO
+* State and Territory Geological Surveys:
+  * Victoria
+  * South Australia
+  * Western Australia
+  * Northern Territory
+  * New South Wales
+  * Queensland
+  * Tasmania
+* AusPass
+* EarthBank
+* University of Wollongong (Octopus DB)
+* University of Melbourne
+* Curtin University
+* Australian National University
+* Loop3d
+* Native Land Digital
+
+
+Documentation: https://auscope.github.io/AuScope-Cat/
 
 ## Install
 
