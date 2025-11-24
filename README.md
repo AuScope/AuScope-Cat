@@ -2,7 +2,7 @@
 [![Coverage Status](https://raw.githubusercontent.com/AuScope/AuScope-Cat/main/.github/badges/coverage.svg)](https://github.com/AuScope/AuScope-Cat/actions/workflows/python-build-test.yml)
 
 # AuScope Catalogue
-Home of 'auscopecat', a Python package that allows access to AuScope's catalogue of geoscience datasets from sources all over Australia. These sources include:
+Home of 'AuScope-Cat', a Python package that allows access to AuScope's catalogue of geoscience datasets from sources all over Australia. These sources include:
 
 * AuScope
 * National Virtual Core Library
@@ -31,7 +31,7 @@ Documentation: https://auscope.github.io/AuScope-Cat/
 
 ## Install
 
-'auscopecat' is available from PyPi https://pypi.org/project/auscopecat/
+'AuScope-Cat' is available from PyPi https://pypi.org/project/auscopecat/
 
 ```
 pip install auscopecat
@@ -39,11 +39,11 @@ pip install auscopecat
 
 ## Jupyter Notebooks
 
-We have created a set of [Jupyter notebooks](https://github.com/AuScope/AuScope-Cat/tree/main/jupyter-notebooks) to demonstrate some of 'auscopecat's applications 
+We have created a set of [Jupyter notebooks](https://github.com/AuScope/AuScope-Cat/tree/main/jupyter-notebooks) to demonstrate some of 'AuScope-Cat's applications 
 
 ## Documentation
 
-'auscopecat's documentation is available [here](auscope.github.io/AuScope-Cat/)
+'AuScope-Cat's documentation is available [here](auscope.github.io/AuScope-Cat/)
 
 ## Development
 
@@ -73,7 +73,7 @@ uv run $SHELL
 ```
 will run an environment in a new shell
 
-**TIP**: Use 'uv pip install "auscopecat@."' to install the local auscopecat package
+**TIP**: Use 'uv pip install "auscopecat@."' to install the local 'auscopecat' package
 
 ### Pre-commit
 This project comes with a pre-commit configuration `pre-commit install` to add it as a git hook.<br>
@@ -101,11 +101,19 @@ Run
 ```
 uv run pytest
 ```
-in the 'AuScope-Cat'root directory
+in the 'AuScope-Cat' root directory
 
-## Reference used to cite 'auscopecat'
+### Create a new release
 
-Please cite 'auscopecat' in your publications if you use it in your research
+1. Login to github
+2. Go to "Releases", hit "Draft a new release" button
+3. Be sure to select 'Create new tag' and enter appropriate value
+4. Fill in title, description etc.
+5. Hit 'Publish Release'
+
+## Reference used to cite 'AuScope-Cat'
+
+Please cite 'AuScope-Cat' in your publications if you use it in your research
 
 *Fazio, Vincent; Warren, Peter; Woodman, Stuart; Jiang, Lingbo; & Li, Yunlong (2025): AuScope-Cat: a python package for accessing AuScope's catalogue of geoscience datasets. v1. CSIRO. Service Collection. http://hdl.handle.net/102.100.100/706652?index=1*
 
