@@ -5,19 +5,22 @@ If you use AuScope-Cat in your research, please cite it as follows:
 
 .. code-block:: text
 
-    AuScope MAINTAIN. (2023). AuScope-Cat: A Python package for accessing AuScope's catalogue 
-    of geoscience datasets. [Software]. Available from https://github.com/AuScope/AuScope-Cat
+   Fazio, Vincent; Warren, Peter; Woodman, Stuart; Jiang, Lingbo; & Li, Yunlong (2025):
+   AuScope-Cat: a python package for accessing AuScope's catalogue of geoscience datasets. v1.
+   CSIRO. Service Collection. http://hdl.handle.net/102.100.100/706652?index=1
 
 BibTeX Entry
 ------------
 
 .. code-block:: bibtex
 
-    @software{auscopecat,
-      author = {{AuScope MAINTAIN}},
-      title = {AuScope-Cat: A Python package for accessing AuScope's catalogue of geoscience datasets},
-      url = {https://github.com/AuScope/AuScope-Cat},
-      year = {2023},
+    @software{Fazio2025AuScopeCat,
+      author       = {Fazio, Vincent and Warren, Peter and Woodman, Stuart and Jiang, Lingbo and Li, Yunlong},
+      title        = {AuScope-Cat: a python package for accessing AuScope's catalogue of geoscience datasets},
+      version      = {v1},
+      date         = {2025},
+      organization = {CSIRO},
+      url          = {http://hdl.handle.net/102.100.100/706652?index=1},
     }
 
 Citing Specific Datasets
