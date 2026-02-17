@@ -1,114 +1,113 @@
-"""Tests for Google Analytics 4 integration."""
+"""Tests for RudderStack analytics integration."""
 import os
 import unittest
 from unittest.mock import patch, MagicMock
-import time
 
 import pytest
 
 from auscopecat.analytics import (
-    GA4Analytics, 
-    track_api_search, 
-    track_api_download, 
+    RudderStackAnalytics,
+    track_api_search,
+    track_api_download,
     track_api_nvcl_query,
     _extract_domain
 )
 
 
-class TestGA4Analytics(unittest.TestCase):
-    """Test GA4Analytics class functionality."""
-    
+class TestRudderStackAnalytics(unittest.TestCase):
+    """Test RudderStackAnalytics class functionality."""
+
     def setUp(self):
         """Set up test environment."""
         # Clear environment variables
-        os.environ.pop('GA4_MEASUREMENT_ID', None)
-        os.environ.pop('GA4_API_SECRET', None)
-    
+        os.environ.pop('RUDDERSTACK_WRITE_KEY', None)
+        os.environ.pop('RUDDERSTACK_DATA_PLANE_URL', None)
+        os.environ.pop('RUDDERSTACK_DEBUG_USER_ID', None)
+
     def test_analytics_disabled_without_credentials(self):
         """Test analytics is disabled when credentials are missing."""
-        analytics = GA4Analytics()
+        analytics = RudderStackAnalytics()
         assert not analytics.enabled
-        assert analytics.measurement_id is None
-        assert analytics.api_secret is None
-    
+        assert analytics.write_key is None
+        assert analytics.data_plane_url is None
+
     def test_analytics_enabled_with_credentials(self):
         """Test analytics is enabled when credentials are provided."""
-        os.environ['GA4_MEASUREMENT_ID'] = 'G-TEST123'
-        os.environ['GA4_API_SECRET'] = 'test-secret'
-        
-        analytics = GA4Analytics()
+        os.environ['RUDDERSTACK_WRITE_KEY'] = 'test-write-key'
+        os.environ['RUDDERSTACK_DATA_PLANE_URL'] = 'https://test-dataplane.com'
+
+        analytics = RudderStackAnalytics()
         assert analytics.enabled
-        assert analytics.measurement_id == 'G-TEST123'
-        assert analytics.api_secret == 'test-secret'
-        assert analytics.client_id  # Should generate a UUID
-    
-    @patch('auscopecat.analytics.requests.post')
-    def test_send_event_with_credentials(self, mock_post):
+        assert analytics.write_key == 'test-write-key'
+        assert analytics.data_plane_url == 'https://test-dataplane.com'
+        assert analytics.user_id  # Should generate a UUID
+
+    @patch('rudderstack.analytics.track')
+    def test_send_event_with_credentials(self, mock_track):
         """Test sending events when credentials are available."""
-        os.environ['GA4_MEASUREMENT_ID'] = 'G-TEST123'
-        os.environ['GA4_API_SECRET'] = 'test-secret'
-        
-        mock_post.return_value.status_code = 204
-        
-        analytics = GA4Analytics()
+        os.environ['RUDDERSTACK_WRITE_KEY'] = 'test-write-key'
+        os.environ['RUDDERSTACK_DATA_PLANE_URL'] = 'https://test-dataplane.com'
+
+        analytics = RudderStackAnalytics()
         analytics.send_event('test_event', {'param1': 'value1'})
-        
-        # Give thread time to execute
-        time.sleep(0.1)
-        
-        assert mock_post.called
-        call_args = mock_post.call_args
-        assert call_args[1]['params']['measurement_id'] == 'G-TEST123'
-        assert call_args[1]['params']['api_secret'] == 'test-secret'
-        assert 'test_event' in str(call_args[1]['json'])
-    
+
+        assert mock_track.called
+        call_kwargs = mock_track.call_args[1]
+        assert call_kwargs['event'] == 'test_event'
+        assert call_kwargs['properties']['source'] == 'python_api'
+        assert call_kwargs['properties']['param1'] == 'value1'
+
     def test_send_event_without_credentials(self):
         """Test sending events when credentials are missing."""
-        analytics = GA4Analytics()
-        
+        analytics = RudderStackAnalytics()
+
         # Should not raise any exceptions
         analytics.send_event('test_event', {'param1': 'value1'})
         assert not analytics.enabled
-    
-    @patch('auscopecat.analytics.requests.post')
-    def test_send_event_handles_exceptions(self, mock_post):
+
+    @patch('rudderstack.analytics.track')
+    def test_send_event_handles_exceptions(self, mock_track):
         """Test that exceptions in analytics don't break functionality."""
-        os.environ['GA4_MEASUREMENT_ID'] = 'G-TEST123'
-        os.environ['GA4_API_SECRET'] = 'test-secret'
-        
-        mock_post.side_effect = Exception("Network error")
-        
-        analytics = GA4Analytics()
+        os.environ['RUDDERSTACK_WRITE_KEY'] = 'test-write-key'
+        os.environ['RUDDERSTACK_DATA_PLANE_URL'] = 'https://test-dataplane.com'
+
+        mock_track.side_effect = Exception("Network error")
+
+        analytics = RudderStackAnalytics()
         # Should not raise any exceptions
         analytics.send_event('test_event')
-        
-        # Give thread time to execute and handle exception
-        time.sleep(0.1)
-    
-    @patch('auscopecat.analytics.requests.post')
-    def test_event_payload_structure(self, mock_post):
+
+    @patch('rudderstack.analytics.track')
+    def test_debug_user_id_override(self, mock_track):
+        """Test that RUDDERSTACK_DEBUG_USER_ID overrides generated user_id."""
+        os.environ['RUDDERSTACK_WRITE_KEY'] = 'test-write-key'
+        os.environ['RUDDERSTACK_DATA_PLANE_URL'] = 'https://test-dataplane.com'
+        os.environ['RUDDERSTACK_DEBUG_USER_ID'] = 'debug-user-123'
+
+        analytics = RudderStackAnalytics()
+        assert analytics.user_id == 'debug-user-123'
+
+        analytics.send_event('test_event')
+        call_kwargs = mock_track.call_args[1]
+        assert call_kwargs['user_id'] == 'debug-user-123'
+
+    @patch('rudderstack.analytics.track')
+    def test_event_payload_structure(self, mock_track):
         """Test that events are sent with correct payload structure."""
-        os.environ['GA4_MEASUREMENT_ID'] = 'G-TEST123'
-        os.environ['GA4_API_SECRET'] = 'test-secret'
-        
-        mock_post.return_value.status_code = 204
-        
-        analytics = GA4Analytics()
+        os.environ['RUDDERSTACK_WRITE_KEY'] = 'test-write-key'
+        os.environ['RUDDERSTACK_DATA_PLANE_URL'] = 'https://test-dataplane.com'
+
+        analytics = RudderStackAnalytics()
         analytics.send_event('test_event', {'custom_param': 'test_value'})
-        
-        # Give thread time to execute
-        time.sleep(0.1)
-        
-        call_args = mock_post.call_args
-        payload = call_args[1]['json']
-        
-        assert 'client_id' in payload
-        assert 'events' in payload
-        assert len(payload['events']) == 1
-        assert payload['events'][0]['name'] == 'test_event'
-        assert 'timestamp_micros' in payload['events'][0]['params']
-        assert payload['events'][0]['params']['source'] == 'python_api'
-        assert payload['events'][0]['params']['custom_param'] == 'test_value'
+
+        assert mock_track.called
+        call_kwargs = mock_track.call_args[1]
+
+        assert call_kwargs['user_id'] == analytics.user_id
+        assert call_kwargs['event'] == 'test_event'
+        assert call_kwargs['properties']['source'] == 'python_api'
+        assert 'api_version' in call_kwargs['properties']
+        assert call_kwargs['properties']['custom_param'] == 'test_value'
 
 
 class TestTrackingFunctions(unittest.TestCase):
@@ -245,52 +244,49 @@ class TestUtilityFunctions(unittest.TestCase):
 
 class TestIntegrationWithRealAPI(unittest.TestCase):
     """Integration tests with real API calls (requires credentials)."""
-    
+
     def setUp(self):
         """Set up test environment."""
         self.has_credentials = bool(
-            os.getenv('GA4_MEASUREMENT_ID') and os.getenv('GA4_API_SECRET')
+            os.getenv('RUDDERSTACK_WRITE_KEY') and os.getenv('RUDDERSTACK_DATA_PLANE_URL')
         )
-    
+
     @unittest.skipUnless(
-        os.getenv('GA4_MEASUREMENT_ID') and os.getenv('GA4_API_SECRET'),
-        "GA4 credentials not available"
+        os.getenv('RUDDERSTACK_WRITE_KEY') and os.getenv('RUDDERSTACK_DATA_PLANE_URL'),
+        "RudderStack credentials not available"
     )
     def test_end_to_end_analytics(self):
-        """Test end-to-end analytics with real GA4 credentials."""
+        """Test end-to-end analytics with real RudderStack credentials."""
         from auscopecat.api import search
         from auscopecat.auscopecat_types import ServiceType
-        
+
         # This should trigger analytics tracking
         results = search('borehole', [ServiceType.WFS])
-        
+
         # Verify search worked
         assert isinstance(results, list)
-        # Analytics should be triggered in background - no way to verify without GA4 access
-        
-        # Give analytics time to send
-        time.sleep(1)
-    
+        # Analytics should be triggered - RudderStack SDK handles it asynchronously
+
     def test_analytics_graceful_failure_without_credentials(self):
         """Test that analytics fails gracefully without credentials."""
         # Clear any existing credentials
-        old_measurement_id = os.environ.pop('GA4_MEASUREMENT_ID', None)
-        old_api_secret = os.environ.pop('GA4_API_SECRET', None)
-        
+        old_write_key = os.environ.pop('RUDDERSTACK_WRITE_KEY', None)
+        old_data_plane_url = os.environ.pop('RUDDERSTACK_DATA_PLANE_URL', None)
+
         try:
             from auscopecat.api import search
             from auscopecat.auscopecat_types import ServiceType
-            
+
             # This should work even without analytics credentials
             results = search('borehole', [ServiceType.WFS])
             assert isinstance(results, list)
-            
+
         finally:
             # Restore credentials if they existed
-            if old_measurement_id:
-                os.environ['GA4_MEASUREMENT_ID'] = old_measurement_id
-            if old_api_secret:
-                os.environ['GA4_API_SECRET'] = old_api_secret
+            if old_write_key:
+                os.environ['RUDDERSTACK_WRITE_KEY'] = old_write_key
+            if old_data_plane_url:
+                os.environ['RUDDERSTACK_DATA_PLANE_URL'] = old_data_plane_url
 
 
 if __name__ == '__main__':

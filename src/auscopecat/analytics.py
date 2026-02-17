@@ -1,103 +1,92 @@
 """
-Google Analytics 4 Measurement Protocol integration for tracking API usage.
+RudderStack analytics integration for tracking API usage.
 """
+import atexit
 import logging
 import os
-import threading
-import time
+import socket
 import uuid
 from typing import Optional
 
-import requests
+import rudderstack.analytics as rudder_analytics
 
 
 LOGGER = logging.getLogger(__name__)
 
+# Default RudderStack credentials (can be overridden with environment variables)
+DEFAULT_RUDDERSTACK_WRITE_KEY = "38s1jj9jSa5kz5UaTzQ8qruE4U8"
+DEFAULT_RUDDERSTACK_DATA_PLANE_URL = "https://csirobenyzumqe.dataplane.rudderstack.com"
 
-class GA4Analytics:
-    """Google Analytics 4 Measurement Protocol client for tracking API usage."""
-    
+# Get package version dynamically
+try:
+    from importlib.metadata import version
+    __version__ = version("auscopecat")
+except Exception:
+    __version__ = "unknown"
+
+
+class RudderStackAnalytics:
+    """RudderStack analytics client for tracking API usage."""
+
     def __init__(self):
-        """Initialize GA4 Analytics with environment variables."""
-        self.measurement_id = os.getenv('GA4_MEASUREMENT_ID')
-        self.api_secret = os.getenv('GA4_API_SECRET')
-        
-        # Use consistent client ID for better tracking
-        # In production, this creates a stable anonymous identifier
-        # For debugging, can be overridden with GA4_DEBUG_CLIENT_ID
-        debug_client_id = os.getenv('GA4_DEBUG_CLIENT_ID')
-        if debug_client_id:
-            self.client_id = debug_client_id
+        """Initialize RudderStack with environment variables or hardcoded defaults."""
+        # Check environment variables first, fall back to hardcoded defaults
+        self.write_key = os.getenv('RUDDERSTACK_WRITE_KEY', DEFAULT_RUDDERSTACK_WRITE_KEY)
+        self.data_plane_url = os.getenv('RUDDERSTACK_DATA_PLANE_URL', DEFAULT_RUDDERSTACK_DATA_PLANE_URL)
+
+        # Generate user_id using same logic as former GA4 client_id
+        # Creates a stable anonymous identifier based on hostname
+        # Can be overridden with RUDDERSTACK_DEBUG_USER_ID for testing
+        debug_user_id = os.getenv('RUDDERSTACK_DEBUG_USER_ID')
+        if debug_user_id:
+            self.user_id = debug_user_id
         else:
-            # Create stable client ID based on hostname for consistent tracking
-            import socket
             hostname = socket.gethostname()
-            self.client_id = str(uuid.uuid5(uuid.NAMESPACE_DNS, hostname))
-        
-        self.enabled = bool(self.measurement_id and self.api_secret)
-        
-        if not self.enabled:
-            LOGGER.debug("GA4 analytics disabled - missing credentials")
-    
+            self.user_id = str(uuid.uuid5(uuid.NAMESPACE_DNS, hostname))
+
+        self.enabled = bool(self.write_key and self.data_plane_url)
+
+        if self.enabled:
+            # Configure RudderStack SDK
+            rudder_analytics.write_key = self.write_key
+            rudder_analytics.dataPlaneUrl = self.data_plane_url
+            rudder_analytics.gzip = True  # Enable compression
+
+            if os.getenv('RUDDERSTACK_DEBUG'):
+                rudder_analytics.debug = True
+
+            # Register cleanup on exit to ensure events are flushed
+            atexit.register(rudder_analytics.shutdown)
+
+            LOGGER.debug("RudderStack analytics enabled")
+        else:
+            LOGGER.debug("RudderStack analytics disabled - missing credentials")
+
     def send_event(self, event_name: str, parameters: Optional[dict] = None) -> None:
         """
-        Send an event to Google Analytics 4 via Measurement Protocol.
-        
-        :param event_name: Name of the event (e.g., 'api_search', 'api_download')
+        Send event to RudderStack.
+
+        :param event_name: Name of the event (e.g., 'api_search')
         :param parameters: Additional event parameters
         """
         if not self.enabled:
             return
-            
-        # Run analytics in background thread to avoid blocking API calls
-        thread = threading.Thread(
-            target=self._send_event_async,
-            args=(event_name, parameters or {}),
-            daemon=True
-        )
-        thread.start()
-    
-    def _send_event_async(self, event_name: str, parameters: dict) -> None:
-        """Send event asynchronously to avoid blocking main API calls."""
+
         try:
-            url = f"https://www.google-analytics.com/mp/collect"
-            
-            payload = {
-                "client_id": self.client_id,
-                "events": [{
-                    "name": event_name,
-                    "params": {
-                        "timestamp_micros": int(time.time() * 1_000_000),
-                        "source": "python_api",
-                        "api_version": "1.0.1",  # Match package version
-                        **parameters
-                    }
-                }]
-            }
-            
-            params = {
-                "measurement_id": self.measurement_id,
-                "api_secret": self.api_secret
-            }
-            
-            # Send with short timeout to avoid hanging
-            response = requests.post(
-                url,
-                params=params,
-                json=payload,
-                timeout=5
+            rudder_analytics.track(
+                user_id=self.user_id,
+                event=event_name,
+                properties={
+                    "source": "python_api",
+                    "api_version": __version__,
+                    **(parameters or {})
+                }
             )
-            
-            if response.status_code != 204:
-                LOGGER.debug(f"GA4 event failed: {response.status_code}")
-                
         except Exception as e:
-            # Analytics should never break the main API functionality
-            LOGGER.debug(f"GA4 analytics error: {e}")
+            LOGGER.debug(f"RudderStack analytics error: {e}")
 
 
-# Global analytics instance
-_analytics = GA4Analytics()
+_analytics = RudderStackAnalytics()
 
 
 def track_api_search(pattern: str, ogc_types: Optional[list] = None, 
