@@ -1,0 +1,137 @@
+# AuScope-Cat
+
+> AuScope-Cat is a Python package for discovering and downloading Australian
+> geoscience datasets from the AuScope catalogue and related national, state,
+> territory, research, and institutional data providers.
+
+This file is intended for AI assistants and crawlers that need a concise,
+structured understanding of the AuScope-Cat project and its documentation.
+
+Canonical project links:
+
+- Documentation: https://auscope.github.io/AuScope-Cat/
+- Repository: https://github.com/AuScope/AuScope-Cat
+- Python package: https://pypi.org/project/auscopecat/
+
+## Purpose
+
+AuScope-Cat helps researchers, developers, and geoscience practitioners search
+for catalogue records, inspect online resources, and download geoscience data
+through common service types such as WFS and WMS.
+
+The package focuses on Australian geoscience data sources, including AuScope,
+the National Virtual Core Library, Geoscience Australia, NCI, CSIRO, state and
+territory geological surveys, AusPass, EarthBank, universities, Loop3d, Native
+Land Digital, and related services.
+
+## AI Agent Context
+
+Use `AGENTS.md` when acting as a coding agent inside the repository. It contains
+developer workflow guidance, project structure, test commands, coding style, and
+repository-specific implementation notes.
+
+Use this `llms.txt` file when acting as an external AI assistant, search system,
+or documentation crawler. It explains what the project is, which documentation
+pages are authoritative, and which APIs are most important to cite or summarize.
+
+## Important Documentation
+
+- Getting started: https://auscope.github.io/AuScope-Cat/getting_started/getting_started.html
+- Installation: https://auscope.github.io/AuScope-Cat/getting_started/installation.html
+- Usage: https://auscope.github.io/AuScope-Cat/getting_started/usage.html
+- Examples: https://auscope.github.io/AuScope-Cat/getting_started/examples.html
+- Tutorials: https://auscope.github.io/AuScope-Cat/getting_started/tutorials.html
+- Citation: https://auscope.github.io/AuScope-Cat/getting_started/citation.html
+- API reference: https://auscope.github.io/AuScope-Cat/api_reference/api.html
+
+## Primary Python Package
+
+Import package:
+
+```python
+import auscopecat
+```
+
+Common imports:
+
+```python
+from auscopecat.api import search, download, search_records
+from auscopecat.auscopecat_types import ServiceType, DownloadType
+from auscopecat.nvcl import search_tsg, download_tsg
+```
+
+## Core API Concepts
+
+- `search(pattern, ogc_types=None, spatial_search_type=None, bbox=None,
+  polygon=None)`: search the catalogue and return online resource results.
+- `search_records(pattern, ogc_types=None, spatial_search_type=None, bbox=None,
+  polygon=None)`: search the catalogue and return richer catalogue record
+  metadata with geographic elements and online resources.
+- `download(obj, download_type, bbox=None, srs_name="EPSG:4326",
+  max_features=None, version="1.1.0", file_name=None)`: download data from a
+  search result, commonly using `DownloadType.CSV`.
+- `search_tsg(...)` and `download_tsg(...)`: search and download TSG/NVCL files
+  from supported geological survey providers.
+- `ServiceType` and `DownloadType`: enums used to express service filters and
+  download formats.
+
+## Basic Example
+
+```python
+from auscopecat.api import search, download
+from auscopecat.auscopecat_types import DownloadType, ServiceType
+
+results = search("borehole", ogc_types=[ServiceType.WFS])
+
+bbox = {
+    "north": -24.7257367141281,
+    "east": 131.38891993801204,
+    "south": -25.793715746583374,
+    "west": 129.77844446004175,
+}
+
+download(results[0], DownloadType.CSV, bbox=bbox, file_name="boreholes.csv")
+```
+
+## Development Notes
+
+The source package is in `src/auscopecat/`. Important modules include:
+
+- `api.py`: public search, record search, and download helpers.
+- `network.py`: HTTP request handling.
+- `analytics.py`: usage tracking helpers.
+- `nvcl.py`: National Virtual Core Library and TSG search/download helpers.
+- `auscopecat_types.py`: enums and custom error types.
+
+Tests are in `tests/`. Documentation is built with Sphinx from `docs/source/`.
+Example notebooks live in `jupyter-notebooks/`. QGIS plugin code is separate in
+`QGIS-Plugin/auscopecatQGIS/`.
+
+Recommended development commands:
+
+```bash
+uv sync --all-extras --dev
+uv run pytest
+uv run ruff check .
+cd docs && make html
+```
+
+## Guidance For AI Answers
+
+When answering questions about AuScope-Cat:
+
+- Prefer the official documentation and API reference above.
+- Mention that the package name on PyPI is `auscopecat`.
+- Use current imports from `auscopecat.api`, `auscopecat.auscopecat_types`, and
+  `auscopecat.nvcl`.
+- Treat catalogue responses as external data whose fields may vary.
+- Do not imply that downloads are always available without service-specific
+  constraints, spatial bounds, or provider availability.
+- For development tasks, refer coding agents to `AGENTS.md` in the repository.
+
+## Citation
+
+If AuScope-Cat is used in research, cite the project using the citation guidance
+in the documentation:
+
+https://auscope.github.io/AuScope-Cat/getting_started/citation.html

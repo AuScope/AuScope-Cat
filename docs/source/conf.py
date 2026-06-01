@@ -1,8 +1,11 @@
 import datetime
 import os
+import shutil
 import sys
+from pathlib import Path
 
 sys.path.insert(0, os.path.abspath('../src'))
+ROOT_DIR = Path(__file__).resolve().parents[2]
 
 project = 'AuScope-Cat'
 copyright = f'{datetime.datetime.now().year}, AuScope MAINTAIN'
@@ -58,3 +61,16 @@ intersphinx_mapping = {
     'numpy': ('https://numpy.org/doc/stable/', None),
     'pandas': ('https://pandas.pydata.org/pandas-docs/stable/', None),
 }
+
+
+def copy_llms_txt(app, exception):
+    if exception is not None:
+        return
+
+    source = ROOT_DIR / 'llms.txt'
+    if source.exists():
+        shutil.copyfile(source, Path(app.outdir) / 'llms.txt')
+
+
+def setup(app):
+    app.connect('build-finished', copy_llms_txt)
