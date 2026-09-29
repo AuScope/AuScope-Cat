@@ -140,12 +140,15 @@ def add_tsg_urls(prov: str, df: DataFrame)->any:
     df_a = pd.read_csv(url_all)
     LOGGER.info((f'{prov} cql return: {df.shape[0]} : dfAll return {df_a.shape[0]}'))
     if df.shape[0] < 1:
-        return []
-    df = df.loc[df['gsmlp:nvclCollection']]
+        return df
+    df = df.loc[df['gsmlp:nvclCollection']].copy()
     df['DownloadLink'] = ''
-    for index, bh_identifier in enumerate(df['gsmlp:identifier']):
+    # Lowercase both sides rather than passing case=False: the pyarrow-backed
+    # string dtype in pandas 3 needs an RE2-enabled pyarrow for ignore_case
+    bh_uris = df_a['BoreholeURI'].str.lower()
+    for index, bh_identifier in df['gsmlp:identifier'].items():
         bh_identifier1 = bh_identifier.split('://')[1]
-        df_mask = df_a['BoreholeURI'].str.contains(bh_identifier1, na=False, case=False, regex=False)
+        df_mask = bh_uris.str.contains(bh_identifier1.lower(), na=False, regex=False)
         df_urls = df_a[df_mask].reset_index()
         if df_urls.shape[0] > 0:
             df.loc[index,'DownloadLink'] = df_urls.loc[0,'DownloadLink']

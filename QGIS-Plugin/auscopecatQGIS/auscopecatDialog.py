@@ -2,8 +2,8 @@ import os
 
 import geopandas as gpd
 import requests
-from PyQt6 import QtWidgets, uic
 from qgis.core import QgsProject, QgsRasterLayer, QgsVectorLayer
+from qgis.PyQt import QtWidgets, uic
 from shapely import wkt
 
 from auscopecat.nvcl import search_cql_tsg_df
@@ -25,6 +25,9 @@ class AuscopecatDialog(QtWidgets.QDialog, FORM_CLASS):
         print(f'{searchtext=}')
         df = None
         df = search_cql_tsg_df(prov='WA', name = searchtext, bbox='110.,-44.,156,-9.')
+        if df is None or df.shape[0] < 1:
+            print(f'No results found for {searchtext!r}')
+            return
         geometry = wkt.loads(df["gsmlp:shape"])
         gdf = gpd.GeoDataFrame(df, geometry=geometry,crs="EPSG:4326")
         geojson_string = gdf.to_json()
