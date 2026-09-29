@@ -100,19 +100,19 @@
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">auscopecat.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">search</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">auscopecat.auscopecat_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServiceType</span>
 
-<span class="c1"># Search for datasets containing &quot;gold&quot;</span>
-<span class="n">results</span> <span class="o">=</span> <span class="n">search</span><span class="p">(</span><span class="s2">&quot;gold&quot;</span><span class="p">)</span>
+<span class="c1"># Search for datasets containing "gold"</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">search</span><span class="p">(</span><span class="s2">"gold"</span><span class="p">)</span>
 
-<span class="c1"># Search for WFS services containing &quot;gold&quot;</span>
-<span class="n">wfs_results</span> <span class="o">=</span> <span class="n">search</span><span class="p">(</span><span class="s2">&quot;gold&quot;</span><span class="p">,</span> <span class="n">ogc_types</span><span class="o">=</span><span class="p">[</span><span class="n">ServiceType</span><span class="o">.</span><span class="n">WFS</span><span class="p">])</span>
+<span class="c1"># Search for WFS services containing "gold"</span>
+<span class="n">wfs_results</span> <span class="o">=</span> <span class="n">search</span><span class="p">(</span><span class="s2">"gold"</span><span class="p">,</span> <span class="n">ogc_types</span><span class="o">=</span><span class="p">[</span><span class="n">ServiceType</span><span class="o">.</span><span class="n">WFS</span><span class="p">])</span>
 
 <span class="c1"># Print the results</span>
 <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;URL: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Type: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="s2">&quot;wfs_typename&quot;</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;WFS Type Name: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">wfs_typename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;---&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"URL: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">url</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Type: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="s2">"wfs_typename"</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"WFS Type Name: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">wfs_typename</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"---"</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -124,14 +124,14 @@
 
 <span class="c1"># Define a bounding box</span>
 <span class="n">bbox</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;north&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">30.0</span><span class="p">,</span>
-    <span class="s2">&quot;south&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">35.0</span><span class="p">,</span>
-    <span class="s2">&quot;east&quot;</span><span class="p">:</span> <span class="mf">150.0</span><span class="p">,</span>
-    <span class="s2">&quot;west&quot;</span><span class="p">:</span> <span class="mf">145.0</span>
+    <span class="s2">"north"</span><span class="p">:</span> <span class="o">-</span><span class="mf">30.0</span><span class="p">,</span>
+    <span class="s2">"south"</span><span class="p">:</span> <span class="o">-</span><span class="mf">35.0</span><span class="p">,</span>
+    <span class="s2">"east"</span><span class="p">:</span> <span class="mf">150.0</span><span class="p">,</span>
+    <span class="s2">"west"</span><span class="p">:</span> <span class="mf">145.0</span>
 <span class="p">}</span>
 
 <span class="c1"># Download data for the first result</span>
-<span class="n">download</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">DownloadType</span><span class="o">.</span><span class="n">CSV</span><span class="p">,</span> <span class="n">bbox</span><span class="o">=</span><span class="n">bbox</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;my_data.csv&quot;</span><span class="p">)</span>
+<span class="n">download</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">DownloadType</span><span class="o">.</span><span class="n">CSV</span><span class="p">,</span> <span class="n">bbox</span><span class="o">=</span><span class="n">bbox</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="s2">"my_data.csv"</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
