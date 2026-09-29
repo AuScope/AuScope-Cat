@@ -1,7 +1,6 @@
 import os
 
-from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtWidgets import QAction
+from PyQt6.QtGui import QAction, QIcon
 
 from .auscopecatDialog import AuscopecatDialog
 
