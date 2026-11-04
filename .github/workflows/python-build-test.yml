@@ -43,8 +43,7 @@ jobs:
       run: uv run pytest --cov=src --cov-report=xml --cov-report=term
 
     - name: Generate coverage badge
-      run: |
-        uv run coverage-badge -f -o .github/badges/coverage.svg
+      run: uv run genbadge coverage -i coverage.xml -o .github/badges/coverage.svg
 
     - name: Commit coverage badge to main branch
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
